@@ -7,6 +7,10 @@ import random
 from collections import OrderedDict
 import matplotlib.pyplot as plt
 from tqdm.auto import tqdm
+
+import skfda
+from skfda.exploratory.visualization import FPCAPlot
+from skfda.preprocessing.dim_reduction import FPCA
 # %% parameters
 Number_of_task=100  #take 10 tasks for training in total 
 
@@ -197,7 +201,7 @@ class sinusoid(Dataset):
         datasets_list_for_tasks=[] 
         for _ in np.arange(Number_of_task):
             A1s=random.random()
-            A2s=random.random()
+            A2s=random.random()*0.5
             A1c=random.random()
             A2c=random.random()
 
@@ -206,7 +210,7 @@ class sinusoid(Dataset):
             w2 = 2
             phi=random.random()*2*np.pi
             t=np.arange(0,10,0.01) # 1000 potential samples in total
-            y= A1s*np.sin(w1*t) + A2s*np.sin(w2*t) + A1c*np.cos(w1*t) + A2c*np.cos(w2*t)
+            y= A1s*np.sin(w1*t) + A2s*np.sin(w2*t) 
             data_in_one_task=torch.tensor(np.stack((t,y),axis=-1)).to(torch.float32) #t,y各一列
             datasets_list_for_tasks.append(data_in_one_task)
         self.datalist=datasets_list_for_tasks
@@ -348,7 +352,7 @@ for epoch in range(max_epoch):
     print("Train loss :" ,"%.3f" % train_meta_loss, end="\t")
     print("Validation loss :" ,"%.3f" % val_meta_loss)
 
-    if val_meta_loss<0.005:
+    if val_meta_loss<0.002:
         break
 val_meta_loss = Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False,visualize=True)
 
@@ -392,11 +396,11 @@ y_true =  support_y.reshape(-1,1)
 y_predict  = meta_model.functional_forward(support_t.reshape(-1,1), fast_weights)
 ft_predict = meta_model.functional_forward(t.reshape(-1,1), fast_weights)
 
-plt.plot(support_t,support_y,"r+")
-plt.plot(support_t,y_predict.detach().numpy(),"b+")
-plt.plot(t,y,"r")
-plt.plot(t,ft_predict.detach().numpy(),"b")
-
+plt.plot(support_t,support_y,"r+",label="trainning data point")
+plt.plot(support_t,y_predict.detach().numpy(),"b+",label="fitted data point")
+plt.plot(t,y,"r",label='ground truth')
+plt.plot(t,ft_predict.detach().numpy(),"b",label='INR')
+plt.legend()
 # %%
 
 # %% meta FPCA
@@ -419,34 +423,75 @@ for task in data_loader:
     y=task[0][:,1].reshape(-1,1)
     fast_weights, inner_loss=inner_train(t,y,meta_weights=meta_weights,inner_step = val_inner_train_step)
     fast_weights_list.append(fast_weights)
-    print(inner_loss)
+    # print(inner_loss)
 
 
-# calculate mean mu(s,t)
-def mu(t,fast_weights_list=fast_weights_list): #t 必须是float tensor
-    mui_list=[]
-    for fast_weights in fast_weights_list:
-        mui=meta_model.functional_forward(t.reshape(-1,1), fast_weights)
-        mui_list.append(mui[:,0].detach().numpy())
-    mu=np.array(mui_list).mean(axis=0)
-    return mu
 
-
-# %% test mean function 刚好和prior接近！！！！！！
+# %% Using meta-learning get dense data for fPCA
+dense_data = []
 t=torch.arange(0,10,0.01)
-plt.plot(t,mu(t),'r')
-y_true=0.5*np.sin(t)+0.5*np.cos(t)+0.5*np.sin(2*t)+0.5*np.cos(2*t)
-plt.plot(t,y_true,'b')
+for fast_weights in fast_weights_list:
+    y_dense=meta_model.functional_forward(t.reshape(-1,1), fast_weights).detach().numpy()
+    dense_data.append(y_dense)
+t=t.detach().numpy() 
 
-t= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
-y,coord= meta_model.forward(t)
-plt.plot(t.detach().numpy(),y.detach().numpy(),'g')
+grid_points = t # Grid points of the curves
+data_matrix = dense_data
+fd = skfda.FDataGrid(
+    data_matrix=data_matrix,
+    grid_points=grid_points,
+)
+
+fpca_discretized = FPCA(n_components=2)
+fpca_discretized.fit(fd)
+pc1,pc2=fpca_discretized.components_.data_matrix
+
+# true value
+
+grid_points = np.arange(0,10,0.01)
+data_matrix_true = [yi[:,1].detach().numpy() for yi in dataset.datalist]
+
+fd_true = skfda.FDataGrid(
+    data_matrix=data_matrix_true,
+    grid_points=grid_points,
+)
+
+fpca_discretized_true = FPCA(n_components=2)
+fpca_discretized_true.fit(fd_true)
+pc1_true,pc2_true=fpca_discretized_true.components_.data_matrix
+
+# visualize
+l1=plt.plot(t,pc1,'r',label='pc1')
+l2=plt.plot(t,pc2,'b',label='pc2')
+l3=plt.plot(t,pc1_true,'r:',label='pc1_true')
+l4=plt.plot(t,pc2_true,'b:',label='pc2_true')
+plt.legend()
+
+# %% mean estimation , mean function 刚好和prior接近！！！！！！
+
+mean=fd.mean().data_matrix[0,:,0]
+plt.plot(t,mean,'r',label="estimated mean")
+
+y_true=0.5*np.sin(t)+0.25*np.sin(2*t)
+plt.plot(t,y_true,'b:',label='true mean')
+
+t1= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
+y,coord= meta_model.forward(t1)
+plt.plot(t,y.detach().numpy(),'g--',label="meta model")
+plt.legend()
+
+
+# %% covariance estimation
+t=t.astype(np.float64)
+t
+# %%
+fd.cov(s_points=t,t_points=t)
 
 # %% long time calculation
-# calculate kernel g(s,t)=g_nn (n by n matrix)
+# calculate covariance kernel g(s,t)=g_nn (n by n matrix)
 def g(t,fast_weights_list=fast_weights_list):
     g_st_list=[]
-    for fast_weights in tqdm(fast_weights_list):
+    for fast_weights in fast_weights_list:
         b=(meta_model.functional_forward(t.reshape(-1,1), fast_weights)[:,0].detach().numpy()-mu(t))
         b=np.matrix(b)
         g_sti=b.T*b
@@ -457,5 +502,4 @@ def g(t,fast_weights_list=fast_weights_list):
 t=torch.arange(0,10,0.01)
 gst=g(t)
 # %%
-print(gst.shape)
 # %%

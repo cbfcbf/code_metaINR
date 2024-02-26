@@ -36,8 +36,7 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 
-\title{Neural Laplace Conformal Prediction\\
-(Research Proposal)}
+\title{Meta-learning Implicit Neural Representation for Sparse Time Series Functional Data Analysis}
 
 
 % The \author macro works with any number of authors. There are two commands
@@ -84,127 +83,71 @@
   Bofan Chen\\
   Department of Pure Mathematics and Mathematical Statistics\\
   University of Cambridge\\
-  \texttt{bc600@cam.ac.uk} \\}
+  \texttt{cbfcbf.byron@gmail.com} \\}
 \begin{document}
 
 
 \maketitle
 
-\section{Our goal}
-The goal of this research is to predict uncertainty on time series.
+\section{Introduction}
 
-\textbf{Notation and assumption} For a system with $D \in \mathbb{N}^{+}$dimensions, the state of dimension $d$ at time $t$ is denoted as $y_d(t), \forall d=$ $1, \ldots, D, \forall t \in \mathbb{R}$.
-We elaborate that the trajectory $y_d: \mathbb{R} \rightarrow \mathbb{R}$ is a function of time.
-We consider the state vector at any time $t$, which is $\mathbf{y}(t):=\left[y_1(t), \ldots, y_D(t)\right]^T \in \mathbb{R}^D$.
-We further assume that the trajectory follows DE dynamics
+\section{Related works}
 
-\textbf{Data.} 
-For each trajectory $\mathbf{y}^{(i)}(t)$, the state observations are made at discrete times of $t \in \mathcal{T}=\left\{t_1, t_2, \ldots, t_K, t_{K+1}, \ldots , t_{K+H}\right\}$; 
-and there exists a certain time $T$, such that $t_1<t_2< \ldots < t_K<T<t_{K+1}< \ldots <t_{K+H}$.
-Our dataset should be expressed like this:
-$$
-\mathcal{D}_{\text{labeled}}=\{\{(t^{(i)}_k,\mathbf{y}^{(i)}_k)\}^{K+H}_{k=1}\}^l_{i=1}.
-$$
-We can use $T$ to divide the trajectory into the known part and the predicting part by letting
-$$
-\mathcal{D}_{\text{labeled}}=\{X^{(i)},P^{(i)}\}^l_{i=1},
-$$
-where 
-$$
-X^{(i)}=\{(t^{(i)}_k,\mathbf{y}^{(i)}_k)\}^K_{k=1}
-$$
-and
-$$
-P^{(i)}=\{(t^{(i)}_k,\mathbf{y}^{(i)}_k)\}^{K+H}_{k=K+1}.
-$$
+\subsection{Functional Data}
+properties: differ from multidimensional data
 
-\textbf{Input and Output.} 
-We design a neural network architecture to use the trajectory observations $X$ before time $T$ to predict the trajectory $\mathbf{\hat y}(t,X), \forall t > T$. 
-Furthermore, we also estimate the uncertainty of the trajectory which can be expressed by the confidence interval 
-$$\hat C^\alpha(t,X)=[\mathbf{\hat y}(t,X)- \epsilon \mathbf{\hat \sigma}(t,X), \mathbf{\hat y}(t,X)+ \epsilon \mathbf{\hat \sigma}(t,X)],$$
-where 
-$$\mathbb{P}(\mathbf{y}(t) \in \hat C^\alpha(t,X)| \mathbf{y}(t_k)=\mathbf{y}_k,\forall (t_k,\mathbf{y}_k) \in X )>1-\alpha.$$
+what we care: derivatives, smoothness
 
-\section{The model}
-\textbf{Divide the dataset.}
-$$
-\mathcal{D}_{\text {labeled }}=\left\{\mathcal{D}_{\text {train }}  \cup \mathcal{D}_{\text {res}} \cup \mathcal{D}_{\text {cal }} \cup \mathcal{D}_{\text {test }}\right\}
-$$
-\textbf{Encode the input.}
-Obtain the initial state of each trajectory: 
-$$
-\mathbf{p}=h_\gamma(X),
-$$
-where $h_\gamma(\cdot)$ can use RNN, LSTM, GRU.
+difficulty for Sparse data: previous baseline
 
-\textbf{Train the predictive model.}
-Use $\mathcal{D}_{\text {train }}$ and Neural Laplace method to obtain the predict trajectory $\mathbf{\hat y}(t,\mathbf{p})$.
+application: medicine
 
-\begin{figure}
-  \centering
-  \includegraphics[width=\textwidth]{NL.jpg}
-  \caption{Neural Laplace.}
-\end{figure}
+\subsection{Implicit Neural Representation}
+SIREN for time series: advantage...
 
-\textbf{Train the conformal normalization model.}
-Use $\mathcal{D}_{\text {res }}$ and Neural Laplace method to obtain the conformal normalization model $\mathbf{\hat \sigma}(t,\mathbf{p})$.
-% why we use NL here? literature support: forward variance model is a DE dynamic.
-\begin{figure}
-  \centering
-  \includegraphics[width=\textwidth]{NLCP.jpg}
-  \caption{Neural Laplace Conformal Prediction.}
-\end{figure}
+\subsection{Meta-learning}
+different architecture: MAML / SNAIL
 
-\textbf{Conformal prediction.}
-Use $\mathcal{D}_{\text {cal }}$ to obtain the confidence interval.
-
-Non-conformity function:
-$$
-\gamma(\mathbf{p})=\sup_{k \in 1:K+H} | \frac{\mathbf{y}_k-\mathbf{\hat y}(t_k,\mathbf{p})}{\mathbf{\hat \sigma}(t_k,\mathbf{p})}| ,
-$$
-where
-$\mathbf{p}=h_\gamma(X),X \in \mathcal{D}_{\text {cal }}^X.$
-
-Non-conformity score $\epsilon$: the $\lceil (|\mathcal{D}_{\text {cal}}|+1)(1-\alpha) \rceil $-th smallest in $\gamma(\mathbf{p})$.
-
-Confidence interval for the initial state $\mathbf{p}$: 
-$$\hat C^\alpha(t,X)=[\mathbf{\hat y}(t,\mathbf{p})- \epsilon \mathbf{\hat \sigma}(t,\mathbf{p}), \mathbf{\hat y}(t,\mathbf{p})+ \epsilon \mathbf{\hat \sigma}(t,\mathbf{p})],$$
-where
-$\mathbf{p}=h_\gamma(X).$
-
-
-
-\section{Advantages}
-
-\textbf{Satisfy exchangeability.}
-Assumption to use conformal prediction: \textit{(Exchangeability) In a dataset of $l$ observations $\left\{\left(\mathbf{x}^{(i)}, y^{(i)}\right)\right\}_{i=1}^l$, any of its $l$ ! permutations are equiprobable. Note that independent identically distributed (iid) observations satisfy exchangeability.}
-For the time series dataset, $(t^{(i)}_k,\mathbf{y}^{(i)}_k)$ in $X^{(i)}$ does not satisfy the exchangeability, because the $y_k$ may be related in one single time series.
-We treat each time series as one observation which satisfy the exchangeability.
-
-\textbf{Locally adaptive.}
-For different initial state, the uncertainty in the future is different.
-We set the score function wisely to ensure it is locally adaptive.
-
-\textbf{Irregular time step.}
-Our framework use Neural Laplace control method which can be use in the irregular time dataset.
-Furthermore, when we calculate the confidence interval, we do not need that the predicting part of the labeled data is observed at regular interval.
-
-% \textbf{noise observation senario.}
-% We permit that the observation could have noise.
-
-\textbf{Computational conplexity.}
-Our framework use Neural Laplace control method which modeled the function in whole time line. This greatly reduces the computational cost.
-
+\section{Method}
+advantage
 \section{Experiments}
-1. For simplicity, consider the time series that $d=1$ and regular time step.
 
-\section{Futher research}
-\begin{itemize}
-  \item consider observation have noise.
-  \item consider use uncertainty to discover misspecification.
-  \item consider self-supervised conformal prediction.
-  \item consider the MPC controller over the modeln where setting the reward function related to uncertainty.
-\end{itemize}
+\subsection{Synthetic data}
+
+\subsubsection{what meta-learning learned in  timeseries}
+
+1. periodicity
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{learning_periodicity.png}
+  \caption{Learning Periodicity}
+\end{figure}
+
+2. differential equations: No?
+
+3. average phenomenon for meta prior model
+
+\subsubsection{Mean estimation}
+
+\subsubsection{Covariance estimation}
+
+\subsubsection{fPCA}
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{fPCA.png}
+  \caption{FPCA}
+\end{figure}
+\subsubsection{Registration}
+
+\subsection{Real-world data}
+
+\section{Conclusion}
+
+\section{Appendix}
+
+\subsection{Traditional FDA for sparse functional data}
+
+\subsection{Brief introduciton to SIREN}
 
 % \begin{abstract}
 %   The abstract paragraph should be indented \nicefrac{1}{2}~inch (3~picas) on
