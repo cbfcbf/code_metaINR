@@ -12,6 +12,7 @@ Number_of_task=100  #take 10 tasks for training in total
 
 number_of_samples_in_support_set=20
 number_of_samples_in_query_set=20
+total_samples_per_task = number_of_samples_in_support_set+number_of_samples_in_query_set
 
 train_inner_train_step = 1
 val_inner_train_step = 10
@@ -192,19 +193,24 @@ def gradient(y, x, grad_outputs=None):
 # %% define dataset
 
 class sinusoid(Dataset):
-    def __init__(self,number_of_samples_in_support_set,number_of_samples_in_query_set):
+    def __init__(self,total_samples_per_task):
         datasets_list_for_tasks=[] 
         for _ in np.arange(Number_of_task):
-            # A=random.random()
-            A = 1
-            w= 1
+            A1s=random.random()
+            A2s=random.random()
+            A1c=random.random()
+            A2c=random.random()
+
+            # A = 1
+            w1 = 1
+            w2 = 2
             phi=random.random()*2*np.pi
             t=np.arange(0,10,0.01) # 1000 potential samples in total
-            y=A*np.sin(w*t+phi)
+            y= A1s*np.sin(w1*t) + A2s*np.sin(w2*t) + A1c*np.cos(w1*t) + A2c*np.cos(w2*t)
             data_in_one_task=torch.tensor(np.stack((t,y),axis=-1)).to(torch.float32) #t,y各一列
             datasets_list_for_tasks.append(data_in_one_task)
         self.datalist=datasets_list_for_tasks
-        self.total_samples_per_task = number_of_samples_in_support_set+number_of_samples_in_query_set
+        self.total_samples_per_task = total_samples_per_task
 
     def __len__(self):
         return len(self.datalist)
@@ -260,11 +266,13 @@ def Metaepoch(model,optimizer,data_loader,loss_fn,
 
 
     # 此时一个epoch结束
-    pi_t=torch.arange(0,10,0.1).reshape(-1,1)
-    pi_y,coord=model.forward(pi_t)
-    Dy=gradient(pi_y,coord)
-    DDy=gradient(Dy,coord)
-    D_loss = loss_fn(pi_y,-DDy)
+        
+    # 计算微分方程上的损失 D_loss
+    # pi_t=torch.arange(0,10,0.1).reshape(-1,1)
+    # pi_y,coord=model.forward(pi_t)
+    # Dy=gradient(pi_y,coord)
+    # DDy=gradient(Dy,coord)
+    # D_loss = loss_fn(pi_y,-DDy)
 
     if train:
         #此时所有task的loss收集结束，考虑优化参数
@@ -282,7 +290,7 @@ def Metaepoch(model,optimizer,data_loader,loss_fn,
         meta_loss=torch.stack(task_loss).mean()
 
 
-    return meta_loss, D_loss
+    return meta_loss
 
 # %% initialization
 
@@ -303,7 +311,8 @@ def dataloader_init(data, shuffle=True, num_workers=0, inner_batch_size=inner_ba
     val_iter = iter(val_loader)
     return (train_loader, val_loader), (train_iter, val_iter)
 
-dataset=sinusoid(number_of_samples_in_support_set,number_of_samples_in_query_set)
+dataset=sinusoid(total_samples_per_task)
+
 train_split = int(0.8 * len(dataset))
 val_split = len(dataset) - train_split
 train_set, val_set = torch.utils.data.random_split(dataset, [train_split, val_split])
@@ -321,12 +330,11 @@ def model_init():
 meta_model, optimizer, loss_fn = model_init()
 
 
+# %% prior before meta training
 
-# %%
-#prior before meta training
-# t=torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
-# y= meta_model.forward(t)
-# plt.plot(t.detach().numpy(),y.detach().numpy())
+t=torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
+y,coord= meta_model.forward(t)
+plt.plot(t.detach().numpy(),y.detach().numpy())
 
 # %% 单训一次的结果
 # val_meta_loss = Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False,visualize=True)
@@ -334,58 +342,114 @@ meta_model, optimizer, loss_fn = model_init()
 
 # %% training
 for epoch in range(max_epoch):
-    train_meta_loss,train_D_loss = Metaepoch(meta_model,optimizer,train_loader,loss_fn,inner_train_step=train_inner_train_step,inner_lr=inner_lr,train=True)
-    val_meta_loss,val_D_loss = Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False)
+    train_meta_loss = Metaepoch(meta_model,optimizer,train_loader,loss_fn,inner_train_step=train_inner_train_step,inner_lr=inner_lr,train=True)
+    val_meta_loss= Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False)
     print("Epoch :" ,"%d" % epoch, end="\t")
     print("Train loss :" ,"%.3f" % train_meta_loss, end="\t")
-    print("Validation loss :" ,"%.3f" % val_meta_loss, end="\t")
-    print("Train ODE loss :" ,"%.3f" % train_D_loss, end="\t")
-    print("Validation ODE loss :" ,"%.3f" % val_D_loss)
+    print("Validation loss :" ,"%.3f" % val_meta_loss)
 
-    if val_meta_loss<0.001:
+    if val_meta_loss<0.005:
         break
 val_meta_loss = Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False,visualize=True)
 
 
 # %% prior after meta training
+
 t= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
 y,coord= meta_model.forward(t)
-Dy=gradient(y,coord)
-DDy=gradient(Dy,coord)
 plt.plot(t.detach().numpy(),y.detach().numpy(),'r')
-plt.plot(t.detach().numpy(),Dy.detach().numpy(),'g')
-plt.plot(t.detach().numpy(),DDy.detach().numpy(),'b')
 
-# %% test 一个完全在validation+training外的回归任务
+
+# %% test 一个完全在validation+training外的回归任务 visualize
+
 t=torch.arange(0,10,0.01)
 y=torch.sin(t)
 
 support_t=torch.arange(5,10,0.5)
 support_y=torch.sin(support_t)
 
-fast_weights = OrderedDict(meta_model.named_parameters())
-for inner_step in range(10):
-    # Simply training
-    y_true =  support_y.reshape(-1,1)
-    y_predict  = meta_model.functional_forward(support_t.reshape(-1,1), fast_weights)
-    loss = loss_fn(y_predict, y_true)
-    # Inner gradients update! #
-    grads = torch.autograd.grad(loss, fast_weights.values(), create_graph=True)
-    fast_weights = OrderedDict(
-        (name, param - inner_lr * grad)
-        for ((name, param), grad) in zip(fast_weights.items(), grads)
-    )
-    print(loss)
-    
+meta_weights = OrderedDict(meta_model.named_parameters())
+
+def inner_train(t,y, meta_weights=meta_weights, inner_step = val_inner_train_step):
+    fast_weights=meta_weights
+    for inner_step in range(inner_step):
+        # Simply training
+        y_true =  y.reshape(-1,1)
+        y_predict  = meta_model.functional_forward(t.reshape(-1,1), fast_weights)
+        loss = loss_fn(y_predict, y_true)
+        # Inner gradients update! #
+        grads = torch.autograd.grad(loss, fast_weights.values(), create_graph=True)
+        fast_weights = OrderedDict(
+            (name, param - inner_lr * grad)
+            for ((name, param), grad) in zip(fast_weights.items(), grads)
+        )
+    inner_loss=loss
+    return fast_weights,inner_loss
+
+fast_weights,inner_loss = inner_train(support_t,support_y,meta_weights=meta_weights,inner_step = val_inner_train_step)
+
 y_true =  support_y.reshape(-1,1)
 y_predict  = meta_model.functional_forward(support_t.reshape(-1,1), fast_weights)
-
 ft_predict = meta_model.functional_forward(t.reshape(-1,1), fast_weights)
 
 plt.plot(support_t,support_y,"r+")
 plt.plot(support_t,y_predict.detach().numpy(),"b+")
 plt.plot(t,y,"r")
 plt.plot(t,ft_predict.detach().numpy(),"b")
+
+# %%
+
+# %% meta FPCA
+# 对原来的数据做FPCA
+# 若要重新生成一组数据：
+# dataset=sinusoid(number_of_samples_in_support_set,number_of_samples_in_query_set)
+
+
+data_loader = DataLoader(
+        dataset,
+        batch_size=inner_batch_size,
+        num_workers=0,
+        shuffle=False,
+        drop_last=True,
+    )
+
+fast_weights_list=[]
+for task in data_loader:
+    t=task[0][:,0].reshape(-1,1)
+    y=task[0][:,1].reshape(-1,1)
+    fast_weights, inner_loss=inner_train(t,y,meta_weights=meta_weights,inner_step = val_inner_train_step)
+    fast_weights_list.append(fast_weights)
+    print(inner_loss)
+
+
+# calculate mean mu(s,t)
+def mu(t,fast_weights_list=fast_weights_list): #t 必须是float tensor
+    mui_list=[]
+    for fast_weights in fast_weights_list:
+        mui=meta_model.functional_forward(t.reshape(-1,1), fast_weights)
+        mui_list.append(mui[:,0].detach().numpy())
+    mu=np.array(mui_list).mean(axis=0)
+    return mu
+
+
+# %% test mean function 刚好和prior接近！！！！！！
+t=torch.arange(0,10,0.01)
+plt.plot(t,mu(t),'r')
+y_true=0.5*np.sin(t)+0.5*np.cos(t)+0.5*np.sin(2*t)+0.5*np.cos(2*t)
+plt.plot(t,y_true,'b')
+
+t= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
+y,coord= meta_model.forward(t)
+plt.plot(t.detach().numpy(),y.detach().numpy(),'g')
+
+# %%
+# calculate kernel g(s,t)=g_nn (n by n matrix)
+def g(t,fast_weights_list):
+    g_st_list=[]
+    for fast_weights in fast_weights_list:
+        for s in t:
+            g_sti=(meta_model.functional_forward(s.reshape(-1,1), fast_weights)-mu(s))*(meta_model.functional_forward(t.reshape(-1,1), fast_weights)-mu(t))
+        g_st_list.append(g_sti)
 
 
 # %%
