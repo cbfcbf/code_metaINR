@@ -1,9 +1,9 @@
 # %% 
-import data_loader as dl
+import SIREN.data_loader as dl
 import numpy as np
 import matplotlib.pyplot as plt
 import torch
-import modules
+import SIREN.modules as modules
 import time
 from torch.utils.data import DataLoader
 import copy

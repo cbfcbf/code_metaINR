@@ -1,8 +1,8 @@
 # %%
-from timeseries_INR import *
-import data_loader as dl
+from SIREN.timeseries_INR import *
+import SIREN.data_loader as dl
 import matplotlib.pyplot as plt
-import modules
+import SIREN.modules as modules
 
 BATCH_SIZE = 10000
 EPOCHS = 1000

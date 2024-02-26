@@ -442,14 +442,20 @@ t= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
 y,coord= meta_model.forward(t)
 plt.plot(t.detach().numpy(),y.detach().numpy(),'g')
 
-# %%
+# %% long time calculation
 # calculate kernel g(s,t)=g_nn (n by n matrix)
-def g(t,fast_weights_list):
+def g(t,fast_weights_list=fast_weights_list):
     g_st_list=[]
-    for fast_weights in fast_weights_list:
-        for s in t:
-            g_sti=(meta_model.functional_forward(s.reshape(-1,1), fast_weights)-mu(s))*(meta_model.functional_forward(t.reshape(-1,1), fast_weights)-mu(t))
+    for fast_weights in tqdm(fast_weights_list):
+        b=(meta_model.functional_forward(t.reshape(-1,1), fast_weights)[:,0].detach().numpy()-mu(t))
+        b=np.matrix(b)
+        g_sti=b.T*b
+        g_sti=np.array(g_sti)
         g_st_list.append(g_sti)
-
-
+    g_st=np.array(g_st_list).mean(axis=0)
+    return g_st
+t=torch.arange(0,10,0.01)
+gst=g(t)
+# %%
+print(gst.shape)
 # %%
