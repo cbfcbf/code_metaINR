@@ -15,3 +15,4 @@ dataset = skfda.datasets.fetch_growth()
 fd = dataset['data']
 y = dataset['target']
 fd.plot()
+# %%
