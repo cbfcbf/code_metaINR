@@ -1,10 +1,10 @@
-This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2022.10.30)  26 FEB 2024 20:59
+This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2022.10.30)  26 FEB 2024 22:13
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
  %&-line parsing enabled.
-**NLCP
-(./NLCP.tex
+**metaFDA
+(./metaFDA.tex
 LaTeX2e <2021-11-15> patch level 1
 L3 programming layer <2022-02-24> (/usr/local/texlive/2022/texmf-dist/tex/latex/base/article.cls
 Document Class: article 2021/10/04 v1.4n Standard LaTeX document class
@@ -330,8 +330,8 @@ File: l3backend-xetex.def 2022-02-07 L3 backend support: XeTeX
 \g__pdf_backend_object_int=\count294
 \g__pdf_backend_annotation_int=\count295
 \g__pdf_backend_link_int=\count296
-) (./NLCP.aux)
-\openout1 = `NLCP.aux'.
+) (./metaFDA.aux)
+\openout1 = `metaFDA.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 87.
 LaTeX Font Info:    ... okay on input line 87.
@@ -437,9 +437,9 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 LaTeX Info: Redefining \ref on input line 87.
 LaTeX Info: Redefining \pageref on input line 87.
 LaTeX Info: Redefining \nameref on input line 87.
- (./NLCP.out) (./NLCP.out)
+ (./metaFDA.out) (./metaFDA.out)
 \@outlinefile=\write3
-\openout3 = `NLCP.out'.
+\openout3 = `metaFDA.out'.
 
 LaTeX Info: Redefining \microtypecontext on input line 87.
 Package microtype Info: Applying patch `item' on input line 87.
@@ -478,22 +478,28 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             See the microtype manual for details.
 File: learning_periodicity.png Graphic file (type bmp)
 <learning_periodicity.png>
+File: learning_mean.png Graphic file (type bmp)
+<learning_mean.png>
+File: mean.png Graphic file (type bmp)
+<mean.png>
+File: covariance.png Graphic file (type bmp)
+<covariance.png>
 File: fPCA.png Graphic file (type bmp)
 <fPCA.png>
  [1
 
 
-] [2] [3] (./NLCP.aux)
-Package rerunfilecheck Info: File `NLCP.out' has not changed.
+] [2] [3] (./metaFDA.aux)
+Package rerunfilecheck Info: File `metaFDA.out' has not changed.
 (rerunfilecheck)             Checksum: 1823548FD3E2470DD207DCC1163E08C2;2601.
  ) 
 Here is how much of TeX's memory you used:
- 12832 strings out of 476179
- 202549 string characters out of 5809543
- 535269 words of memory out of 5000000
- 33404 multiletter control sequences out of 15000+600000
+ 12856 strings out of 476179
+ 203017 string characters out of 5809543
+ 536277 words of memory out of 5000000
+ 33425 multiletter control sequences out of 15000+600000
  483309 words of font info for 46 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
- 70i,8n,76p,997b,340s stack positions out of 10000i,1000n,20000p,200000b,200000s
+ 70i,8n,76p,1000b,340s stack positions out of 10000i,1000n,20000p,200000b,200000s
 
-Output written on NLCP.pdf (3 pages).
+Output written on metaFDA.pdf (3 pages).

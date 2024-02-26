@@ -470,22 +470,38 @@ plt.legend()
 # %% mean estimation , mean function 刚好和prior接近！！！！！！
 
 mean=fd.mean().data_matrix[0,:,0]
-plt.plot(t,mean,'r',label="estimated mean")
+# plt.plot(t,mean,'r',label="Estimated mean")
 
 y_true=0.5*np.sin(t)+0.25*np.sin(2*t)
-plt.plot(t,y_true,'b:',label='true mean')
+plt.plot(t,y_true,'b:',label='True mean')
 
 t1= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
 y,coord= meta_model.forward(t1)
-plt.plot(t,y.detach().numpy(),'g--',label="meta model")
+plt.plot(t,y.detach().numpy(),'g',label="meta model")
 plt.legend()
 
 
 # %% covariance estimation
-t=t.astype(np.float64)
-t
-# %%
-fd.cov(s_points=t,t_points=t)
+fontsize=20
+fig = plt.figure(figsize=(12, 6), facecolor='w')
+c=np.cov(fd.data_matrix[:,:,0].T)
+X, Y = np.meshgrid(t, t)
+Z = c
+ax1 = fig.add_subplot(1, 2, 1, projection='3d')
+ax1.plot_surface(X,Y,Z,alpha=0.2,cmap='winter')
+ax1.contour(X,Y,Z,zdir='z', offset=Z.min(),cmap="rainbow")
+ax1.contour(X,Y,Z,zdir='x', offset=0,cmap="rainbow")  
+ax1.contour(X,Y,Z,zdir='y', offset=10,cmap="rainbow")
+ax1.set_title("Estimated covariance kernel",fontsize=fontsize)
+
+c2=np.cov(fd_true.data_matrix[:,:,0].T)
+Z2 = c2
+ax2 = fig.add_subplot(1, 2, 2, projection='3d')
+ax2.plot_surface(X,Y,Z2,alpha=0.2,cmap='winter')
+ax2.contour(X,Y,Z2,zdir='z', offset=Z.min(),cmap="rainbow")
+ax2.contour(X,Y,Z2,zdir='x', offset=0,cmap="rainbow")  
+ax2.contour(X,Y,Z2,zdir='y', offset=10,cmap="rainbow")
+ax2.set_title("True covariance kernel",fontsize=fontsize)
 
 # %% long time calculation
 # calculate covariance kernel g(s,t)=g_nn (n by n matrix)
