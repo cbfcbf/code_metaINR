@@ -425,9 +425,6 @@ for task in data_loader:
     fast_weights_list.append(fast_weights)
     # print(inner_loss)
 
-
-
-# %% Using meta-learning get dense data for fPCA
 dense_data = []
 t=torch.arange(0,10,0.01)
 for fast_weights in fast_weights_list:
@@ -446,8 +443,7 @@ fpca_discretized = FPCA(n_components=2)
 fpca_discretized.fit(fd)
 pc1,pc2=fpca_discretized.components_.data_matrix
 
-# true value
-
+# %% true value
 grid_points = np.arange(0,10,0.01)
 data_matrix_true = [yi[:,1].detach().numpy() for yi in dataset.datalist]
 
@@ -460,12 +456,42 @@ fpca_discretized_true = FPCA(n_components=2)
 fpca_discretized_true.fit(fd_true)
 pc1_true,pc2_true=fpca_discretized_true.components_.data_matrix
 
-# visualize
+# %% baseline local polynomial regression
+from localreg import *
+
+grid_points = np.arange(0,10,0.01)
+data_matrix_base=[]
+for task in data_loader:
+    t_sample=task[0][:,0].detach().numpy()
+    y_sample=task[0][:,1].detach().numpy()
+    y_base=localreg(t_sample, y_sample,x0=t, degree=2, kernel=rbf.gaussian, radius=1)
+    data_matrix_base.append(y_base)
+
+fd_base = skfda.FDataGrid(
+    data_matrix=data_matrix_base,
+    grid_points=grid_points,
+)
+# %%
+fpca_discretized_base = FPCA(n_components=2)
+fpca_discretized_base.fit(fd_base)
+pc1_base,pc2_base=fpca_discretized_base.components_.data_matrix
+
+
+# %% visualize
 l1=plt.plot(t,pc1,'r',label='pc1')
 l2=plt.plot(t,pc2,'b',label='pc2')
 l3=plt.plot(t,pc1_true,'r:',label='pc1_true')
 l4=plt.plot(t,pc2_true,'b:',label='pc2_true')
+l3=plt.plot(t,-pc1_base,'r--',label='pc1_base')
+l4=plt.plot(t,pc2_base,'b--',label='pc2_base')
+
 plt.legend()
+
+
+# %%
+fd_base.plot()
+
+
 
 # %% mean estimation , mean function 刚好和prior接近！！！！！！
 
@@ -503,19 +529,5 @@ ax2.contour(X,Y,Z2,zdir='x', offset=0,cmap="rainbow")
 ax2.contour(X,Y,Z2,zdir='y', offset=10,cmap="rainbow")
 ax2.set_title("True covariance kernel",fontsize=fontsize)
 
-# %% long time calculation
-# calculate covariance kernel g(s,t)=g_nn (n by n matrix)
-def g(t,fast_weights_list=fast_weights_list):
-    g_st_list=[]
-    for fast_weights in fast_weights_list:
-        b=(meta_model.functional_forward(t.reshape(-1,1), fast_weights)[:,0].detach().numpy()-mu(t))
-        b=np.matrix(b)
-        g_sti=b.T*b
-        g_sti=np.array(g_sti)
-        g_st_list.append(g_sti)
-    g_st=np.array(g_st_list).mean(axis=0)
-    return g_st
-t=torch.arange(0,10,0.01)
-gst=g(t)
 # %%
 # %%
