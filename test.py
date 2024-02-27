@@ -11,6 +11,10 @@ from skfda.representation.basis import (
     MonomialBasis,
 )
 # %%
+dataset=skfda.datasets.fetch_cran("pbc","survival")
+# %%
+dataset
+# %%
 dataset = skfda.datasets.fetch_growth()
 fd = dataset['data']
 y = dataset['target']
