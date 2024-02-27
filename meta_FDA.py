@@ -1,4 +1,4 @@
-# %%
+# %% packages
 import torch, torch.nn as nn
 import torch.nn.functional as F
 from torch.utils.data import DataLoader, Dataset
@@ -11,11 +11,13 @@ from tqdm.auto import tqdm
 import skfda
 from skfda.exploratory.visualization import FPCAPlot
 from skfda.preprocessing.dim_reduction import FPCA
+from localreg import *
+
 # %% parameters
 Number_of_task=100  #take 10 tasks for training in total 
 
-number_of_samples_in_support_set=20
-number_of_samples_in_query_set=20
+number_of_samples_in_support_set=10
+number_of_samples_in_query_set=10
 total_samples_per_task = number_of_samples_in_support_set+number_of_samples_in_query_set
 
 train_inner_train_step = 1
@@ -30,7 +32,6 @@ inner_batch_size=1 #没什么用 每个batch只能对应一个任务
 
 eval_batches = 20
 
-# %%
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # Fix random seeds
 random_seed = 0
@@ -194,7 +195,7 @@ def gradient(y, x, grad_outputs=None):
     grad = torch.autograd.grad(y, [x], grad_outputs=grad_outputs, create_graph=True)[0]
     return grad
 
-# %% define dataset
+# define dataset
 
 class sinusoid(Dataset):
     def __init__(self,total_samples_per_task):
@@ -227,7 +228,7 @@ class sinusoid(Dataset):
         y=x[:,1]
         return x
     
-# %%
+# training function
 def Metaepoch(model,optimizer,data_loader,loss_fn,
                inner_train_step = 1, inner_lr=0.1, train=True,visualize=False):
     criterion, task_loss= loss_fn, []
@@ -285,17 +286,32 @@ def Metaepoch(model,optimizer,data_loader,loss_fn,
         meta_batch_loss = torch.stack(task_loss).mean()
         meta_batch_loss.backward(retain_graph=True)
         optimizer.step()
-        meta_loss= meta_batch_loss
+        meta_loss= meta_batch_loss.detach().numpy()
     else:
         if visualize:
         # validation set上进行训练后产生的loss(最后一个task)，不进行元模型的进一步优化 
             plt.plot(query_t.detach().numpy(),y_true.detach().numpy(),"r+")
             plt.plot(query_t.detach().numpy(),y_predict.detach().numpy(),"b+")
-        meta_loss=torch.stack(task_loss).mean()
+        meta_loss=torch.stack(task_loss).mean().detach().numpy()
 
 
     return meta_loss
 
+def inner_train(t,y, meta_weights, inner_step = val_inner_train_step):
+    fast_weights=meta_weights
+    for inner_step in range(inner_step):
+        # Simply training
+        y_true =  y.reshape(-1,1)
+        y_predict  = meta_model.functional_forward(t.reshape(-1,1), fast_weights)
+        loss = loss_fn(y_predict, y_true)
+        # Inner gradients update! #
+        grads = torch.autograd.grad(loss, fast_weights.values(), create_graph=True)
+        fast_weights = OrderedDict(
+            (name, param - inner_lr * grad)
+            for ((name, param), grad) in zip(fast_weights.items(), grads)
+        )
+    inner_loss=loss
+    return fast_weights,inner_loss
 # %% initialization
 
 # data divide into batches each batch one task
@@ -322,9 +338,40 @@ val_split = len(dataset) - train_split
 train_set, val_set = torch.utils.data.random_split(dataset, [train_split, val_split])
 (train_loader, val_loader), (train_iter, val_iter) = dataloader_init((train_set, val_set))
 
-# print(next(train_iter).shape)
+data_loader = DataLoader(
+        dataset,
+        batch_size=inner_batch_size,
+        num_workers=0,
+        shuffle=False,
+        drop_last=True,
+    )
 
-# model init
+
+t=np.arange(0,10,0.01)
+# ground truth
+grid_points = np.arange(0,10,0.01)
+data_matrix_true = [yi[:,1].detach().numpy() for yi in dataset.datalist]
+
+fd_true = skfda.FDataGrid(
+    data_matrix=data_matrix_true,
+    grid_points=grid_points,
+)
+
+# baseline
+grid_points = np.arange(0,10,0.01)
+data_matrix_base=[]
+for task in data_loader:
+    t_sample=task[0][:,0].detach().numpy()
+    y_sample=task[0][:,1].detach().numpy()
+    y_base=localreg(t_sample, y_sample,x0=t, degree=1, kernel=rbf.gaussian, radius=1)
+    data_matrix_base.append(y_base)
+
+fd_base = skfda.FDataGrid(
+    data_matrix=data_matrix_base,
+    grid_points=grid_points,
+)
+
+# metaINR model init
 def model_init():
     meta_model = Siren(in_features=1,hidden_features=40,hidden_layers=3,out_features=1,first_omega_0=first_omega_0).to(device)
     optimizer = torch.optim.Adam(meta_model.parameters(), lr=meta_lr)
@@ -334,88 +381,48 @@ def model_init():
 meta_model, optimizer, loss_fn = model_init()
 
 
-# %% prior before meta training
+# prior before meta training
 
-t=torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
-y,coord= meta_model.forward(t)
-plt.plot(t.detach().numpy(),y.detach().numpy())
+# t=torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
+# y,coord= meta_model.forward(t)
+# plt.plot(t.detach().numpy(),y.detach().numpy())
 
-# %% 单训一次的结果
+# 单训一次的结果
 # val_meta_loss = Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False,visualize=True)
 
 
 # %% training
+train_meta_loss_list=[]
+val_meta_loss_list=[]
+mean_loss_list=[]
+
 for epoch in range(max_epoch):
     train_meta_loss = Metaepoch(meta_model,optimizer,train_loader,loss_fn,inner_train_step=train_inner_train_step,inner_lr=inner_lr,train=True)
     val_meta_loss= Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False)
     print("Epoch :" ,"%d" % epoch, end="\t")
     print("Train loss :" ,"%.3f" % train_meta_loss, end="\t")
     print("Validation loss :" ,"%.3f" % val_meta_loss)
+    train_meta_loss_list.append(train_meta_loss)
+    val_meta_loss_list.append(val_meta_loss)
 
-    if val_meta_loss<0.002:
+    #看是否元模型学习了task的均值
+    t1= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
+    y,coord = meta_model.forward(t1)
+    y=y.detach().numpy()[:,0]
+    y_true_mean=fd_true.mean().data_matrix[0,:,0]
+    mean_loss = ((y-y_true_mean)**2).mean()
+    print("mean_loss :" ,"%.3f" % mean_loss)
+    mean_loss_list.append(mean_loss)
+    if val_meta_loss<0.001:
         break
-val_meta_loss = Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False,visualize=True)
+train_meta_loss_list=np.array(train_meta_loss_list)
+val_meta_loss_list=np.array(val_meta_loss_list)
+mean_loss_list=np.array(mean_loss_list)
+# 可视化训练结果
+#  val_meta_loss = Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False,visualize=True)
 
-
-# %% prior after meta training
-
-t= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
-y,coord= meta_model.forward(t)
-plt.plot(t.detach().numpy(),y.detach().numpy(),'r')
-
-
-# %% test 一个完全在validation+training外的回归任务 visualize
-
-t=torch.arange(0,10,0.01)
-y=torch.sin(t)
-
-support_t=torch.arange(5,10,0.5)
-support_y=torch.sin(support_t)
-
+# 保存每个任务的格点拟合
 meta_weights = OrderedDict(meta_model.named_parameters())
-
-def inner_train(t,y, meta_weights=meta_weights, inner_step = val_inner_train_step):
-    fast_weights=meta_weights
-    for inner_step in range(inner_step):
-        # Simply training
-        y_true =  y.reshape(-1,1)
-        y_predict  = meta_model.functional_forward(t.reshape(-1,1), fast_weights)
-        loss = loss_fn(y_predict, y_true)
-        # Inner gradients update! #
-        grads = torch.autograd.grad(loss, fast_weights.values(), create_graph=True)
-        fast_weights = OrderedDict(
-            (name, param - inner_lr * grad)
-            for ((name, param), grad) in zip(fast_weights.items(), grads)
-        )
-    inner_loss=loss
-    return fast_weights,inner_loss
-
-fast_weights,inner_loss = inner_train(support_t,support_y,meta_weights=meta_weights,inner_step = val_inner_train_step)
-
-y_true =  support_y.reshape(-1,1)
-y_predict  = meta_model.functional_forward(support_t.reshape(-1,1), fast_weights)
-ft_predict = meta_model.functional_forward(t.reshape(-1,1), fast_weights)
-
-plt.plot(support_t,support_y,"r+",label="trainning data point")
-plt.plot(support_t,y_predict.detach().numpy(),"b+",label="fitted data point")
-plt.plot(t,y,"r",label='ground truth')
-plt.plot(t,ft_predict.detach().numpy(),"b",label='INR')
-plt.legend()
-# %%
-
-# %% meta FPCA
-# 对原来的数据做FPCA
-# 若要重新生成一组数据：
-# dataset=sinusoid(number_of_samples_in_support_set,number_of_samples_in_query_set)
-
-
-data_loader = DataLoader(
-        dataset,
-        batch_size=inner_batch_size,
-        num_workers=0,
-        shuffle=False,
-        drop_last=True,
-    )
 
 fast_weights_list=[]
 for task in data_loader:
@@ -439,55 +446,101 @@ fd = skfda.FDataGrid(
     grid_points=grid_points,
 )
 
+
+# %% learning mean function
+plt.plot(np.log(train_meta_loss_list),'r',label='train loss')
+plt.plot(np.log(val_meta_loss_list),'g',label='validation loss')
+plt.plot(np.log(mean_loss_list),'b',label='$\| \mu(t)-F_\\theta(t)\Vert^2 $')
+
+plt.legend()
+
+# prior after meta training
+# t= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
+# y,coord= meta_model.forward(t)
+# plt.plot(t.detach().numpy(),y.detach().numpy(),'r')
+
+
+# %% learning periodicity
+
+t=torch.arange(0,10,0.01)
+y=torch.sin(t)
+
+support_t=torch.arange(5,10,0.5)
+support_y=torch.sin(support_t)
+
+fast_weights,inner_loss = inner_train(support_t,support_y,meta_weights=meta_weights,inner_step = val_inner_train_step)
+
+y_true =  support_y.reshape(-1,1)
+y_predict  = meta_model.functional_forward(support_t.reshape(-1,1), fast_weights).detach().numpy()
+ft_predict = meta_model.functional_forward(t.reshape(-1,1), fast_weights).detach().numpy()
+
+t=t.detach().numpy()
+support_t=support_t.detach().numpy()
+support_y=support_y.detach().numpy()
+y_base=localreg(support_t, support_y, x0=t, degree=2, kernel=rbf.gaussian, radius=1)
+
+# print(inner_loss)
+plt.plot(support_t,support_y,"y^",markersize=10,label="trainning data point")
+# plt.plot(support_t,y_predict.detach().numpy(),"b+",label="fitted data point")
+
+plt.plot(t,y_base,"g",label="Baseline")
+plt.plot(t,y,"r",label='Ground truth')
+plt.plot(t,ft_predict,"b",label='MetaINR')
+plt.ylim(-2,2)
+plt.legend()
+
+
+# %% FPCA
+
+# 对原来的数据做FPCA
+
 fpca_discretized = FPCA(n_components=2)
 fpca_discretized.fit(fd)
 pc1,pc2=fpca_discretized.components_.data_matrix
 
-# %% true value
-grid_points = np.arange(0,10,0.01)
-data_matrix_true = [yi[:,1].detach().numpy() for yi in dataset.datalist]
+# true value PCA
 
-fd_true = skfda.FDataGrid(
-    data_matrix=data_matrix_true,
-    grid_points=grid_points,
-)
+# grid_points = np.arange(0,10,0.01)
+# data_matrix_true = [yi[:,1].detach().numpy() for yi in dataset.datalist]
+
+# fd_true = skfda.FDataGrid(
+#     data_matrix=data_matrix_true,
+#     grid_points=grid_points,
+# )
 
 fpca_discretized_true = FPCA(n_components=2)
 fpca_discretized_true.fit(fd_true)
 pc1_true,pc2_true=fpca_discretized_true.components_.data_matrix
 
-# %% baseline local polynomial regression
-from localreg import *
+# baseline local polynomial regression PCA
 
-grid_points = np.arange(0,10,0.01)
-data_matrix_base=[]
-for task in data_loader:
-    t_sample=task[0][:,0].detach().numpy()
-    y_sample=task[0][:,1].detach().numpy()
-    y_base=localreg(t_sample, y_sample,x0=t, degree=2, kernel=rbf.gaussian, radius=1)
-    data_matrix_base.append(y_base)
+# grid_points = np.arange(0,10,0.01)
+# data_matrix_base=[]
+# for task in data_loader:
+#     t_sample=task[0][:,0].detach().numpy()
+#     y_sample=task[0][:,1].detach().numpy()
+#     y_base=localreg(t_sample, y_sample,x0=t, degree=2, kernel=rbf.gaussian, radius=1)
+#     data_matrix_base.append(y_base)
 
-fd_base = skfda.FDataGrid(
-    data_matrix=data_matrix_base,
-    grid_points=grid_points,
-)
-# %%
+# fd_base = skfda.FDataGrid(
+#     data_matrix=data_matrix_base,
+#     grid_points=grid_points,
+# )
+
 fpca_discretized_base = FPCA(n_components=2)
 fpca_discretized_base.fit(fd_base)
 pc1_base,pc2_base=fpca_discretized_base.components_.data_matrix
 
 
-# %% visualize
+# visualize
 l1=plt.plot(t,pc1,'r',label='pc1_metaINR')
 l2=plt.plot(t,pc2,'b',label='pc2_metaINR')
 l3=plt.plot(t,-pc1_base,'r--',label='pc1_baseline')
 l4=plt.plot(t,pc2_base,'b--',label='pc2_baseline')
 l5=plt.plot(t,pc1_true,'r:',label='pc1_true')
 l6=plt.plot(t,pc2_true,'b:',label='pc2_true')
-
-plt.ylim(-1,1)
-
-plt.legend()
+plt.ylim(-0.75,0.75)
+plt.legend(loc="upper right")
 
 # %% mean estimation , mean function 刚好和prior接近！！！！！！
 

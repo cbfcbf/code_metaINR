@@ -1,4 +1,4 @@
-This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2022.10.30)  27 FEB 2024 11:25
+This is XeTeX, Version 3.141592653-2.6-0.999994 (TeX Live 2022) (preloaded format=xelatex 2022.10.30)  27 FEB 2024 15:01
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -478,25 +478,26 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             See the microtype manual for details.
 File: learning_periodicity.png Graphic file (type bmp)
 <learning_periodicity.png>
-File: learning_mean.png Graphic file (type bmp)
-<learning_mean.png>
+File: learning_mean_loss.png Graphic file (type bmp)
+<learning_mean_loss.png>
 File: mean.png Graphic file (type bmp)
 <mean.png>
 File: covariance.png Graphic file (type bmp)
 <covariance.png>
-File: fPCA.png Graphic file (type bmp)
-<fPCA.png>
  [1
 
 
-] [2] [3] (./metaFDA.aux)
+] [2]
+File: fPCA.png Graphic file (type bmp)
+<fPCA.png>
+ [3] (./metaFDA.aux)
 Package rerunfilecheck Info: File `metaFDA.out' has not changed.
 (rerunfilecheck)             Checksum: 0A1AA352937A81E19F892FF9E81EDDB6;2828.
  ) 
 Here is how much of TeX's memory you used:
  12856 strings out of 476179
- 203017 string characters out of 5809543
- 534993 words of memory out of 5000000
+ 203057 string characters out of 5809543
+ 534670 words of memory out of 5000000
  33425 multiletter control sequences out of 15000+600000
  483309 words of font info for 46 fonts, out of 8000000 for 9000
  1348 hyphenation exceptions out of 8191
