@@ -478,56 +478,68 @@ pc1_base,pc2_base=fpca_discretized_base.components_.data_matrix
 
 
 # %% visualize
-l1=plt.plot(t,pc1,'r',label='pc1')
-l2=plt.plot(t,pc2,'b',label='pc2')
-l3=plt.plot(t,pc1_true,'r:',label='pc1_true')
-l4=plt.plot(t,pc2_true,'b:',label='pc2_true')
-l3=plt.plot(t,-pc1_base,'r--',label='pc1_base')
-l4=plt.plot(t,pc2_base,'b--',label='pc2_base')
+l1=plt.plot(t,pc1,'r',label='pc1_metaINR')
+l2=plt.plot(t,pc2,'b',label='pc2_metaINR')
+l3=plt.plot(t,-pc1_base,'r--',label='pc1_baseline')
+l4=plt.plot(t,pc2_base,'b--',label='pc2_baseline')
+l5=plt.plot(t,pc1_true,'r:',label='pc1_true')
+l6=plt.plot(t,pc2_true,'b:',label='pc2_true')
+
+plt.ylim(-1,1)
 
 plt.legend()
-
-
-# %%
-fd_base.plot()
-
-
 
 # %% mean estimation , mean function 刚好和prior接近！！！！！！
 
 mean=fd.mean().data_matrix[0,:,0]
-# plt.plot(t,mean,'r',label="Estimated mean")
+plt.plot(t,mean,'r',label="MetaINR")
 
-y_true=0.5*np.sin(t)+0.25*np.sin(2*t)
-plt.plot(t,y_true,'b:',label='True mean')
+mean_base=fd_base.mean().data_matrix[0,:,0]
+plt.plot(t,mean_base,'r:',label="Baseline")
 
-t1= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
-y,coord= meta_model.forward(t1)
-plt.plot(t,y.detach().numpy(),'g',label="meta model")
+y_true=fd_true.mean().data_matrix[0,:,0]
+plt.plot(t,y_true,'b',label='Ground truth')
+
+# t1= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
+# y,coord= meta_model.forward(t1)
+# plt.plot(t,y.detach().numpy(),'g',label="meta model prior")
 plt.legend()
 
 
+
 # %% covariance estimation
-fontsize=20
+fontsize=15
 fig = plt.figure(figsize=(12, 6), facecolor='w')
 c=np.cov(fd.data_matrix[:,:,0].T)
 X, Y = np.meshgrid(t, t)
 Z = c
-ax1 = fig.add_subplot(1, 2, 1, projection='3d')
+ax1 = fig.add_subplot(1, 3, 1, projection='3d')
 ax1.plot_surface(X,Y,Z,alpha=0.2,cmap='winter')
 ax1.contour(X,Y,Z,zdir='z', offset=Z.min(),cmap="rainbow")
 ax1.contour(X,Y,Z,zdir='x', offset=0,cmap="rainbow")  
 ax1.contour(X,Y,Z,zdir='y', offset=10,cmap="rainbow")
-ax1.set_title("Estimated covariance kernel",fontsize=fontsize)
+ax1.set_title("MetaINR",fontsize=fontsize)
+ax1.set_zlim(-0.1,0.1)
+
+c3=np.cov(fd_base.data_matrix[:,:,0].T)
+Z3 = c3
+ax3 = fig.add_subplot(1, 3, 2, projection='3d')
+ax3.plot_surface(X,Y,Z3,alpha=0.2,cmap='winter')
+ax3.contour(X,Y,Z3,zdir='z', offset=Z.min(),cmap="rainbow")
+ax3.contour(X,Y,Z3,zdir='x', offset=0,cmap="rainbow")  
+ax3.contour(X,Y,Z3,zdir='y', offset=10,cmap="rainbow")
+ax3.set_title("Baseline",fontsize=fontsize)
+ax3.set_zlim(-0.1,0.1)
 
 c2=np.cov(fd_true.data_matrix[:,:,0].T)
 Z2 = c2
-ax2 = fig.add_subplot(1, 2, 2, projection='3d')
+ax2 = fig.add_subplot(1, 3, 3, projection='3d')
 ax2.plot_surface(X,Y,Z2,alpha=0.2,cmap='winter')
 ax2.contour(X,Y,Z2,zdir='z', offset=Z.min(),cmap="rainbow")
 ax2.contour(X,Y,Z2,zdir='x', offset=0,cmap="rainbow")  
 ax2.contour(X,Y,Z2,zdir='y', offset=10,cmap="rainbow")
-ax2.set_title("True covariance kernel",fontsize=fontsize)
+ax2.set_title("Ground truth",fontsize=fontsize)
+ax2.set_zlim(-0.1,0.1)
 
 # %%
 # %%
