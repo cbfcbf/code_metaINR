@@ -10,10 +10,35 @@ from skfda.representation.basis import (
     FourierBasis,
     MonomialBasis,
 )
+
+import numpy as np
+import torch, torch.nn as nn
+import torch.nn.functional as F
+from torch.utils.data import DataLoader, Dataset
+
 # %%
-dataset=skfda.datasets.fetch_cran("pbc","survival")
+data=skfda.datasets.fetch_cran("pbc","survival")["pbcseq"]
+# %% 
+# np.array(data[data["id"]==1]["day"])
+data=data[data["day"]<=910]
+data
+# %% 研究bili这个变量
+# print data structure
+
+for id in range(312):
+    ti=np.array(data[data["id"]==1+id]["day"])
+    yi=np.array(data[data["id"]==1+id]["bili"])
+    plt.plot(ti,yi)
 # %%
-dataset
+
+
+
+
+
+
+
+
+
 # %%
 dataset = skfda.datasets.fetch_growth()
 fd = dataset['data']

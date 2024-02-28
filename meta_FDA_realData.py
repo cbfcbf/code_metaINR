@@ -12,21 +12,29 @@ from skfda.exploratory.visualization import FPCAPlot
 from skfda.preprocessing.dim_reduction import FPCA
 from localreg import *
 
+# %% real data we use #要取log #删除910天以内就死亡的
+data=skfda.datasets.fetch_cran("pbc","survival")["pbcseq"]
+data=data[data["day"]<=910]
+data=data[data["futime"]>910]
+
+id_list=np.array(data.id.drop_duplicates())
+
+for id in id_list:
+    ti=np.array(data[data["id"]==1+id]["day"])
+    yi=np.log(np.array(data[data["id"]==1+id]["bili"]))
+    plt.plot(ti,yi)
+
 # %% parameters
-Number_of_task=100  #take 10 tasks for training in total 
+# Number_of_task=100  #take 10 tasks for training in total 
 
-number_of_samples_in_support_set=10
-number_of_samples_in_query_set=10
-total_samples_per_task = number_of_samples_in_support_set+number_of_samples_in_query_set
+train_inner_train_step = 20
+val_inner_train_step = 20
 
-train_inner_train_step = 1
-val_inner_train_step = 10
-
-first_omega_0=3
-inner_lr = 0.001
+first_omega_0 = 0.0001 #0.0001
+inner_lr = 0.0001 #0.06
 meta_lr = 0.0001
 
-max_epoch = 10000
+max_epoch = 1000
 inner_batch_size=1 #没什么用 每个batch只能对应一个任务
 
 eval_batches = 20
@@ -80,7 +88,6 @@ class SineLayer(torch.nn.Module):
         # For visualization of activation distributions
         intermediate = self.omega_0 * self.linear(input)
         return torch.sin(intermediate), intermediate
-
 
 class Siren(torch.nn.Module):
     def __init__(
@@ -203,6 +210,7 @@ def Metaepoch(model,optimizer,data_loader,loss_fn,
         # for i in range(inner_batch_size): # batch 中的第 i 个 task 共10个task #这个循环可能可以去掉
         # Get data
         i=0
+        number_of_samples_in_support_set=int(0.5*len(train_batch[i]))
         support_set = train_batch[i][: number_of_samples_in_support_set] #[50,2]
         support_t = support_set[:,0].reshape(-1,1)
         support_y = support_set[:,1].reshape(-1,1)
@@ -277,40 +285,31 @@ def inner_train(t,y, meta_weights, inner_step = val_inner_train_step):
             for ((name, param), grad) in zip(fast_weights.items(), grads)
         )
     inner_loss=loss
-    return fast_weights,inner_loss
-# %% initialization
+    return fast_weights, inner_loss
+# %% data initialization
 
 # define dataset
-
-class sinusoid(Dataset):
-    def __init__(self,total_samples_per_task):
+class PBC(Dataset):
+    def __init__(self):
+        data=skfda.datasets.fetch_cran("pbc","survival")["pbcseq"]
+        data=data[data["day"]<=910]
+        data=data[data["futime"]>910]
+        id_list=np.array(data.id.drop_duplicates())
         datasets_list_for_tasks=[] 
-        for _ in np.arange(Number_of_task):
-            A1s=random.random()
-            A2s=random.random()*0.5
-            A1c=random.random()
-            A2c=random.random()
-
-            # A = 1
-            w1 = 1
-            w2 = 2
-            phi=random.random()*2*np.pi
-            t=np.arange(0,10,0.01) # 1000 potential samples in total
-            y= A1s*np.sin(w1*t) + A2s*np.sin(w2*t) 
-            data_in_one_task=torch.tensor(np.stack((t,y),axis=-1)).to(torch.float32) #t,y各一列
+        for id in id_list[:30]: 
+            ti=np.array(data[data["id"]==id]["day"])
+            yi=np.log(np.array(data[data["id"]==id]["bili"]))
+            data_in_one_task=torch.tensor(np.stack((ti,yi),axis=-1)).to(torch.float32) #t,y各一列
             datasets_list_for_tasks.append(data_in_one_task)
         self.datalist=datasets_list_for_tasks
-        self.total_samples_per_task = total_samples_per_task
 
     def __len__(self):
         return len(self.datalist)
 
     def __getitem__(self, idx):
-        sample = np.arange(1000) 
-        np.random.shuffle(sample)  # For random sampling the characters we want.
-        x=self.datalist[idx][sample[:self.total_samples_per_task],:]
-        t=x[:,0]
-        y=x[:,1]
+        x=self.datalist[idx]
+        # t=x[:,0]
+        # y=x[:,1]
         return x
     
 # data divide into batches each batch one task
@@ -330,7 +329,7 @@ def dataloader_init(data, shuffle=True, num_workers=0, inner_batch_size=inner_ba
     val_iter = iter(val_loader)
     return (train_loader, val_loader), (train_iter, val_iter)
 
-dataset=sinusoid(total_samples_per_task)
+dataset=PBC()
 
 train_split = int(0.8 * len(dataset))
 val_split = len(dataset) - train_split
@@ -344,16 +343,14 @@ data_loader = DataLoader(
         drop_last=True,
     )
 
-
-t=np.arange(0,10,0.01)
-
+t=np.arange(0,910,10)
 # baseline
-grid_points = np.arange(0,10,0.01)
+grid_points = t
 data_matrix_base=[]
 for task in data_loader:
     t_sample=task[0][:,0].detach().numpy()
     y_sample=task[0][:,1].detach().numpy()
-    y_base=localreg(t_sample, y_sample,x0=t, degree=1, kernel=rbf.gaussian, radius=1)
+    y_base=localreg(t_sample, y_sample,x0=t, degree=1, kernel=rbf.gaussian, radius=150)
     data_matrix_base.append(y_base)
 
 fd_base = skfda.FDataGrid(
@@ -361,25 +358,49 @@ fd_base = skfda.FDataGrid(
     grid_points=grid_points,
 )
 
+# fd_base.plot()
+
+# %% test
+
+# first_omega_0 = 0.0001
+# inner_lr = 0.06  #0.06
+# meta_lr = 0.01
+# val_inner_train_step=10
+
+# random_seed = 0
+# random.seed(random_seed)
+# np.random.seed(random_seed)
+# torch.manual_seed(random_seed)
+# if torch.cuda.is_available():
+#     torch.cuda.manual_seed_all(random_seed)
+
 # metaINR model init
 def model_init():
     meta_model = Siren(in_features=1,hidden_features=40,hidden_layers=3,out_features=1,first_omega_0=first_omega_0).to(device)
     optimizer = torch.optim.Adam(meta_model.parameters(), lr=meta_lr)
     loss_fn = nn.MSELoss().to(device)
     return meta_model, optimizer, loss_fn
-
 meta_model, optimizer, loss_fn = model_init()
 
+# meta_weights = OrderedDict(meta_model.named_parameters())
 
-# prior before meta training
+# inner_loss_list=[]
+# i=0
+# for task in data_loader:
+#     i+=1
+#     print(i)
+#     t=task[0][:,0].reshape(-1,1)
+#     y=task[0][:,1].reshape(-1,1)
+#     fast_weights, inner_loss=inner_train(t,y,meta_weights=meta_weights,inner_step = val_inner_train_step)
+#     inner_loss_list.append(inner_loss.detach().numpy())
+# print(np.array(inner_loss_list).mean())
+# %% 单训一次的结果 前后比较
 
-# t=torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
-# y,coord= meta_model.forward(t)
-# plt.plot(t.detach().numpy(),y.detach().numpy())
-
-# 单训一次的结果
-# val_meta_loss = Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False,visualize=True)
-
+# val_meta_loss = Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False)
+# print(val_meta_loss)
+# train_meta_loss = Metaepoch(meta_model,optimizer,train_loader,loss_fn,inner_train_step=train_inner_train_step,inner_lr=inner_lr,train=True)
+# val_meta_loss= Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False,visualize=True)
+# print(val_meta_loss)
 
 # %% training
 train_meta_loss_list=[]
@@ -412,8 +433,10 @@ for task in data_loader:
     fast_weights_list.append(fast_weights)
     # print(inner_loss)
 
+# %%
 dense_data = []
-t=torch.arange(0,10,0.01)
+
+t=torch.arange(0,910,10).to(torch.float32)
 for fast_weights in fast_weights_list:
     y_dense=meta_model.functional_forward(t.reshape(-1,1), fast_weights).detach().numpy()
     dense_data.append(y_dense)
@@ -427,16 +450,13 @@ fd = skfda.FDataGrid(
 )
 
 
-# %% learning loss function
-plt.plot(np.log(train_meta_loss_list),'r',label='train loss')
-plt.plot(np.log(val_meta_loss_list),'g',label='validation loss')
-plt.legend()
+# %% prior after meta training
+t= torch.tensor(t).to(torch.float32).reshape(-1,1)
+y,coord= meta_model.forward(t)
+plt.plot(t.detach().numpy(),y.detach().numpy(),'r')
 
-# prior after meta training
-# t= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
-# y,coord= meta_model.forward(t)
-# plt.plot(t.detach().numpy(),y.detach().numpy(),'r')
-
+# %% 看看拟合成什么样
+fd.plot()
 
 # %% FPCA
 
@@ -460,7 +480,7 @@ l2=plt.plot(t,pc2,'b',label='pc2_metaINR')
 l3=plt.plot(t,-pc1_base,'r--',label='pc1_baseline')
 l4=plt.plot(t,pc2_base,'b--',label='pc2_baseline')
 
-plt.ylim(-0.75,0.75)
+# plt.ylim(-0.75,0.75)
 plt.legend(loc="upper right")
 
 # %% mean estimation 
@@ -485,9 +505,9 @@ ax1 = fig.add_subplot(1, 2, 1, projection='3d')
 ax1.plot_surface(X,Y,Z,alpha=0.2,cmap='winter')
 ax1.contour(X,Y,Z,zdir='z', offset=Z.min(),cmap="rainbow")
 ax1.contour(X,Y,Z,zdir='x', offset=0,cmap="rainbow")  
-ax1.contour(X,Y,Z,zdir='y', offset=10,cmap="rainbow")
+ax1.contour(X,Y,Z,zdir='y', offset=Y.max(),cmap="rainbow")
 ax1.set_title("MetaINR",fontsize=fontsize)
-ax1.set_zlim(-0.1,0.1)
+# ax1.set_zlim(-0.1,0.1)
 
 c3=np.cov(fd_base.data_matrix[:,:,0].T)
 Z3 = c3
@@ -495,9 +515,9 @@ ax3 = fig.add_subplot(1, 2, 2, projection='3d')
 ax3.plot_surface(X,Y,Z3,alpha=0.2,cmap='winter')
 ax3.contour(X,Y,Z3,zdir='z', offset=Z.min(),cmap="rainbow")
 ax3.contour(X,Y,Z3,zdir='x', offset=0,cmap="rainbow")  
-ax3.contour(X,Y,Z3,zdir='y', offset=10,cmap="rainbow")
+ax3.contour(X,Y,Z3,zdir='y', offset=Y.max(),cmap="rainbow")
 ax3.set_title("Baseline",fontsize=fontsize)
-ax3.set_zlim(-0.1,0.1)
+# ax3.set_zlim(-0.1,0.1)
 
 
 # %%
