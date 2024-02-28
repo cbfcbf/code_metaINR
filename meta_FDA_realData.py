@@ -25,20 +25,19 @@ for id in id_list:
     plt.plot(ti,yi)
 
 # %% parameters
-# Number_of_task=100  #take 10 tasks for training in total 
+train_inner_train_step = 3
+val_inner_train_step = 3
+INR_inner_train_step=500
 
-train_inner_train_step = 20
-val_inner_train_step = 20
-
-first_omega_0 = 0.0001 #0.0001
-inner_lr = 0.0001 #0.06
-meta_lr = 0.0001
+first_omega_0 = 0.00005 
+inner_lr = 0.00005 
+meta_lr = 0.00005
 
 max_epoch = 1000
 inner_batch_size=1 #没什么用 每个batch只能对应一个任务
+# eval_batches = 20
 
-eval_batches = 20
-
+# %% seed
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # Fix random seeds
 random_seed = 0
@@ -422,18 +421,20 @@ val_meta_loss_list=np.array(val_meta_loss_list)
 # 可视化训练结果
 #  val_meta_loss = Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False,visualize=True)
 
-# 保存每个任务的格点拟合
+# %% 保存每个任务的格点拟合
 meta_weights = OrderedDict(meta_model.named_parameters())
 
 fast_weights_list=[]
+inner_loss_list=[]
 for task in data_loader:
     t=task[0][:,0].reshape(-1,1)
     y=task[0][:,1].reshape(-1,1)
-    fast_weights, inner_loss=inner_train(t,y,meta_weights=meta_weights,inner_step = val_inner_train_step)
+    fast_weights, inner_loss=inner_train(t,y,meta_weights=meta_weights,inner_step = INR_inner_train_step)
     fast_weights_list.append(fast_weights)
-    # print(inner_loss)
+    inner_loss_list.append(inner_loss.detach().numpy())
+inner_loss_list=np.array(inner_loss_list)
+print(inner_loss_list.mean())
 
-# %%
 dense_data = []
 
 t=torch.arange(0,910,10).to(torch.float32)
@@ -456,7 +457,21 @@ y,coord= meta_model.forward(t)
 plt.plot(t.detach().numpy(),y.detach().numpy(),'r')
 
 # %% 看看拟合成什么样
-fd.plot()
+i=6
+plt.plot(dataset.datalist[i][:,0],dataset.datalist[i][:,1],"r^",markersize=15,label='training data points')
+plt.plot(t,fd.data_matrix[i],'r',label='metaINR')
+plt.plot(t,fd_base.data_matrix[i],'r:',label='Baseline')
+
+i=8
+plt.plot(dataset.datalist[i][:,0],dataset.datalist[i][:,1],"g^",markersize=15)
+plt.plot(t,fd.data_matrix[i],'g')
+plt.plot(t,fd_base.data_matrix[i],'g:')
+
+i=9
+plt.plot(dataset.datalist[i][:,0],dataset.datalist[i][:,1],"b^",markersize=15)
+plt.plot(t,fd.data_matrix[i],'b')
+plt.plot(t,fd_base.data_matrix[i],'b:')
+plt.legend()
 
 # %% FPCA
 
@@ -465,23 +480,24 @@ fd.plot()
 fpca_discretized = FPCA(n_components=2)
 fpca_discretized.fit(fd)
 pc1,pc2=fpca_discretized.components_.data_matrix
-
+var_ratio=fpca_discretized.explained_variance_ratio_
+print(var_ratio)
 
 # baseline local polynomial regression PCA
-
 fpca_discretized_base = FPCA(n_components=2)
 fpca_discretized_base.fit(fd_base)
 pc1_base,pc2_base=fpca_discretized_base.components_.data_matrix
+var_ratio_base=fpca_discretized_base.explained_variance_ratio_
 
 
 # visualize
-l1=plt.plot(t,pc1,'r',label='pc1_metaINR')
-l2=plt.plot(t,pc2,'b',label='pc2_metaINR')
-l3=plt.plot(t,-pc1_base,'r--',label='pc1_baseline')
-l4=plt.plot(t,pc2_base,'b--',label='pc2_baseline')
+l1=plt.plot(t,pc1,'r',label='pc1_metaINR %.3f' % var_ratio[0])
+l3=plt.plot(t,pc1_base,'r--',label='pc1_baseline %.3f' % var_ratio_base[0])
+l2=plt.plot(t,pc2,'b',label='pc2_metaINR %.3f' % var_ratio[1])
+l4=plt.plot(t,pc2_base,'b--',label='pc2_baseline %.3f' % var_ratio_base[1])
 
 # plt.ylim(-0.75,0.75)
-plt.legend(loc="upper right")
+plt.legend(loc="lower right")
 
 # %% mean estimation 
 
