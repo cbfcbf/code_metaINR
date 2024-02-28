@@ -12,11 +12,11 @@
 
 % to compile a preprint version, e.g., for submission to arXiv, add add the
 % [preprint] option:
-%     \usepackage[preprint]{neurips_2023}
+    \usepackage[preprint]{neurips_2023}
 
 
 % to compile a camera-ready version, add the [final] option, e.g.:
-    \usepackage[final]{neurips_2023}
+    % \usepackage[final]{neurips_2023}
 
 
 % to avoid loading the natbib package, add option nonatbib:
@@ -95,24 +95,50 @@
 
 \subsection{Functional Data}
 
-properties: differ from multidimensional data
+% Traditional multivariate statistics 把一个有限维空间中的向量作为研究对象，来分析它的统计性质，如均值向量、协方差矩阵等。在维度较小的时候，这并没有什么不妥。然而如果把分析对象所在空间的维度提高到无穷维，比如L2空间时，传统方法将会面临一些挑战。在函数空间，人们的关注点并不会局限于向量在某个维度上的取值，人们还会关注连续性、导数等更多性质。同时，随着空间增长到无穷维，原先多元统计中的很多指标也会丧失意义，如概率密度函数等。正是由于无穷维和有穷维空间的统计性质和人们关注点的不同，functional data analysis（FDA） 这个方向引起了研究者的广泛关注。
+\textbf{Multivariate data versus functional data} 
+Traditional multivariate statistics take finite-dimensional vectors as the objects of study to analyze their statistical properties, such as mean vectors and covariance matrices. 
+This approach is appropriate and easy to compute when the dimension is relatively small. 
+However, if the dimension of the space in which the objects are analyzed is increased to infinite, for example, in $L^2$ space, traditional methods face certain challenges. 
+In such functional spaces, the focus is not only on the values of vectors in a particular dimension but also on properties such as continuity and derivatives. 
+At the same time, as the space grows to infinite dimensions, many useful tools in multivariate statistics, such as probability density functions, will lose their meaning. 
+It is the differences in statistical properties and people's focus between infinite-dimensional and finite-dimensional spaces, that have led to widespread attention to functional data analysis (FDA) among researchers.
 
-best way to describe timeseries
+% Time series是一个很典型的需要在无穷维函数空间中处理的研究对象。这是因为现实中收集的时间序列数据往往具有连续性，同时，在某些情况下，人们会关注它的导数、时间对齐（registration）等话题。有很多之前的研究基于多元统计学对时间序列进行分析。比如···。从函数逼近的观点来看，这些基于多元统计的研究确实能够很好的反映一些时间序列的性质，但是这在很多情况下是比较难以推广的，比如本文中所研究的sparse time series data。
+\textbf{Time series as a representative example of functional data}
+Time series is a typical object that needs to be addressed in an infinite-dimensional function space. 
+This is because time series data collected in reality often exhibit continuity, and, in certain situations, people may focus on topics such as derivatives and time alignment (registration).
+Many previous studies have relied on multivariate statistics in the analysis of time series, such as [mention some specific examples]...
+From the perspective of function approximation, these multivariate-statistics-based studies can indeed reflect certain properties of time series. 
+However, in many cases, this approach is challenging to generalize, as is the case with sparse time series data studied in this paper.
 
-
-what we care: derivatives, smoothness
-
-difficulty for Sparse data: previous baseline- local polynomial regression
-
-application: medicine
+% 当人们对time series的观测频率不高并且不规律的时候，就会形成sparse time series data。这种类型的数据在医学领域中尤其常见，因为人们只有在医院才会采集数据，而往往看病的次数是因人而异的，看病频率的也是不规律的。如果要用多元统计学分析这种类型的“杂乱”数据，人们往往会束手无策。在functional data analysis中，人们可以通过local polynomial regression的方法先估计出函数形数据的原始形式，然后在这个基础上估计均值，协方差算子等统计量（详见appendix）。local polynomial regression可以表示如下：
+\textbf{Sparse times series data analysis}
+When the observation frequency of time series is low and irregular, sparse time series data is formed. 
+This type of data is particularly common in the medical field, as the frequency of medical visits varies from person to person, with irregular patterns.
+When it comes to analyzing such "messy" data using multivariate statistics, people often find themselves at a loss.
+In functional data analysis, one can employ the method of local polynomial regression to initially estimate the original form of functional data.
+Subsequently, based on this estimation, various statistical quantities such as mean and covariance operators can be estimated (see details in the appendix).
+The local polynomial regression can be represented as follows:
+$$
+\sum_{i=1}^n\left[Y_i-\sum_{j=0}^p \beta_j\left(X_i-x_0\right)^j\right]^2 K_h\left(X_i-x_0\right) .
+$$
+% 下文中我会将基于这种方法得到的估计值作为Baseline与本文提出的基于metalearning的方法相比较。
 
 \subsection{Implicit Neural Representation}
+
+% 传统上，函数形数据的表示会用标准的网格法，即给定有限个坐标和函数值的pairs(ti,yi)。这么做有一定的缺陷：原来在无穷维空间中的函数形数据被离散化到了有穷维空间，它不仅不利于求导等计算，而且会极大影响函数的在一个较小时间区间上的分辨率。随着深度学习的兴起，人们发现可以利用深度神经网络来表示函数。···
+
+%【】提出了SIREN的函数结构，。
+
 SIREN for time series: advantage...
 
 \subsection{Meta-learning}
 different architecture: MAML / SNAIL
 
 \section{Method}
+%如前文所述，基于local polynomial regression，人们可以试图恢复functional data 的原始形式。但是，这却有一个致命的缺点：它只能够用到 
+
 advantage
 \section{Experiments}
 
