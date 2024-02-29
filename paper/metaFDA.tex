@@ -100,7 +100,7 @@
 Traditional multivariate statistics take finite-dimensional vectors as the objects of study to analyze their statistical properties, such as mean vectors and covariance matrices. 
 This approach is appropriate and easy to compute when the dimension is relatively small. 
 However, if the dimension of the space in which the objects are analyzed is increased to infinite, for example, in $L^2$ space, traditional methods face certain challenges. 
-In such functional spaces, the focus is not only on the values of vectors in a particular dimension but also on properties such as continuity and derivatives. 
+In such functional spaces, the focus is not only on the values of vectors in a particular dimension but also on properties such as continuity, smoothness and derivatives. 
 At the same time, as the space grows to infinite dimensions, many useful tools in multivariate statistics, such as probability density functions, will lose their meaning. 
 It is the differences in statistical properties and people's focus between infinite-dimensional and finite-dimensional spaces, that have led to widespread attention to functional data analysis (FDA) among researchers.
 
@@ -115,14 +115,35 @@ However, in many cases, this approach is challenging to generalize, as is the ca
 % 当人们对time series的观测频率不高并且不规律的时候，就会形成sparse time series data。这种类型的数据在医学领域中尤其常见，因为人们只有在医院才会采集数据，而往往看病的次数是因人而异的，看病频率的也是不规律的。如果要用多元统计学分析这种类型的“杂乱”数据，人们往往会束手无策。在functional data analysis中，人们可以通过local polynomial regression的方法先估计出函数形数据的原始形式，然后在这个基础上估计均值，协方差算子等统计量（详见appendix）。local polynomial regression可以表示如下：
 \textbf{Sparse times series data analysis}
 When the observation frequency of time series is low and irregular, sparse time series data is formed. 
+We can represent the sparse dataset of $n$ samples as 
+$$D=\{(t_{ij},y_{ij})_{j=1}^{J_i}\}_{i=1}^n,$$ 
+where
+$y_{ij}=x_i(t_{ij}) , i=1, \cdots, n, j=1, \cdots, J_i$ and $J_i$ is the total observations of the $i$-th sample.
 This type of data is particularly common in the medical field, as the frequency of medical visits varies from person to person, with irregular patterns.
 When it comes to analyzing such "messy" data using multivariate statistics, people often find themselves at a loss.
-In functional data analysis, one can employ the method of local polynomial regression to initially estimate the original form of functional data.
-Subsequently, based on this estimation, various statistical quantities such as mean and covariance operators can be estimated (see details in the appendix).
-The local polynomial regression can be represented as follows:
+However, in functional data analysis, one can employ the method of local polynomial regression to estimate the mean function and covariance operator of functional data.
+Specifically, given our sparse observation of dataset $D$,
+we can define the loss function to estimate mean function $\mu(t)$
 $$
-\sum_{i=1}^n\left[Y_i-\sum_{j=0}^p \beta_j\left(X_i-x_0\right)^j\right]^2 K_h\left(X_i-x_0\right) .
+L_t^\mu(\beta)=\sum_{i=1}^n\sum_{j=1}^{J_i}\left[y_{ij}-\sum_{r=0}^R \beta_r\left(t-t_{ij}\right)^r\right]^2 K\left(\frac{t-t_{ij}}{h}\right),
 $$
+where $K(\cdot)$ is the kernel function and $h$ is the bandwidth which shoud be carefully chosen based on data.
+By minimizing this function, we can get
+$\beta_t=(\beta_0(t), \cdots, \beta_R(t))=arg\,min L_t^\mu(\beta)$. The estimator of mean function cam be defined as $\hat{\mu}(t)=\beta_0(t)$.
+Similarly, to estimate the covariance kernel $c(t,s)$, we define the loss function 
+$$
+L^c_{t,s}(\beta)=\sum_{i=1}^n \sum_{1\leq j, l, \leq J_i} K_{t,s}(\frac{t-t_{ij}}{h}, \frac{s-t_{il}}{h}) \left[ g(t_{ij},t_{il})-f\left(\beta,(t,s),(t_{ij},t_{il})\right) \right]^2
+$$
+where
+$$
+g(t_{ij},t_{il})=(y_{ij}-\hat{\mu}(t_{ij}))(y_{il}-\hat{\mu}(t_{il}))
+$$
+$$
+f\left(\beta,(t,s),(t_{ij},t_{il})\right)=\beta_0 + \beta_{11}(t-t_{ij})+\beta_{12}(s-t_{il})
+$$
+By minimization of $L_{t,s}^c(\beta)$, we obtain $(\beta_0(t),\beta_{11}(t),\beta_{12}(t))=arg\,min L_{t,s}^c(\beta)$. Then the estimator of the covariance kernel is defined as $\hat{c}(t,s)=\beta_0(t)$.
+Based on the estimation of mean and covariance,  we can use the method of Principal Analysis by Conditional Expectation (PACE) to reconstruct each sample and compute their scores (see details in the appendix).
+
 % 下文中我会将基于这种方法得到的估计值作为Baseline与本文提出的基于metalearning的方法相比较。
 
 \subsection{Implicit Neural Representation}
