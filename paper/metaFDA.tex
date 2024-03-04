@@ -2,7 +2,7 @@
 
 
 % if you need to pass options to natbib, use, e.g.:
-%     \PassOptionsToPackage{numbers, compress}{natbib}
+    \PassOptionsToPackage{numbers, compress}{natbib}
 % before loading neurips_2023
 
 
@@ -35,6 +35,9 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
+
+
+
 
 \title{Meta-learning Implicit Neural Representation for Sparse Time Series Functional Data Analysis}
 
@@ -143,18 +146,44 @@ f\left(\beta,(t,s),(t_{ij},t_{il})\right)=\beta_0 + \beta_{11}(t-t_{ij})+\beta_{
 $$
 By minimization of $L_{t,s}^c(\beta)$, we obtain $(\beta_0(t),\beta_{11}(t),\beta_{12}(t))=arg\,min L_{t,s}^c(\beta)$. Then the estimator of the covariance kernel is defined as $\hat{c}(t,s)=\beta_0(t)$.
 Based on the estimation of mean and covariance,  we can use the method of Principal Analysis by Conditional Expectation (PACE) to reconstruct each sample and compute their scores (see details in the appendix).
-
+Comparing to using local polynomial regression directly to reconstruct samples, It is noticeable that the reconstruction of the sample makes use of the total of information of all observations, but it hugely relies on the assumption that scores are normally distributed. 
+In the following text, I will compare the estimates obtained based on this method as the baseline with the meta-learning-based approach proposed in this paper.
 % 下文中我会将基于这种方法得到的估计值作为Baseline与本文提出的基于metalearning的方法相比较。
 
 \subsection{Implicit Neural Representation}
 
 % 传统上，函数形数据的表示会用标准的网格法，即给定有限个坐标和函数值的pairs(ti,yi)。这么做有一定的缺陷：原来在无穷维空间中的函数形数据被离散化到了有穷维空间，它不仅不利于求导等计算，而且会极大影响函数的在一个较小时间区间上的分辨率。随着深度学习的兴起，人们发现可以利用深度神经网络来表示函数。···
+\textbf{Traditional grid-based representation versus implicit neural representation}
+Traditionally, the representation of functional data involves using a standard grid-based method, 
+wherein a finite set of coordinates and corresponding function values are given as pairs $(t_i, y_i)$. 
+However, this approach has certain drawbacks: the original functional data in an infinite-dimensional space is discretized into a finite-dimensional space. 
+This not only hampers operations like differentiation but also significantly impacts the resolution of the function within a smaller time interval.
+With the emergence of deep learning, it has been discovered that utilizing deep neural networks can be an effective way to represent functions implicitly.
+Implicit neural representation (INR) parameterize the functional data by deep neural networks. 
+This type of continuous representation not only proves to be more memory-efficient but also enables higher resolution and the handling of more complex operations on functional data.
 
 %【】提出了SIREN的函数结构，。
+\textbf{SIREN architecture for time series}
+% 很多之前的工作用Relu-based multilayer perceptrons(MLP) 来作为INR的神经网络架构，但是基于这种架构的INR往往缺乏表达信号中精细细节的能力，并且不能很好的表示目标信号的多阶导数。为了解决这个问题，【1】提出了SIREN的架构来替代传统的ReLU-MLPs。它使用sine函数来作为神经网络的激活函数，可以很好的刻画函数的细节。令人惊奇的是，当对用SIREN来表示函数求导后，它依然可以用SIREN来表示。虽然之前的研究大多利用SIREN来表示图像和视频，却很少用来表示时间序列。本文将SIREN用在时间序列的分析中，我们发现SIREN这种特殊的性质对于时间序列的表示也有独到的优势。
+Many prior works have utilized ReLU-based multilayer perceptrons (MLP) as the neural network architecture for Implicit Neural Representations (INR). 
+However, ReLU-based INR often lack the ability to capture fine details in signal and struggle to effectively express higher-order derivatives.
+In addressing this limitation, \cite{sitzmann2020implicit} introduced the SIREN architecture as an alternative to traditional ReLU-MLPs.
+It employs the sine function as the activation function, effectively capturing intricate details in functions.
+A remarkable observation is that even after taking derivatives of a function represented using SIREN, 
+it can still be expressed using the SIREN architecture. 
+While previous research predominantly applied SIREN to represent images and videos, its application in time series representation has been limited. 
+This paper explores the utilization of SIREN in the analysis of time series, 
+revealing that its distinctive properties 
+confer unique advantages in representing temporal sequences.
 
-SIREN for time series: advantage...
+
+
 
 \subsection{Meta-learning}
+
+\textbf{Meta-learning framework}
+
+\textbf{Two different types}
 different architecture: MAML / SNAIL
 
 \section{Method}
@@ -226,6 +255,11 @@ global+differential property lead to a better PC estimation
 \subsection{Traditional FDA for sparse functional data}
 
 \subsection{Brief introduciton to SIREN}
+
+\section*{References}
+
+\bibliographystyle{IEEEtran}      %IEEEtran为给定模板格式定义文件名
+\bibliography{ref}
 
 % \begin{abstract}
 %   The abstract paragraph should be indented \nicefrac{1}{2}~inch (3~picas) on
