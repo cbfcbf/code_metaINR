@@ -36,7 +36,8 @@
 \usepackage{amssymb}
 \usepackage{graphicx}
 
-
+\usepackage{algorithm}
+\usepackage{algorithmic}
 
 
 \title{Meta-learning Implicit Neural Representation for Sparse Time Series Functional Data Analysis}
@@ -92,8 +93,31 @@
 
 \maketitle
 
-\section{Introduction}
+\begin{abstract}
+  Sparse time series data are everywhere in our daily life. However it is hard to analyze them by traditional statistical methods. Here, we propose MetaINR, a method to learning the implicit neural representation (INR) given sparse obsevations of time series data.
+  Based on this, estimations of mean function, covariance operator, and principal components can be implemented easily.
+  The method introduce the meta-learning to the functional data analysis framework, which greatly outperforms the traditional baseline.
+\end{abstract}
 
+\section{Introduction}
+Sparse time series data is prevalent in daily life, such as medical data measured at different times for patients or height data collected at various stages of adolescence. 
+However, the sparsity and irregularity of such data make traditional statistical methods less suitable. 
+Additionally, the consideration of continuity and differentiability properties in most time series data pose challenges for multivariable statistical analysis.
+
+Recent research suggests that meta-learning exhibits great advantages in handling sparse data. 
+It can learn commonalities among similar tasks, enabling few-shot learning or even one-shot learning on extremely sparse training sets. 
+Besides, statistical analysis based on functional data has been hugely developed for dealing with continuous time series problems recently.
+
+In this paper, we introduce a novel approach, metaINR, which combines meta-learning and functional data analysis to address the estimation challenges posed by sparse time series data. 
+Through this method, we use meta-learning to realize the implicit neural representation (INR) to
+reconstruct the time series function for each sample based on sparse time series observations.
+Furthermore, we can estimate the mean, covariance, and principal components of the distribution of these samples.
+Therefore, MetaINR method presents a fresh solution for addressing issues related to sparse time series data.
+
+% Sparse time series data 在日常生活中非常常见，比如病人在不同时间测量的医疗数据、青少年在成长时不同阶段测量得到的身高数据等。这些数据的稀疏性和irregularity让传统的统计手段变得不太适用。同时，绝大多数时间序列数据所拥有的连续性，可微性等性质也给基于multivarible的统计学分析带来了困境
+% 最近的研究表明，元学习在处理稀疏形数据中具有独特的优势。它可以从大量相似的任务中学习任务的共性，并对非常稀疏的训练集做到few-shot learning, 甚至 one-shot learning。同时，在处理连续的时间序列问题时，基于funcitonal data 的统计学也逐渐成熟。
+% 在本文中，我们结合了meta-learning和functional data analysis的方法首次提出了metaINR，来解决对稀疏时间序列数据的估计问题。通过这个方法，我们可以基于多个样本的稀疏的时间序列观测较好地重构每个样本的时间序列函数，并且进一步地估算这些样本分布的均值、协方差和主成分。
+% metaINR为处理稀疏时间序列问题给出了新的解决方案。
 \section{Related works}
 
 \subsection{Functional Data}
@@ -125,7 +149,7 @@ $y_{ij}=x_i(t_{ij}) , i=1, \cdots, n, j=1, \cdots, J_i$ and $J_i$ is the total o
 This type of data is particularly common in the medical field, as the frequency of medical visits varies from person to person, with irregular patterns.
 When it comes to analyzing such "messy" data using multivariate statistics, people often find themselves at a loss.
 However, in functional data analysis, one can employ the method of local polynomial regression to estimate the mean function and covariance operator of functional data.
-Specifically, given our sparse observation of dataset $D$,
+Specifically, given our sparse observations of dataset $D$,
 we can define the loss function to estimate mean function $\mu(t)$
 $$
 L_t^\mu(\beta)=\sum_{i=1}^n\sum_{j=1}^{J_i}\left[y_{ij}-\sum_{r=0}^R \beta_r\left(t-t_{ij}\right)^r\right]^2 K\left(\frac{t-t_{ij}}{h}\right),
@@ -154,42 +178,154 @@ In the following text, I will compare the estimates obtained based on this metho
 
 % 传统上，函数形数据的表示会用标准的网格法，即给定有限个坐标和函数值的pairs(ti,yi)。这么做有一定的缺陷：原来在无穷维空间中的函数形数据被离散化到了有穷维空间，它不仅不利于求导等计算，而且会极大影响函数的在一个较小时间区间上的分辨率。随着深度学习的兴起，人们发现可以利用深度神经网络来表示函数。···
 \textbf{Traditional grid-based representation versus implicit neural representation}
-Traditionally, the representation of functional data involves using a standard grid-based method, 
+Traditionally, the representation of functional data $y(t)$ involves using a standard grid-based method, 
 wherein a finite set of coordinates and corresponding function values are given as pairs $(t_i, y_i)$. 
 However, this approach has certain drawbacks: the original functional data in an infinite-dimensional space is discretized into a finite-dimensional space. 
 This not only hampers operations like differentiation but also significantly impacts the resolution of the function within a smaller time interval.
 With the emergence of deep learning, it has been discovered that utilizing deep neural networks can be an effective way to represent functions implicitly.
-Implicit neural representation (INR) parameterize the functional data by deep neural networks. 
+Implicit neural representation (INR) parameterize the functional data by deep neural networks:
+$$y(t)=F_\phi(t), $$
+where $F_\phi(\cdot)$ is a deep neural network parameterized by $\phi$.
 This type of continuous representation not only proves to be more memory-efficient but also enables higher resolution and the handling of more complex operations on functional data.
 
 %【】提出了SIREN的函数结构，。
 \textbf{SIREN architecture for time series}
-% 很多之前的工作用Relu-based multilayer perceptrons(MLP) 来作为INR的神经网络架构，但是基于这种架构的INR往往缺乏表达信号中精细细节的能力，并且不能很好的表示目标信号的多阶导数。为了解决这个问题，【1】提出了SIREN的架构来替代传统的ReLU-MLPs。它使用sine函数来作为神经网络的激活函数，可以很好的刻画函数的细节。令人惊奇的是，当对用SIREN来表示函数求导后，它依然可以用SIREN来表示。虽然之前的研究大多利用SIREN来表示图像和视频，却很少用来表示时间序列。本文将SIREN用在时间序列的分析中，我们发现SIREN这种特殊的性质对于时间序列的表示也有独到的优势。
+% 很多之前的工作用Relu-based multilayer perceptrons(MLP) 来作为INR的神经网络架构，但是基于这种架构的INR往往缺乏表达信号中精细细节的能力，并且不能很好的表示目标信号的多阶导数。为了解决这个问题，【1】提出了SIREN的架构来替代传统的ReLU-MLPs。它使用sine函数来作为神经网络的激活函数，可以很好的刻画函数的细节。令人惊奇的是，当对用SIREN来表示函数求导后，它依然可以用SIREN来表示。虽然之前的研究大多利用SIREN来表示图像和视频，却很少用来表示时间序列。本文将SIREN用在时间序列的分析中，我们发现SIREN在表示时间序列上具有优越性。
 Many prior works have utilized ReLU-based multilayer perceptrons (MLP) as the neural network architecture for Implicit Neural Representations (INR). 
 However, ReLU-based INR often lack the ability to capture fine details in signal and struggle to effectively express higher-order derivatives.
-In addressing this limitation, \cite{sitzmann2020implicit} introduced the SIREN architecture as an alternative to traditional ReLU-MLPs.
-It employs the sine function as the activation function, effectively capturing intricate details in functions.
+In addressing this limitation, \cite{sitzmann2020implicit} introduced the SIREN architecture as an alternative to traditional ReLU-MLPs:
+$$
+\Phi(\mathbf{x})=\mathbf{W}_n\left(\phi_{n-1} \circ \phi_{n-2} \circ \ldots \circ \phi_0\right)(\mathbf{x})+\mathbf{b}_n, \quad \mathbf{x}_i \mapsto \phi_i\left(\mathbf{x}_i\right)=\sin \left(\mathbf{W}_i \mathbf{x}_i+\mathbf{b}_i\right)
+$$
+SIREN employs the sine function as the activation function, effectively capturing intricate details in functions.
 A remarkable observation is that even after taking derivatives of a function represented using SIREN, 
 it can still be expressed using the SIREN architecture. 
 While previous research predominantly applied SIREN to represent images and videos, its application in time series representation has been limited. 
-This paper explores the utilization of SIREN in the analysis of time series, 
-revealing that its distinctive properties 
-confer unique advantages in representing temporal sequences.
-
-
-
+This paper explores the utilization of SIREN in the analysis of time series and demonstates its superiority in time series INR.
 
 \subsection{Meta-learning}
 
 \textbf{Meta-learning framework}
+Meta-learning was initially introduced to enhance the efficiency of machine learning, often referred to as ``learning to learn''.
+By employing the deep learning model $F_\phi(\cdot)$ to address similar tasks, the ``shared characteristics'' among these tasks can be leveraged to expedite the machine learning process. 
+% Meta-learning 一开始被提出是为了提高机器的学习效率，即learning to learn。 使用同一个模型来解决一系列相似的task，往往可以利用这些相似任务的”共性“来帮助机器更快地完成训练。
+To fomulate, given the observation dataset $D^*$ of the target task and the observation dataset $D=\bigcup_{i=1}^n D_i$ of $n$ similar tasks, we need to find a meta-function to effectively learn the parameters of the given task, namely $\phi^*=f_\theta(D,D^*)$,
+where $\theta$ is the meta-parameter of the meta-function $f_\theta(\cdot)$. Accordingly, the original target task can be solved as $F_{\phi^*}(\cdot)$.
+In fact, the representation of meta-function $f_\theta(\cdot)$ can be diverse. There are two main classs of methods:  Parameterized Policy Gradient Methods (PPG) and Black Box Methods.
 
-\textbf{Two different types}
-different architecture: MAML / SNAIL
+\textbf{Parameterized Policy Gradient Methods and MAML}
+The PPG method use an iterative algorithm to represent $f_\theta$, which has an innerloop of the form:
+$$
+\phi^*_{j+1}=\phi_j^*-\alpha_\theta \nabla_{\phi_j^*} \hat{L}_\theta\left(D^*, F_{\phi_j^*}\right),
+$$
+with the initial value $\phi_0^*=\phi_0^*(\theta)$.
+This is very intuitive because it is similar to the traditional gradient decent method to optimize. 
+The only difference is that $\theta$ should be carefully determined by the observations of other tasks $D$ in this scenario.
+One important example of PPG method is MAML, where $\phi_0^*(\theta)=\theta$ and $\hat{L}_\theta$ can be any loss function independent of $\theta$.
+MAML can be regard as learning an initial value for a task distribution, which retains the gradient decent framework of traditional optimization algorithms.
+
+
+\textbf{Black Box Methods}
+Since we only care about the target function $F_\phi(\cdot)$ rather than the value of parameters $\phi$, an alternative way to treat $f_\theta(\cdot)$ is to see it as a black box. Based on this idea, we can rewrite the target function:
+$$
+F_\phi(t)=F_{f_\theta(D,D^*)}(t)=g_\theta(t,D,D^*)
+$$
+Here we do not need to explicitly specify the value of $\phi$, and treat the meta-learning task as another ``big'' task, which adds all the training materials into input.
+Because of the sequential properties of the datasets, sequential model architectures such as RNN are used in $g_\theta$, which unavoidably change the initial architecture $F_\phi$.
+In contrast, PPG methods use the meta-parameters $\theta$ to find the task parameters $\phi$ explicitly, which maintain the initial network architecture.
+Therefore, black box methods have inductive bias from data while PPG methods have inductive bias in network structure.
+
+In the context of time series Implicit Neural Representation (INR), selecting an appropriate network structure is crucial, as it directly influences properties such as continuity and differentiability.
+Hence, in this paper, we opt for MAML as our meta-learning method for the INR task.
 
 \section{Method}
-%如前文所述，基于local polynomial regression，人们可以试图恢复functional data 的原始形式。但是，这却有一个致命的缺点：它只能够用到 
 
-advantage
+\textbf{Overview of MetaINR}
+% 给定sparse observations of n similar time series, 我们的目标是尽可能的还原每一个sample并找到描述这一系列时间序列的主成分PC。
+Given sparse observations of $n$ similar time series, the goal of MetaINR is to reconstruct each sample as accurately as possible and identify the principal components (PC) of these time series.
+% As discussed in the previous section，在传统的方法中，我们首先利用local polinomial regression 估计这些时间序列的均值和方差，在scores服从正态分布的条件下，就可以利用PACE的方法估计出每个主成分并reconstruct each sample.
+As discussed in the previous section, in traditional approaches, we first use local polynomial regression to estimate the mean and covariance of these time series. 
+Under the assumption that scores follow a normal distribution, the PACE method can then be employed to estimate each principal component and reconstruct each sample.
+% 这种两步估计的方法固然优于直接利用local polynomial 重构sample, 因为它利用了所有样本的信息。但是它依然存在两大明显的缺点：1. scores 服从正态分布的假设太强；2. 均值和协方差的估计不一定准确。
+While this two-step estimation method is indeed superior to directly reconstructing samples using local polynomials as it leverages information from all samples, it still has the notable drawback that 
+the assumption that scores follow a normal distribution is too restrictive.
+% 在我们的方法中，我们不把meta-learning看成是一种高效学习的方法，而把他当作一种学习大量任务中共性的手段。 利用这个性质，我们先通过meta learning来学习出给定的多个timeseries的共性，然后基于共性还原每个sample的INR。再根据每个sample的INR得到均值和方差的估计值。最后利用方差核来估计主成分。
+Here, we choose an alternative way by using the method of meta-learning, which involves three main steps:
+\begin{itemize}
+  \item Learning the meta-model: use SIREN architecture and MAML algorithm to learn the meta-model for the INR of given time series.
+  \item Recovery of samples: calculate the SIREN-based INR efficiently for each time series sample based on the mata-model.
+  \item Functional data estimation: use INR of each sample to estimate the mean function, covariance kernel and principal components.
+\end{itemize}
+We now discuss each step.
+
+\textbf{Learning the meta-model}
+The tasks here are realizing the implicit neural representation of samples by the SIREN architecture $F_\phi(t)$.
+Given the sparse observations of $n$ similiar time series $D=\{(t_{ij},y_{ij})_{j=1}^{J_i}\}_{i=1}^n$,
+we use MAML algorithm \ref{MAML} to learning the meta-model of these tasks, 
+whose initial value of parameters are denoted by $\phi_0$. 
+The MAML optimization process to find $\phi_0$ can be expressed as follows:
+\begin{algorithm}
+	\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+	\renewcommand{\algorithmicensure}{\textbf{Output:}}
+	\caption{Model-Agnostic Meta-Learning for Time Series Implicit Neural Representation}
+	\label{MAML}
+	\begin{algorithmic}
+    \REQUIRE $D=\{(t_{ij},y_{ij})_{j=1}^{J_i}\}_{i=1}^n$: the sparse observations for tasks
+    \REQUIRE $\alpha, \beta: \text { step size hyperparameters }$
+		\STATE randomly initialize $\theta$
+    \WHILE {not done} 
+      \FOR{all $i$}
+        \STATE $\theta^0 \gets \theta$
+        \FOR{$q = 0$ to $Q-1$  }
+          \STATE Evaluate $\nabla_{\theta^q} \mathcal{L}_{i}\left(F_{\theta^q}\right)$ using support set $D_i^{\text{support}}=(t_{ij},y_{ij})_{j=1}^{\lfloor 0.8*J_i\rfloor }$
+          \STATE Compute adapted parameters with gradient descent:
+          $\theta_i^{q+1}=\theta_i^q-\alpha \nabla_{\theta_i^q} \mathcal{L}_{i}\left(F_{\theta_i^q}\right)$
+        \ENDFOR
+        \STATE Compute the loss $\mathcal{L}_{i}\left(F_{\theta_i^Q}\right)$ in sample $i$ using query set $D_i^{\text{query}}=(t_{ij},y_{ij})_{j=\lfloor 0.8*J_i\rfloor }^{J_i}$
+      \ENDFOR
+      \STATE Compute the total loss $\mathcal{L} = \sum_{i=1}^n \mathcal{L}_{i}\left(F_{\theta_i^Q}\right)$
+      \STATE Update meta-parameters $\theta \leftarrow \theta-\beta \nabla_\theta \mathcal{L} $
+    \ENDWHILE 
+    \STATE $\phi_0 \gets \theta$
+		\ENSURE the meta-parameters $\phi_0$
+  \end{algorithmic}  
+\end{algorithm}
+
+\textbf{Recovery of samples}
+Based on this meta-model, we can use gradient decent algorithm\ref{INR-learning} to calculate the optimal parameters $\phi^*_i$ for the sample $i$ and hence obtain the INR $F_{\phi^*_i}(t)$. 
+\begin{algorithm}
+	\renewcommand{\algorithmicrequire}{\textbf{Input:}}
+	\renewcommand{\algorithmicensure}{\textbf{Output:}}
+	\caption{Implicit Neural Representation Learning for Target Sample}
+	\label{INR-learning}
+	\begin{algorithmic}
+    \REQUIRE $D^*=(t_{ij},y_{ij})_{j=1}^{J^*}$: the sparse observations for the target task
+    \REQUIRE $\alpha: \text { step size hyperparameters }$
+		\STATE initialize $\phi \gets \phi_0$
+    \WHILE {not done} 
+      \STATE Evaluate $\nabla_{\phi} \mathcal{L}\left(F_{\phi}\right)$ using support set $D^*=(t_{j}^*,y_{j}^*)_{j=1}^{J^*}$
+      \STATE Update parameters with gradient descent:
+      $\phi=\phi-\alpha \nabla_{\phi} \mathcal{L}\left(F_{\phi}\right)$
+    \ENDWHILE 
+    \STATE $\phi^* \gets \phi$
+		\ENSURE $\phi^*$: the parameters of INR for the target model 
+  \end{algorithmic}  
+\end{algorithm}
+
+\textbf{Functional data estimation}
+Based on the estimated INR $\hat{y}_i(t)=F_{\phi^*_i}(t)$, we subsequently estimate the mean function $\hat{\mu}(t)$ and covariance kernel $\hat{c}(t,s)$ as follows:
+$$
+\hat{\mu}(t)= \frac{1}{n} \sum_{i=1}^n \hat{y}_i(t)
+$$
+$$
+\hat{c}(t,s)= \frac{1}{n} \sum_{i=1}^n  [\hat{y}_i(t))-\hat{\mu}(t)] [\hat{y}_i(s)-\hat{\mu}(s) ]
+$$
+According to the covariance operator, we can further estimate its principal components $\hat{\phi}_k$ by calculate the eigenfunctions of $\hat{c}(t,s)$.
+
+In our approach, we view meta-learning not merely as an efficient learning method but as a means to learn commonalities among a large number of tasks.
+Leveraging this property, the metaINR $\hat{y}_i(t)=F_{\phi^*_i}(t)$ implicitly contain the information of the whole datasets.
+Consequently, it provides a robust estimation for sparse time series data.
+
 \section{Experiments}
 
 \subsection{Synthetic data}
@@ -261,13 +397,6 @@ global+differential property lead to a better PC estimation
 \bibliographystyle{IEEEtran}      %IEEEtran为给定模板格式定义文件名
 \bibliography{ref}
 
-% \begin{abstract}
-%   The abstract paragraph should be indented \nicefrac{1}{2}~inch (3~picas) on
-%   both the left- and right-hand margins. Use 10~point type, with a vertical
-%   spacing (leading) of 11~points.  The word \textbf{Abstract} must be centered,
-%   bold, and in point size 12. Two line spaces precede the abstract. The abstract
-%   must be limited to one paragraph.
-% \end{abstract}
 
 
 % \section{Submission of papers to NeurIPS 2023}
