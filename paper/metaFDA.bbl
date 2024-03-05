@@ -26,4 +26,9 @@ V.~Sitzmann, J.~Martel, A.~Bergman, D.~Lindell, and G.~Wetzstein, ``Implicit
   neural representations with periodic activation functions,'' \emph{Advances
   in neural information processing systems}, vol.~33, pp. 7462--7473, 2020.
 
+\bibitem{raghu2019rapid}
+A.~Raghu, M.~Raghu, S.~Bengio, and O.~Vinyals, ``Rapid learning or feature
+  reuse? towards understanding the effectiveness of maml,'' \emph{arXiv
+  preprint arXiv:1909.09157}, 2019.
+
 \end{thebibliography}

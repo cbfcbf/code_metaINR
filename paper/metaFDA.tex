@@ -135,7 +135,7 @@ It is the differences in statistical properties and people's focus between infin
 \textbf{Time series as a representative example of functional data}
 Time series is a typical object that needs to be addressed in an infinite-dimensional function space. 
 This is because time series data collected in reality often exhibit continuity, and, in certain situations, people may focus on topics such as derivatives and time alignment (registration).
-Many previous studies have relied on multivariate statistics in the analysis of time series, such as [mention some specific examples]...
+Many previous studies have relied on multivariate statistics in the analysis of time series, such as \textcolor{red}{[mention some specific examples]...}
 From the perspective of function approximation, these multivariate-statistics-based studies can indeed reflect certain properties of time series. 
 However, in many cases, this approach is challenging to generalize, as is the case with sparse time series data studied in this paper.
 
@@ -143,7 +143,7 @@ However, in many cases, this approach is challenging to generalize, as is the ca
 \textbf{Sparse times series data analysis}
 When the observation frequency of time series is low and irregular, sparse time series data is formed. 
 We can represent the sparse dataset of $n$ samples as 
-$$D=\{(t_{ij},y_{ij})_{j=1}^{J_i}\}_{i=1}^n,$$ 
+
 where
 $y_{ij}=x_i(t_{ij}) , i=1, \cdots, n, j=1, \cdots, J_i$ and $J_i$ is the total observations of the $i$-th sample.
 This type of data is particularly common in the medical field, as the frequency of medical visits varies from person to person, with irregular patterns.
@@ -171,7 +171,7 @@ $$
 By minimization of $L_{t,s}^c(\beta)$, we obtain $(\beta_0(t),\beta_{11}(t),\beta_{12}(t))=arg\,min L_{t,s}^c(\beta)$. Then the estimator of the covariance kernel is defined as $\hat{c}(t,s)=\beta_0(t)$.
 Based on the estimation of mean and covariance,  we can use the method of Principal Analysis by Conditional Expectation (PACE) to reconstruct each sample and compute their scores (see details in the appendix).
 Comparing to using local polynomial regression directly to reconstruct samples, It is noticeable that the reconstruction of the sample makes use of the total of information of all observations, but it hugely relies on the assumption that scores are normally distributed. 
-In the following text, I will compare the estimates obtained based on this method as the baseline with the meta-learning-based approach proposed in this paper.
+\textcolor{red}{In the following text, I will compare the estimates obtained based on this method as the baseline with the meta-learning-based approach proposed in this paper.[TODO PACE baseline coding]} 
 % 下文中我会将基于这种方法得到的估计值作为Baseline与本文提出的基于metalearning的方法相比较。
 
 \subsection{Implicit Neural Representation}
@@ -277,11 +277,11 @@ The MAML optimization process to find $\phi_0$ can be expressed as follows:
       \FOR{all $i$}
         \STATE $\theta^0 \gets \theta$
         \FOR{$q = 0$ to $Q-1$  }
-          \STATE Evaluate $\nabla_{\theta^q} \mathcal{L}_{i}\left(F_{\theta^q}\right)$ using support set $D_i^{\text{support}}=(t_{ij},y_{ij})_{j=1}^{\lfloor 0.8*J_i\rfloor }$
+          \STATE Evaluate $\nabla_{\theta^q} \mathcal{L}_{i}\left(F_{\theta^q}\right)$ using support set $D_i^{\text{support}}=(t_{ij},y_{ij})_{j=1}^{\lfloor 0.5*J_i\rfloor }$
           \STATE Compute adapted parameters with gradient descent:
           $\theta_i^{q+1}=\theta_i^q-\alpha \nabla_{\theta_i^q} \mathcal{L}_{i}\left(F_{\theta_i^q}\right)$
         \ENDFOR
-        \STATE Compute the loss $\mathcal{L}_{i}\left(F_{\theta_i^Q}\right)$ in sample $i$ using query set $D_i^{\text{query}}=(t_{ij},y_{ij})_{j=\lfloor 0.8*J_i\rfloor }^{J_i}$
+        \STATE Compute the loss $\mathcal{L}_{i}\left(F_{\theta_i^Q}\right)$ in sample $i$ using query set $D_i^{\text{query}}=(t_{ij},y_{ij})_{j=\lfloor 0.5*J_i\rfloor }^{J_i}$
       \ENDFOR
       \STATE Compute the total loss $\mathcal{L} = \sum_{i=1}^n \mathcal{L}_{i}\left(F_{\theta_i^Q}\right)$
       \STATE Update meta-parameters $\theta \leftarrow \theta-\beta \nabla_\theta \mathcal{L} $
@@ -327,42 +327,75 @@ Leveraging this property, the metaINR $\hat{y}_i(t)=F_{\phi^*_i}(t)$ implicitly 
 Consequently, it provides a robust estimation for sparse time series data.
 
 \section{Experiments}
-
+We evaluate our method on the synthetic data, with benchmark estimations provided by local polynomial regression \textcolor{red}{and the traditional PACE method [TODO]}.
+Our results clearly demonstrate that MetaINR significantly outperforms the conventional baseline. 
+Moreover, we extended our analysis to a real-world medical dataset to validate the robustness and applicability of our approach in practical scenarios.
+% define evaluation method , measures? not only pictures
 \subsection{Synthetic data}
 
-\subsubsection{what meta-learning learned in  timeseries}
+\textbf{Data generating process}
+Our ground truth of our synthetic data distribution is given by:
+$$
+y(t)=A sin(t)+ B sin(2t), \quad t \in [0,10],
+$$
+where $A$ and $B$ are independent and follows the uniform distribution
+$$
+A \thicksim Uniform[0,1], \quad B \thicksim Uniform[0,0.5].
+$$
+We randomly draw $n=100$ sample tasks $\{y_i(t)\}_{i=1}^n$ from this distribution.
+For each sample task, $J=20$ observations randomly chosen in irregular time points.
+The overall dataset employed for meta-learning comprises these observations.
+$$
+D=\{(t_{ij},y_{ij})_{j=1}^{J}\}_{i=1}^n
+$$
+% For training purposes, we further randomly divide overall dataset into training dataset and validation dataset, and for each sample task we randomly divide their observations into support and query sets. 
+% $$
+% D=\{(t_{ij},y_{ij})_{j=1}^{J}\}_{i=1}^n
+% $$
+\textbf{Meta-learning the commonalities of time series}
+% 当我们对这个人造数据集进行元学习时，确实发现了元学习能够学习到一系列相似时间序列数据的共性。如图一所示，我们发现，当仅仅给出某一个样本后半段【5，10】这段区间的观测时，元学习能够从其他样本的数据中获得信息，学习到这个分布所包含的周期性。而local polynomial regression则仅仅基于单个样本的数据进行估计，这对于时间序列前半段的估计是不准确的。
+When conducting meta-learning on this synthetic dataset, we indeed observed the capability of meta-learning to capture commonalities among a series of similar time-series data.
+As shown in Figure 1, we found that when providing observations solely for the latter segment ($t \in [5, 10]$) of a particular sample, 
+meta-learning could extract information from data of other samples, learning the periodicity inherent in this distribution. 
+In contrast, local polynomial regression relies solely on the data of an individual sample for estimation, 
+resulting in less accurate predictions for the first half ($t \in [0, 5]$) of the time series.
+% 除此之外，我们还发现metamodel中蕴含着均值的信息。当我们把MAML学习到的初始值直接带入SIREN模型形成我们的进一步学习的meta-model，我们发现meta-model与这些sample的均值及其接近。从图2中可以看到，元学习的过程同时伴随着元模型向均值逼近。
+In addition, we discovered that the meta-model inherently contains information about the mean. 
+By directly plugging the initial values learned by MAML into the SIREN model to construct our meta-model for further learning,
+we observed a notable proximity between the meta-model and the means of these samples. 
+As demonstrated in Figure 2, the meta-learning process is accompanied by the meta-model gradually converging towards the mean.
+% 除了这两个例子之外，【2】向我们展示了MAML能够加速学习的原因是feature reuse，这也解释了为什么元模型会包含数据集的多种特征。因此通过MetaINR进行基于稀疏观测的重建会比local polynomial regression 更加可靠。
+Aside from these two examples, \cite{raghu2019rapid}  illustrates that MAML accelerates learning through feature reuse.
+This also clarifies why the meta-model encompasses various features of the dataset. 
+Consequently, employing MetaINR for time series reconstruction based on sparse observations proves to be more reliable than local polynomial regression.
 
-global+differential property lead to a better PC estimation
-
-% 为什么要研究PC 人们喜欢简单 降维
-
-%加一个learning loss 变化的图像
-
-1. periodicity
 \begin{figure}
   \centering
   \includegraphics[width=0.5\textwidth]{learning_periodicity.png}
   \caption{Learning periodicity}
 \end{figure}
 
-2. differential equations: No?
-
-3. average phenomenon for meta prior model
 \begin{figure}
   \centering
   \includegraphics[width=0.5\textwidth]{learning_mean_loss.png}
   \caption{Learning mean}
 \end{figure}
 
-4. based on information from whole dataset to get a estimation 
-\subsubsection{Mean estimation}
+\textbf{Estimation of mean, covariance and principal components}
+% 基于每个样本的MetaINR, 我们对这个人造数据集的均值函数，方差核和主成分进行了估计，结果如图3，4，5所示。
+% 我们发现，以MetaINR为基础对三者的估计都远好于benchmark。特别是在数据的边界处，即t接近0或10的位置，baseline的估计往往与真实值相差甚远，而基于MetaINR的估计却相对可靠。
+Based on MetaINR for each sample, we estimated the mean function, covariance kernel, and principal components of this synthetic dataset. 
+The results are demonstrated in Figures 3, 4, and 5.
+We observed that the estimators based on MetaINR for all three metrics significantly outperformed the benchmark. 
+Particularly at the boundaries of the data, where $t$ approaches $0$ or $10$, 
+the baseline estimators often deviated substantially from the true values,
+while the estimateors based on MetaINR remained relatively reliable.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.5\textwidth]{mean.png}
   \caption{Mean estimation}
 \end{figure}
-\subsubsection{Covariance estimation}
 
 \begin{figure}
   \centering
@@ -370,7 +403,6 @@ global+differential property lead to a better PC estimation
   \caption{Covariance estimation}
 \end{figure}
 
-\subsubsection{fPCA}
 \begin{figure}
   \centering
   \includegraphics[width=0.5\textwidth]{fPCA.png}
@@ -381,18 +413,37 @@ global+differential property lead to a better PC estimation
 % \subsubsection{Metalearning+PACE Representation(dimensional reduction)}
 % \subsubsection{Registration}
 
-
 \subsection{Real-world data}
 %CD4 count 的数据最好用
+\textbf{Data description} 
+We apply MetaINR to the longitudinal data on primary biliary cirrhosis (PBC).
+
+\textcolor{red}{The data resulted from a Mayo Clinic trial that was conducted in 1974 to 1984. 
+They are available at http://lib.stat.cmu.edu/datasets/pbc and have been described in Fleming \& Harrington (1991) and Murtaugh et al. (1994).
+The data contain various sparsely and irregularly sampled covariates, 
+as well as the survival or censoring time for each of 312 patients. 
+Among these medical measurements ,
+serum bilirubin concentration is known to be elevated in the presence of chronic liver cirrhosis, such as PBC.
+}
+We extracted data from the dataset for the initial 910 days, 
+analyzing bilirubin measurements (in mg/dl) for different patients 
+during the pre-onset phase. 
+The goal was to characterize the pattern of this measurement over time through estimates of mean function, covariance kernel and principal components.
+In the practice, we applied a logarithmic transformation to the bilirubin measurements and removed data for patients with a survival time less than 910 days.
+% 因此，我们从数据集中截取了前910天的数据，对这发病前期不同病人的bilirubin measurements (in mg/dl)进行分析，期望通过主成分和均值的估计来刻画这个指标随时间变化的规律。
+% 在实际操作中我们对bilirubin measurements取了对数变换，并且删除了存活时间小于910天的病人的数据。
+A total of 260 patients in the study satisfied these criteria and only 2.9 observations per sample on average. 
+
+\textbf{Estimation of mean, covariance and principal components}
+% 如图展示了MetaINR在实际sparse functional dataset中的估计结果。我们发现
+
 \section{Conclusion}
 
 \section{Appendix}
 
-\subsection{Traditional FDA for sparse functional data}
+\subsection{Traditional FDA method for sparse functional data: PACE}
 
 \subsection{Brief introduciton to SIREN}
-
-\section*{References}
 
 \bibliographystyle{IEEEtran}      %IEEEtran为给定模板格式定义文件名
 \bibliography{ref}

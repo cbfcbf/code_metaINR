@@ -18,11 +18,16 @@ data=data[data["day"]<=910]
 data=data[data["futime"]>910]
 
 id_list=np.array(data.id.drop_duplicates())
+obs_num=0
 
 for id in id_list:
     ti=np.array(data[data["id"]==1+id]["day"])
     yi=np.log(np.array(data[data["id"]==1+id]["bili"]))
-    plt.plot(ti,yi)
+    # plt.plot(ti,yi)
+    obs_num+=len(yi)
+ave_obs=obs_num/len(id_list)
+print("total samples: %d " % len(id_list))
+print("average observations per sample: %.3f " % ave_obs)
 
 # %% parameters
 train_inner_train_step = 3

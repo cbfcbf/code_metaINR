@@ -14,7 +14,7 @@ from skfda.preprocessing.dim_reduction import FPCA
 from localreg import *
 
 # %% parameters
-Number_of_task=100  #take 10 tasks for training in total 
+Number_of_task=100  #take 100 tasks for training in total 
 
 number_of_samples_in_support_set=10
 number_of_samples_in_query_set=10
