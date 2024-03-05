@@ -329,6 +329,7 @@ Consequently, it provides a robust estimation for sparse time series data.
   \centering
   \includegraphics[width=\textwidth]{learning_commonalities.png}
   \caption{Learning commonalities}
+  \label{Learning commonalities}
 \end{figure}
 
 \section{Experiments}
@@ -360,7 +361,7 @@ $$
 \textbf{Meta-learning the commonalities of time series}
 % 当我们对这个人造数据集进行元学习时，确实发现了元学习能够学习到一系列相似时间序列数据的共性。如图一所示，我们发现，当仅仅给出某一个样本后半段【5，10】这段区间的观测时，元学习能够从其他样本的数据中获得信息，学习到这个分布所包含的周期性。而local polynomial regression则仅仅基于单个样本的数据进行估计，这对于时间序列前半段的估计是不准确的。
 When conducting meta-learning on this synthetic dataset, we indeed observed the capability of meta-learning to capture commonalities among a series of similar time-series data.
-As shown in Figure 1a, we found that when providing observations solely for the latter segment ($t \in [5, 10]$) of a particular sample, 
+As shown in Figure \ref{Learning commonalities}a, we found that when providing observations solely for the latter segment ($t \in [5, 10]$) of a particular sample, 
 meta-learning could extract information from data of other samples, learning the periodicity inherent in this distribution. 
 In contrast, local polynomial regression relies solely on the data of an individual sample for estimation, 
 resulting in less accurate predictions for the first half ($t \in [0, 5]$) of the time series.
@@ -368,7 +369,7 @@ resulting in less accurate predictions for the first half ($t \in [0, 5]$) of th
 In addition, we discovered that the meta-model inherently contains information about the mean. 
 By directly plugging the initial values learned by MAML into the SIREN model to construct our meta-model for further learning,
 we observed a notable proximity between the meta-model and the means of these samples. 
-As demonstrated in Figure 1b, the meta-learning process is accompanied by the meta-model gradually converging towards the mean.
+As demonstrated in Figure \ref{Learning commonalities}b, the meta-learning process is accompanied by the meta-model gradually converging towards the mean.
 % 除了这两个例子之外，【2】向我们展示了MAML能够加速学习的原因是feature reuse，这也解释了为什么元模型会包含数据集的多种特征。因此通过MetaINR进行基于稀疏观测的重建会比local polynomial regression 更加可靠。
 Aside from these two examples, \cite{raghu2019rapid}  illustrates that MAML accelerates learning through feature reuse.
 This also clarifies why the meta-model encompasses various features of the dataset. 
@@ -391,7 +392,7 @@ Consequently, employing MetaINR for time series reconstruction based on sparse o
 % 基于每个样本的MetaINR, 我们对这个人造数据集的均值函数，方差核和主成分进行了估计，结果如图3，4，5所示。
 % 我们发现，以MetaINR为基础对三者的估计都远好于benchmark。特别是在数据的边界处，即t接近0或10的位置，baseline的估计往往与真实值相差甚远，而基于MetaINR的估计却相对可靠。
 Based on MetaINR for each sample, we estimated the mean function, covariance kernel, and principal components of this synthetic dataset. 
-The results are demonstrated in Figures 3, 4, and 5.
+The results are demonstrated in Figure \ref{Estimation for synthetic data}.
 We observed that the estimators based on MetaINR for all three metrics significantly outperformed the benchmark. 
 Particularly at the boundaries of the data, where $t$ approaches $0$ or $10$, 
 the baseline estimators often deviated substantially from the true values,
@@ -401,6 +402,7 @@ while the estimateors based on MetaINR remained relatively reliable.
   \centering
   \includegraphics[width=\textwidth]{estimation.png}
   \caption{Estimation for synthetic data}
+  \label{Estimation for synthetic data}
 \end{figure}
 
 % \begin{figure}
@@ -448,7 +450,7 @@ A total of 260 patients in the study satisfied these criteria and only 2.9 obser
 
 \textbf{Estimation of mean, covariance and principal components}
 % 如图3展示了MetaINR在实际sparse functional dataset中的估计结果。我们发现虽然每个样本只有极少数的观测点，但是MetaINR却能较好地恢复样本。在统计量的估计方面，在这个特定的实际数据集中，metaINR有着与Baseline类似的估计效果。我们可以通过估计结果得到如下结论：在前910天的观测中，病人的serum bilirubin concentration先小幅下降，在400天左右，它又急剧上升（mean function）。不同病人之间serum bilirubin concentration除了在基础值上有差异外（pc1），从400天左右, 病人的serum bilirubin concentration之间出现较大的分化差异（pc2）。
-Figure 3 illustrates the estimation results of MetaINR on the real-world medical sparse functional dataset mentioned above. 
+Figure \ref{Estimation for real-world data} illustrates the estimation results of MetaINR on the real-world medical sparse functional dataset mentioned above. 
 We observe that despite the minimal number of observations per sample, 
 MetaINR can effectively recover the sample function. 
 Regarding the estimation of statistical quantities, 
@@ -463,11 +465,12 @@ significant divergence in serum bilirubin concentration among patients emerges a
   \centering
   \includegraphics[width=\textwidth]{estimation_realData.png}
   \caption{Estimation for real-world data}
+  \label{Estimation for real-world data}
 \end{figure}
 
 \section{Conclusion and future work}
 % 我们展示了一个利用meta-learning的技术来处理sparse time series data的一个方法。通过meta-learning利用整个数据集的信息可以对只存在极少数观测点的样本进行MetaINR。基于MetaINR让一些原本只在稠密数据集中使用的functional data analysis的方法在sparse 数据集中变得可行。基于MetaINR的估计也为我们进一步分析sparse time series data提供了强大的工具。
-We have shown a method utilizing meta-learning techniques to analyze sparse time series data. 
+We have shown a method named MetaINR utilizing meta-learning techniques to analyze sparse time series data. 
 Through meta-learning, the MetaINR approach enables the estimation of functional form samples with very few observation points by leveraging information from the entire dataset. 
 The application of MetaINR makes functional data analysis (FDA) methods, which are typically used in dense datasets, feasible for sparse datasets. 
 Therefore, MetaINR provides a novel tool for further analyzing sparse time series data.
