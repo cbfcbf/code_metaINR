@@ -94,25 +94,25 @@
 \maketitle
 
 \begin{abstract}
-  Sparse time series data are everywhere in our daily life. However it is hard to analyze them by traditional statistical methods. Here, we propose MetaINR, a method to learning the implicit neural representation (INR) given sparse obsevations of time series data.
-  Based on this, estimations of mean function, covariance operator, and principal components can be implemented easily.
-  The method introduce the meta-learning to the functional data analysis framework, which greatly outperforms the traditional baseline.
+  Sparse time series data is everywhere in our daily life. However it is hard to analyze them by traditional statistical methods. Here, we propose MetaINR, a method to learning the implicit neural representation (INR) of time series given sparse and irregular obsevations.
+  Based on MetaINR, estimations of mean function, covariance operator, and principal components can be implemented easily.
+  The method introduce the meta-learning to the functional data analysis (FDA) framework, which greatly outperforms the traditional baseline.
 \end{abstract}
 
 \section{Introduction}
-Sparse time series data is prevalent in daily life, such as medical data measured at different times for patients or height data collected at various stages of adolescence. 
-However, the sparsity and irregularity of such data make traditional statistical methods less suitable. 
+Sparse time series data is common in daily life, such as medical data measured at different times for patients or height data collected at various stages of adolescence. 
+However, the sparsity and irregularity of such data make traditional statistical methods hard to apply directly. 
 Additionally, the consideration of continuity and differentiability properties in most time series data pose challenges for multivariable statistical analysis.
 
 Recent research suggests that meta-learning exhibits great advantages in handling sparse data. 
 It can learn commonalities among similar tasks, enabling few-shot learning or even one-shot learning on extremely sparse training sets. 
-Besides, statistical analysis based on functional data has been hugely developed for dealing with continuous time series problems recently.
+Besides, statistical analysis based on dense functional data has been hugely developed for dealing with continuous time series problems.
 
-In this paper, we introduce a novel approach, metaINR, which combines meta-learning and functional data analysis to address the estimation challenges posed by sparse time series data. 
+In this paper, we introduce a novel approach, MetaINR, which combines meta-learning and functional data analysis to address the estimation challenges posed by sparse time series data. 
 Through this method, we use meta-learning to realize the implicit neural representation (INR) to
 reconstruct the time series function for each sample based on sparse time series observations.
-Furthermore, we can estimate the mean, covariance, and principal components of the distribution of these samples.
-Therefore, MetaINR method presents a fresh solution for addressing issues related to sparse time series data.
+Furthermore, we can estimate the mean, covariance, and principal components of the distribution behind these samples.
+Therefore, MetaINR method presents a new solution for addressing issues related to sparse time series data.
 
 % Sparse time series data 在日常生活中非常常见，比如病人在不同时间测量的医疗数据、青少年在成长时不同阶段测量得到的身高数据等。这些数据的稀疏性和irregularity让传统的统计手段变得不太适用。同时，绝大多数时间序列数据所拥有的连续性，可微性等性质也给基于multivarible的统计学分析带来了困境
 % 最近的研究表明，元学习在处理稀疏形数据中具有独特的优势。它可以从大量相似的任务中学习任务的共性，并对非常稀疏的训练集做到few-shot learning, 甚至 one-shot learning。同时，在处理连续的时间序列问题时，基于funcitonal data 的统计学也逐渐成熟。
@@ -122,14 +122,17 @@ Therefore, MetaINR method presents a fresh solution for addressing issues relate
 
 \subsection{Functional Data}
 
+\textcolor{red}{[TODO: add references]}
+
 % Traditional multivariate statistics 把一个有限维空间中的向量作为研究对象，来分析它的统计性质，如均值向量、协方差矩阵等。在维度较小的时候，这并没有什么不妥。然而如果把分析对象所在空间的维度提高到无穷维，比如L2空间时，传统方法将会面临一些挑战。在函数空间，人们的关注点并不会局限于向量在某个维度上的取值，人们还会关注连续性、导数等更多性质。同时，随着空间增长到无穷维，原先多元统计中的很多指标也会丧失意义，如概率密度函数等。正是由于无穷维和有穷维空间的统计性质和人们关注点的不同，functional data analysis（FDA） 这个方向引起了研究者的广泛关注。
 \textbf{Multivariate data versus functional data} 
 Traditional multivariate statistics take finite-dimensional vectors as the objects of study to analyze their statistical properties, such as mean vectors and covariance matrices. 
-This approach is appropriate and easy to compute when the dimension is relatively small. 
-However, if the dimension of the space in which the objects are analyzed is increased to infinite, for example, in $L^2$ space, traditional methods face certain challenges. 
-In such functional spaces, the focus is not only on the values of vectors in a particular dimension but also on properties such as continuity, smoothness and derivatives. 
-At the same time, as the space grows to infinite dimensions, many useful tools in multivariate statistics, such as probability density functions, will lose their meaning. 
+This approach is appropriate and is easy to compute when the dimension of the statistical objects is relatively small. 
+However, if the dimension of the space is increased to infinite, for example, in $L^2$ space, traditional methods face certain challenges. 
+Besides the expensive computational cost, in such functional spaces, people's focus is not only on the values of vectors in a particular dimension but also on properties such as continuity, smoothness and derivatives. 
+Additionally, as the space grows to infinite dimensions, many useful tools in multivariate statistics, such as probability density functions, will lose their meaning. 
 It is the differences in statistical properties and people's focus between infinite-dimensional and finite-dimensional spaces, that have led to widespread attention to functional data analysis (FDA) among researchers.
+In FDA, scientists treat functions as basic elements for analysis and have developed various methods to estimate the statistical properties for a functional distribution, such as mean function, covariance operator and functional principal components.
 
 % Time series是一个很典型的需要在无穷维函数空间中处理的研究对象。这是因为现实中收集的时间序列数据往往具有连续性，同时，在某些情况下，人们会关注它的导数、时间对齐（registration）等话题。有很多之前的研究基于多元统计学对时间序列进行分析。比如···。从函数逼近的观点来看，这些基于多元统计的研究确实能够很好的反映一些时间序列的性质，但是这在很多情况下是比较难以推广的，比如本文中所研究的sparse time series data。
 \textbf{Time series as a representative example of functional data}
@@ -143,6 +146,9 @@ However, in many cases, this approach is challenging to generalize, as is the ca
 \textbf{Sparse times series data analysis}
 When the observation frequency of time series is low and irregular, sparse time series data is formed. 
 We can represent the sparse dataset of $n$ samples as 
+$$
+D=\{(t_{ij},y_{ij})_{j=1}^{J}\}_{i=1}^n
+$$
 
 where
 $y_{ij}=x_i(t_{ij}) , i=1, \cdots, n, j=1, \cdots, J_i$ and $J_i$ is the total observations of the $i$-th sample.
@@ -168,9 +174,9 @@ $$
 $$
 f\left(\beta,(t,s),(t_{ij},t_{il})\right)=\beta_0 + \beta_{11}(t-t_{ij})+\beta_{12}(s-t_{il})
 $$
-By minimization of $L_{t,s}^c(\beta)$, we obtain $(\beta_0(t),\beta_{11}(t),\beta_{12}(t))=arg\,min L_{t,s}^c(\beta)$. Then the estimator of the covariance kernel is defined as $\hat{c}(t,s)=\beta_0(t)$.
+By minimization of $L_{t,s}^c(\beta)$, we obtain $(\beta_0(t),\beta_{11}(t),\beta_{12}(t))=arg\,min L_{t,s}^c(\beta)$. Then the estimator of the covariance kernel is defined as $\hat{c}(t,s)=\beta_0(t,s)$.
 Based on the estimation of mean and covariance,  we can use the method of Principal Analysis by Conditional Expectation (PACE) to reconstruct each sample and compute their scores \textcolor{red}{(see details in the appendix)[TODO]}.
-Comparing to using local polynomial regression directly to reconstruct samples, It is noticeable that the reconstruction of the sample makes use of the total of information of all observations, but it hugely relies on the assumption that scores are normally distributed. 
+Comparing to using local polynomial regression directly to reconstruct samples, It is noticeable that the reconstruction of the sample in this method makes use of the total of information of all observations, but it hugely relies on the assumption that scores are normally distributed. 
 \textcolor{red}{In the following text, I will compare the estimates obtained based on this method as the baseline with the meta-learning-based approach proposed in this paper.[TODO PACE baseline coding]} 
 % 下文中我会将基于这种方法得到的估计值作为Baseline与本文提出的基于metalearning的方法相比较。
 
@@ -211,7 +217,7 @@ By employing the deep learning model $F_\phi(\cdot)$ to address similar tasks, t
 % Meta-learning 一开始被提出是为了提高机器的学习效率，即learning to learn。 使用同一个模型来解决一系列相似的task，往往可以利用这些相似任务的”共性“来帮助机器更快地完成训练。
 To fomulate, given the observation dataset $D^*$ of the target task and the observation dataset $D=\bigcup_{i=1}^n D_i$ of $n$ similar tasks, we need to find a meta-function to effectively learn the parameters of the given task, namely $\phi^*=f_\theta(D,D^*)$,
 where $\theta$ is the meta-parameter of the meta-function $f_\theta(\cdot)$. Accordingly, the original target task can be solved as $F_{\phi^*}(\cdot)$.
-In fact, the representation of meta-function $f_\theta(\cdot)$ can be diverse. There are two main classs of methods:  Parameterized Policy Gradient Methods (PPG) and Black Box Methods.
+In fact, the representation of meta-function $f_\theta(\cdot)$ can be diverse. There are two main classes of methods:  Parameterized Policy Gradient Methods (PPG) and Black Box Methods.
 
 \textbf{Parameterized Policy Gradient Methods and MAML}
 The PPG method use an iterative algorithm to represent $f_\theta$, which has an innerloop of the form:
@@ -222,7 +228,7 @@ with the initial value $\phi_0^*=\phi_0^*(\theta)$.
 This is very intuitive because it is similar to the traditional gradient decent method to optimize. 
 The only difference is that $\theta$ should be carefully determined by the observations of other tasks $D$ in this scenario.
 One important example of PPG method is MAML, where $\phi_0^*(\theta)=\theta$ and $\hat{L}_\theta$ can be any loss function independent of $\theta$.
-MAML can be regard as learning an initial value for a task distribution, which retains the gradient decent framework of traditional optimization algorithms.
+MAML can be regarded as learning an initial value for a task distribution, which retains the gradient decent framework of traditional optimization algorithms.
 
 
 \textbf{Black Box Methods}
@@ -242,19 +248,19 @@ Hence, in this paper, we opt for MAML as our meta-learning method for the INR ta
 
 \textbf{Overview of MetaINR}
 % 给定sparse observations of n similar time series, 我们的目标是尽可能的还原每一个sample并找到描述这一系列时间序列的主成分PC。
-Given sparse observations of $n$ similar time series, the goal of MetaINR is to reconstruct each sample as accurately as possible and identify the principal components (PC) of these time series.
+Given sparse observations of $n$ similar time series, the goal of MetaINR is to reconstruct each sample as accurately as possible and identify the principal components (PC) of the distribution behind these time series.
 % As discussed in the previous section，在传统的方法中，我们首先利用local polinomial regression 估计这些时间序列的均值和方差，在scores服从正态分布的条件下，就可以利用PACE的方法估计出每个主成分并reconstruct each sample.
 As discussed in the previous section, in traditional approaches, we first use local polynomial regression to estimate the mean and covariance of these time series. 
 Under the assumption that scores follow a normal distribution, the PACE method can then be employed to estimate each principal component and reconstruct each sample.
 % 这种两步估计的方法固然优于直接利用local polynomial 重构sample, 因为它利用了所有样本的信息。但是它依然存在两大明显的缺点：1. scores 服从正态分布的假设太强；2. 均值和协方差的估计不一定准确。
 While this two-step estimation method is indeed superior to directly reconstructing samples using local polynomials as it leverages information from all samples, it still has the notable drawback that 
-the assumption that scores follow a normal distribution is too restrictive.
+the assumption of normal-distributed scores is too restrictive.
 % 在我们的方法中，我们不把meta-learning看成是一种高效学习的方法，而把他当作一种学习大量任务中共性的手段。 利用这个性质，我们先通过meta learning来学习出给定的多个timeseries的共性，然后基于共性还原每个sample的INR。再根据每个sample的INR得到均值和方差的估计值。最后利用方差核来估计主成分。
 Here, we choose an alternative way by using the method of meta-learning, which involves three main steps:
 \begin{itemize}
   \item Learning the meta-model: use SIREN architecture and MAML algorithm to learn the meta-model for the INR of given time series.
   \item Recovery of samples: calculate the SIREN-based INR efficiently for each time series sample based on the mata-model.
-  \item Functional data estimation: use INR of each sample to estimate the mean function, covariance kernel and principal components.
+  \item Functional data estimation: use MetaINR of each sample to estimate the mean function, covariance kernel and principal components.
 \end{itemize}
 We now discuss each step.
 
@@ -324,7 +330,7 @@ According to the covariance operator, we can further estimate its principal comp
 
 In our approach, we view meta-learning not merely as an efficient learning method but as a means to learn commonalities among a large number of tasks.
 Leveraging this property, the metaINR $\hat{y}_i(t)=F_{\phi^*_i}(t)$ implicitly contain the information of the whole datasets.
-Consequently, it provides a robust estimation for sparse time series data.
+Consequently, it provides a reliable estimation for sparse time series data.
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{learning_commonalities.png}
@@ -332,12 +338,23 @@ Consequently, it provides a robust estimation for sparse time series data.
   \label{Learning commonalities}
 \end{figure}
 
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{estimation.png}
+  \caption{Estimation for synthetic data}
+  \label{Estimation for synthetic data}
+\end{figure}
+
+
+
 \section{Experiments}
 We evaluate our method on the synthetic data, with benchmark estimations provided by local polynomial regression \textcolor{red}{and the traditional PACE method [TODO]}.
 Our results clearly demonstrate that MetaINR significantly outperforms the conventional baseline. 
 Moreover, we extended our analysis to a real-world medical dataset to validate the robustness and applicability of our approach in practical scenarios.
 % define evaluation method , measures? not only pictures
 \subsection{Synthetic data}
+
+\textcolor{red}{[IDEA: synthetic data generated by DE + evaluation principle]}
 
 \textbf{Data generating process}
 Our ground truth of our synthetic data distribution is given by:
@@ -350,7 +367,7 @@ A \thicksim Uniform[0,1], \quad B \thicksim Uniform[0,0.5].
 $$
 We randomly draw $n=100$ sample tasks $\{y_i(t)\}_{i=1}^n$ from this distribution.
 For each sample task, $J=20$ observations randomly chosen in irregular time points.
-The overall dataset employed for meta-learning comprises these observations.
+The overall dataset used for meta-learning comprises these observations.
 $$
 D=\{(t_{ij},y_{ij})_{j=1}^{J}\}_{i=1}^n
 $$
@@ -358,6 +375,12 @@ $$
 % $$
 % D=\{(t_{ij},y_{ij})_{j=1}^{J}\}_{i=1}^n
 % $$
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{estimation_realData.png}
+  \caption{Estimation for real-world data}
+  \label{Estimation for real-world data}
+\end{figure}
 \textbf{Meta-learning the commonalities of time series}
 % 当我们对这个人造数据集进行元学习时，确实发现了元学习能够学习到一系列相似时间序列数据的共性。如图一所示，我们发现，当仅仅给出某一个样本后半段【5，10】这段区间的观测时，元学习能够从其他样本的数据中获得信息，学习到这个分布所包含的周期性。而local polynomial regression则仅仅基于单个样本的数据进行估计，这对于时间序列前半段的估计是不准确的。
 When conducting meta-learning on this synthetic dataset, we indeed observed the capability of meta-learning to capture commonalities among a series of similar time-series data.
@@ -371,7 +394,7 @@ By directly plugging the initial values learned by MAML into the SIREN model to 
 we observed a notable proximity between the meta-model and the means of these samples. 
 As demonstrated in Figure \ref{Learning commonalities}b, the meta-learning process is accompanied by the meta-model gradually converging towards the mean.
 % 除了这两个例子之外，【2】向我们展示了MAML能够加速学习的原因是feature reuse，这也解释了为什么元模型会包含数据集的多种特征。因此通过MetaINR进行基于稀疏观测的重建会比local polynomial regression 更加可靠。
-Aside from these two examples, \cite{raghu2019rapid}  illustrates that MAML accelerates learning through feature reuse.
+\textcolor{red}{Aside from these two examples, \cite{raghu2019rapid}  illustrates that MAML accelerates learning through feature reuse.}
 This also clarifies why the meta-model encompasses various features of the dataset. 
 Consequently, employing MetaINR for time series reconstruction based on sparse observations proves to be more reliable than local polynomial regression.
 
@@ -389,6 +412,7 @@ Consequently, employing MetaINR for time series reconstruction based on sparse o
 % \end{figure}
 
 \textbf{Estimation of mean, covariance and principal components}
+
 % 基于每个样本的MetaINR, 我们对这个人造数据集的均值函数，方差核和主成分进行了估计，结果如图3，4，5所示。
 % 我们发现，以MetaINR为基础对三者的估计都远好于benchmark。特别是在数据的边界处，即t接近0或10的位置，baseline的估计往往与真实值相差甚远，而基于MetaINR的估计却相对可靠。
 Based on MetaINR for each sample, we estimated the mean function, covariance kernel, and principal components of this synthetic dataset. 
@@ -396,14 +420,9 @@ The results are demonstrated in Figure \ref{Estimation for synthetic data}.
 We observed that the estimators based on MetaINR for all three metrics significantly outperformed the benchmark. 
 Particularly at the boundaries of the data, where $t$ approaches $0$ or $10$, 
 the baseline estimators often deviated substantially from the true values,
-while the estimateors based on MetaINR remained relatively reliable.
+while the estimators based on MetaINR remained relatively reliable.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=\textwidth]{estimation.png}
-  \caption{Estimation for synthetic data}
-  \label{Estimation for synthetic data}
-\end{figure}
+
 
 % \begin{figure}
 %   \centering
@@ -430,20 +449,19 @@ while the estimateors based on MetaINR remained relatively reliable.
 \subsection{Real-world data}
 %CD4 count 的数据最好用
 \textbf{Data description} 
-We apply MetaINR to the longitudinal data on primary biliary cirrhosis (PBC).
-
+In real-world scenarios, we apply MetaINR to the longitudinal data on primary biliary cirrhosis (PBC).
 \textcolor{red}{The data resulted from a Mayo Clinic trial that was conducted in 1974 to 1984. 
 They are available at http://lib.stat.cmu.edu/datasets/pbc and have been described in Fleming \& Harrington (1991) and Murtaugh et al. (1994).
 The data contain various sparsely and irregularly sampled covariates, 
 as well as the survival or censoring time for each of 312 patients. 
-Among these medical measurements ,
+Among these medical measurements,
 serum bilirubin concentration is known to be elevated in the presence of chronic liver cirrhosis, such as PBC.
 }
 We extracted data from the dataset for the initial 910 days, 
 analyzing bilirubin measurements (in mg/dl) for different patients 
 during the pre-onset phase. 
 The goal was to characterize the pattern of this measurement over time through estimates of mean function, covariance kernel and principal components.
-In the practice, we applied a logarithmic transformation to the bilirubin measurements and removed data for patients with a survival time less than 910 days.
+In practice, we applied a logarithmic transformation to the bilirubin measurements and removed data for patients with a survival time less than 910 days.
 % 因此，我们从数据集中截取了前910天的数据，对这发病前期不同病人的bilirubin measurements (in mg/dl)进行分析，期望通过主成分和均值的估计来刻画这个指标随时间变化的规律。
 % 在实际操作中我们对bilirubin measurements取了对数变换，并且删除了存活时间小于910天的病人的数据。
 A total of 260 patients in the study satisfied these criteria and only 2.9 observations per sample on average. 
@@ -461,23 +479,18 @@ followed by a sharp increase around 400 days (mean function).
 Apart from differences in ``baseline values'' which remain invariant with time (PC1), 
 significant divergence in serum bilirubin concentration among patients emerges around 400 days (PC2).
 
-\begin{figure}
-  \centering
-  \includegraphics[width=\textwidth]{estimation_realData.png}
-  \caption{Estimation for real-world data}
-  \label{Estimation for real-world data}
-\end{figure}
 
 \section{Conclusion and future work}
 % 我们展示了一个利用meta-learning的技术来处理sparse time series data的一个方法。通过meta-learning利用整个数据集的信息可以对只存在极少数观测点的样本进行MetaINR。基于MetaINR让一些原本只在稠密数据集中使用的functional data analysis的方法在sparse 数据集中变得可行。基于MetaINR的估计也为我们进一步分析sparse time series data提供了强大的工具。
-We have shown a method named MetaINR utilizing meta-learning techniques to analyze sparse time series data. 
-Through meta-learning, the MetaINR approach enables the estimation of functional form samples with very few observation points by leveraging information from the entire dataset. 
+In this paper, we have shown a method named MetaINR utilizing meta-learning to analyze sparse time series data. 
+MetaINR enables the estimation of functional form samples with very few observation points by leveraging information from the entire dataset through meta-learning. 
 The application of MetaINR makes functional data analysis (FDA) methods, which are typically used in dense datasets, feasible for sparse datasets. 
 Therefore, MetaINR provides a novel tool for further analyzing sparse time series data.
 % 在未来的研究中，我们希望可以利用MetaINR对其他原本只适用于稠密数据集的funcational data analysis的方法进行拓展，如FPLS，functional regression等。从而结合MetaINR和FDA的方法来建立针对sparse data的分析工具库。
 
 In future research, we aim to extend the application of MetaINR to other functional data analysis methods that were initially designed for dense datasets, such as Functional Partial Least Squares Regression (FPLS), functional regression, registration and more.
-This approach aims to build an analytical toolkit for sparse data by combining MetaINR with various functional data analysis methods.
+We can also explore other algorithms of meta-learning, such as SNAIL, and compare the performances between them.
+% This approach aims to build an analytical toolkit for sparse data by combining MetaINR with various functional data analysis methods.
 \section{Appendix}
 
 \subsection{Traditional FDA method for sparse functional data: PACE}
@@ -486,6 +499,9 @@ This approach aims to build an analytical toolkit for sparse data by combining M
 
 \subsection{Experiments on other synthetic data}
 
+\section*{Data and code availability}
+PBC data used in this paper is available at \url{http://lib.stat.cmu.edu/datasets/pbc} , and it also can be found in a R package called ``survival''.
+All the experimental code in this paper is available at \url{https://github.com/cbfcbf/code\_metaINR}.
 
 \bibliographystyle{IEEEtran}      %IEEEtran为给定模板格式定义文件名
 \bibliography{ref}
