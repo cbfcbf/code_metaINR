@@ -112,7 +112,16 @@ In this paper, we introduce a novel approach, MetaINR, which combines meta-learn
 Through this method, we use meta-learning to realize the implicit neural representation (INR) to
 reconstruct the time series function for each sample based on sparse time series observations.
 Furthermore, we can estimate the mean, covariance, and principal components of the distribution behind these samples.
+\textcolor{blue}{
+  The advantange of MetaINR can be summarized as follows:
+  \begin{itemize}
+    \item 1
+    \item 2
+  \end{itemize}
+}
+
 Therefore, MetaINR method presents a new solution for addressing issues related to sparse time series data.
+
 
 % Sparse time series data 在日常生活中非常常见，比如病人在不同时间测量的医疗数据、青少年在成长时不同阶段测量得到的身高数据等。这些数据的稀疏性和irregularity让传统的统计手段变得不太适用。同时，绝大多数时间序列数据所拥有的连续性，可微性等性质也给基于multivarible的统计学分析带来了困境
 % 最近的研究表明，元学习在处理稀疏形数据中具有独特的优势。它可以从大量相似的任务中学习任务的共性，并对非常稀疏的训练集做到few-shot learning, 甚至 one-shot learning。同时，在处理连续的时间序列问题时，基于funcitonal data 的统计学也逐渐成熟。
@@ -176,14 +185,19 @@ f\left(\beta,(t,s),(t_{ij},t_{il})\right)=\beta_0 + \beta_{11}(t-t_{ij})+\beta_{
 $$
 By minimization of $L_{t,s}^c(\beta)$, we obtain $(\beta_0(t),\beta_{11}(t),\beta_{12}(t))=arg\,min L_{t,s}^c(\beta)$. Then the estimator of the covariance kernel is defined as $\hat{c}(t,s)=\beta_0(t,s)$.
 Based on the estimation of mean and covariance,  we can use the method of Principal Analysis by Conditional Expectation (PACE) to reconstruct each sample and compute their scores \textcolor{red}{(see details in the appendix)[TODO]}.
+
+\textcolor{blue}{
+\textbf{The drawbacks of traditional FDA method for sparse data}
 Comparing to using local polynomial regression directly to reconstruct samples, It is noticeable that the reconstruction of the sample in this method makes use of the total of information of all observations, but it hugely relies on the assumption that scores are normally distributed. 
 \textcolor{red}{In the following text, I will compare the estimates obtained based on this method as the baseline with the meta-learning-based approach proposed in this paper.[TODO PACE baseline coding]} 
 % 下文中我会将基于这种方法得到的估计值作为Baseline与本文提出的基于metalearning的方法相比较。
+}
 
 \subsection{Implicit Neural Representation}
 
 % 传统上，函数形数据的表示会用标准的网格法，即给定有限个坐标和函数值的pairs(ti,yi)。这么做有一定的缺陷：原来在无穷维空间中的函数形数据被离散化到了有穷维空间，它不仅不利于求导等计算，而且会极大影响函数的在一个较小时间区间上的分辨率。随着深度学习的兴起，人们发现可以利用深度神经网络来表示函数。···
 \textbf{Traditional grid-based representation versus implicit neural representation}
+% Our method introduce the implicit neural representation (INR) to represent functional data for further analysis. 
 Traditionally, the representation of functional data $y(t)$ involves using a standard grid-based method, 
 wherein a finite set of coordinates and corresponding function values are given as pairs $(t_i, y_i)$. 
 However, this approach has certain drawbacks: the original functional data in an infinite-dimensional space is discretized into a finite-dimensional space. 
@@ -207,7 +221,11 @@ SIREN employs the sine function as the activation function, effectively capturin
 A remarkable observation is that even after taking derivatives of a function represented using SIREN, 
 it can still be expressed using the SIREN architecture. 
 While previous research predominantly applied SIREN to represent images and videos, its application in time series representation has been limited. 
+
+\textcolor{blue}{
+\textbf{The advantages of SIREN-based INR for further functional analysis}
 This paper explores the utilization of SIREN in the analysis of time series and demonstates its superiority in time series INR.
+}
 
 \subsection{Meta-learning}
 
@@ -231,30 +249,39 @@ One important example of PPG method is MAML, where $\phi_0^*(\theta)=\theta$ and
 MAML can be regarded as learning an initial value for a task distribution, which retains the gradient decent framework of traditional optimization algorithms.
 
 
-\textbf{Black Box Methods}
+\textbf{Black box methods}
 Since we only care about the target function $F_\phi(\cdot)$ rather than the value of parameters $\phi$, an alternative way to treat $f_\theta(\cdot)$ is to see it as a black box. Based on this idea, we can rewrite the target function:
 $$
 F_\phi(t)=F_{f_\theta(D,D^*)}(t)=g_\theta(t,D,D^*)
 $$
 Here we do not need to explicitly specify the value of $\phi$, and treat the meta-learning task as another ``big'' task, which adds all the training materials into input.
-Because of the sequential properties of the datasets, sequential model architectures such as RNN are used in $g_\theta$, which unavoidably change the initial architecture $F_\phi$.
+
+\textcolor{blue}{
+\textbf{PPG versus black box methods}
+For black box methods, because of the sequential properties of the datasets, sequential model architectures such as RNN are used in $g_\theta$, which unavoidably change the initial architecture $F_\phi$.
 In contrast, PPG methods use the meta-parameters $\theta$ to find the task parameters $\phi$ explicitly, which maintain the initial network architecture.
 Therefore, black box methods have inductive bias from data while PPG methods have inductive bias in network structure.
-
 In the context of time series Implicit Neural Representation (INR), selecting an appropriate network structure is crucial, as it directly influences properties such as continuity and differentiability.
 Hence, in this paper, we opt for MAML as our meta-learning method for the INR task.
+}
+
+\textcolor{blue}{
+\subsection{Other learning method for sparse data INR}
+}
 
 \section{Method}
+
+\textcolor{blue}{[picture, illustration]}
 
 \textbf{Overview of MetaINR}
 % 给定sparse observations of n similar time series, 我们的目标是尽可能的还原每一个sample并找到描述这一系列时间序列的主成分PC。
 Given sparse observations of $n$ similar time series, the goal of MetaINR is to reconstruct each sample as accurately as possible and identify the principal components (PC) of the distribution behind these time series.
 % As discussed in the previous section，在传统的方法中，我们首先利用local polinomial regression 估计这些时间序列的均值和方差，在scores服从正态分布的条件下，就可以利用PACE的方法估计出每个主成分并reconstruct each sample.
-As discussed in the previous section, in traditional approaches, we first use local polynomial regression to estimate the mean and covariance of these time series. 
-Under the assumption that scores follow a normal distribution, the PACE method can then be employed to estimate each principal component and reconstruct each sample.
-% 这种两步估计的方法固然优于直接利用local polynomial 重构sample, 因为它利用了所有样本的信息。但是它依然存在两大明显的缺点：1. scores 服从正态分布的假设太强；2. 均值和协方差的估计不一定准确。
-While this two-step estimation method is indeed superior to directly reconstructing samples using local polynomials as it leverages information from all samples, it still has the notable drawback that 
-the assumption of normal-distributed scores is too restrictive.
+% As discussed in the previous section, in traditional approaches, we first use local polynomial regression to estimate the mean and covariance of these time series. 
+% Under the assumption that scores follow a normal distribution, the PACE method can then be employed to estimate each principal component and reconstruct each sample.
+% % 这种两步估计的方法固然优于直接利用local polynomial 重构sample, 因为它利用了所有样本的信息。但是它依然存在两大明显的缺点：1. scores 服从正态分布的假设太强；2. 均值和协方差的估计不一定准确。
+% While this two-step estimation method is indeed superior to directly reconstructing samples using local polynomials as it leverages information from all samples, it still has the notable drawback that 
+% the assumption of normal-distributed scores is too restrictive.
 % 在我们的方法中，我们不把meta-learning看成是一种高效学习的方法，而把他当作一种学习大量任务中共性的手段。 利用这个性质，我们先通过meta learning来学习出给定的多个timeseries的共性，然后基于共性还原每个sample的INR。再根据每个sample的INR得到均值和方差的估计值。最后利用方差核来估计主成分。
 Here, we choose an alternative way by using the method of meta-learning, which involves three main steps:
 \begin{itemize}
@@ -328,9 +355,26 @@ $$
 $$
 According to the covariance operator, we can further estimate its principal components $\hat{\phi}_k$ by calculate the eigenfunctions of $\hat{c}(t,s)$.
 
+\textcolor{blue}{
+\textbf{Discussion (motivation, advantage)}
+As discussed in the previous section, in traditional approaches, we first use local polynomial regression to estimate the mean and covariance of these time series. 
+Under the assumption that scores follow a normal distribution, the PACE method can then be employed to estimate each principal component and reconstruct each sample.
+% 这种两步估计的方法固然优于直接利用local polynomial 重构sample, 因为它利用了所有样本的信息。但是它依然存在两大明显的缺点：1. scores 服从正态分布的假设太强；2. 均值和协方差的估计不一定准确。
+While this two-step estimation method is indeed superior to directly reconstructing samples using local polynomials as it leverages information from all samples, it still has the notable drawback that 
+the assumption of normal-distributed scores is too restrictive.
+}
+
+\textcolor{blue}{
 In our approach, we view meta-learning not merely as an efficient learning method but as a means to learn commonalities among a large number of tasks.
 Leveraging this property, the metaINR $\hat{y}_i(t)=F_{\phi^*_i}(t)$ implicitly contain the information of the whole datasets.
 Consequently, it provides a reliable estimation for sparse time series data.
+}
+
+\textcolor{blue}{
+\textbf{MetaINR versus other learning-based INR for sparse data}
+% metalearning 为什么要用metalearning 能够保持原本的网络结构
+}
+
 \begin{figure}
   \centering
   \includegraphics[width=\textwidth]{learning_commonalities.png}
@@ -503,6 +547,10 @@ We can also explore other algorithms of meta-learning, such as SNAIL, and compar
 PBC data used in this paper is available at \url{http://lib.stat.cmu.edu/datasets/pbc} , and it also can be found in a R package called ``survival''.
 All the experimental code in this paper is available at \url{https://github.com/cbfcbf/code\_metaINR}.
 
+\section*{Acknowledgments}
+We express our gratitude to Prof. Mihaela van der Schaar for her invaluable supervision. 
+Additionally, we extend our thanks to the research group members of the van der Scaar lab, Dr. Kasia Kobalczyk and Dr. Krzysztof Kacprzyk, for their insightful discussions and constructive suggestions. 
+The input from these individuals significantly enhanced the quality of this paper.
 \bibliographystyle{IEEEtran}      %IEEEtran为给定模板格式定义文件名
 \bibliography{ref}
 
