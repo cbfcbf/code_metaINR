@@ -94,7 +94,7 @@
 \maketitle
 
 \begin{abstract}
-  Sparse time series data is everywhere in our daily life. However it is hard to analyze them by traditional statistical methods. Here, we propose MetaINR, a method to learning the implicit neural representation (INR) of time series given sparse and irregular obsevations.
+  Sparse time series data is everywhere in our daily life. However, it is hard to analyze them by traditional statistical methods. Here, we propose MetaINR, a method to learning the implicit neural representation (INR) of time series given sparse and irregular obsevations.
   Based on MetaINR, estimations of mean function, covariance operator, and principal components can be implemented easily.
   The method introduce the meta-learning to the functional data analysis (FDA) framework, which greatly outperforms the traditional baseline.
 \end{abstract}
@@ -105,8 +105,11 @@ However, the sparsity and irregularity of such data make traditional statistical
 Additionally, the consideration of continuity and differentiability properties in most time series data pose challenges for multivariable statistical analysis.
 
 Recent research suggests that meta-learning exhibits great advantages in handling sparse data. 
-It can learn commonalities among similar tasks, enabling few-shot learning or even one-shot learning on extremely sparse training sets. 
-Besides, statistical analysis based on dense functional data has been hugely developed for dealing with continuous time series problems.
+It possesses the capability to identify shared patterns among related tasks, 
+facilitating few-shot learning or even one-shot learning with extremely limited training data. 
+Moreover, there has been substantial progress in statistical analysis utilizing dense functional data to address continuous time series issues. 
+These findings inspire us to leverage meta-learning techniques to transform sparse time series data into dense formats.
+Subsequently, we can extend the established functional data analysis methodologies tailored for dense data to analyze sparse time series datasets effectively.
 
 In this paper, we introduce a novel approach, MetaINR, which combines meta-learning and functional data analysis to address the estimation challenges posed by sparse time series data. 
 Through this method, we use meta-learning to realize the implicit neural representation (INR) to
@@ -115,12 +118,13 @@ Furthermore, we can estimate the mean, covariance, and principal components of t
 \textcolor{blue}{
   The advantange of MetaINR can be summarized as follows:
   \begin{itemize}
-    \item 1
-    \item 2
+    \item reconstruct time series samples with sparse observations efficiently and accurately by leveraging information from the entire dataset
+    \item Do not rely on any initial assumptions about the distribution of time series samples
+    \item Possess an explicit INR model structure, reducing the inductive bias introduced from data
   \end{itemize}
 }
 
-Therefore, MetaINR method presents a new solution for addressing issues related to sparse time series data.
+Therefore, MetaINR method provides a new solution for addressing issues related to sparse time series data.
 
 
 % Sparse time series data 在日常生活中非常常见，比如病人在不同时间测量的医疗数据、青少年在成长时不同阶段测量得到的身高数据等。这些数据的稀疏性和irregularity让传统的统计手段变得不太适用。同时，绝大多数时间序列数据所拥有的连续性，可微性等性质也给基于multivarible的统计学分析带来了困境
@@ -271,7 +275,12 @@ Hence, in this paper, we opt for MAML as our meta-learning method for the INR ta
 
 \section{Method}
 
-\textcolor{blue}{[picture, illustration]}
+\begin{figure}
+  \centering
+  \includegraphics[width=\textwidth]{illustration.pdf}
+  \caption{MetaINR workflow}
+  \label{MetaINR workflow}
+\end{figure}
 
 \textbf{Overview of MetaINR}
 % 给定sparse observations of n similar time series, 我们的目标是尽可能的还原每一个sample并找到描述这一系列时间序列的主成分PC。
