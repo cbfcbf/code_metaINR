@@ -31,4 +31,15 @@ A.~Raghu, M.~Raghu, S.~Bengio, and O.~Vinyals, ``Rapid learning or feature
   reuse? towards understanding the effectiveness of maml,'' \emph{arXiv
   preprint arXiv:1909.09157}, 2019.
 
+\bibitem{chen2018neural}
+R.~T. Chen, Y.~Rubanova, J.~Bettencourt, and D.~K. Duvenaud, ``Neural ordinary
+  differential equations,'' \emph{Advances in neural information processing
+  systems}, vol.~31, 2018.
+
+\bibitem{holt2022neural}
+S.~I. Holt, Z.~Qian, and M.~van~der Schaar, ``Neural laplace: Learning diverse
+  classes of differential equations in the laplace domain,'' in
+  \emph{International Conference on Machine Learning}.\hskip 1em plus 0.5em
+  minus 0.4em\relax PMLR, 2022, pp. 8811--8832.
+
 \end{thebibliography}
