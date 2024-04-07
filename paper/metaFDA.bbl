@@ -42,4 +42,20 @@ S.~I. Holt, Z.~Qian, and M.~van~der Schaar, ``Neural laplace: Learning diverse
   \emph{International Conference on Machine Learning}.\hskip 1em plus 0.5em
   minus 0.4em\relax PMLR, 2022, pp. 8811--8832.
 
+\bibitem{fleming2013counting}
+T.~R. Fleming and D.~P. Harrington, \emph{Counting processes and survival
+  analysis}.\hskip 1em plus 0.5em minus 0.4em\relax John Wiley \& Sons, 2013,
+  vol. 625.
+
+\bibitem{murtaugh1994primary}
+P.~A. Murtaugh, R.~E. Dickson, G.~M. Van~Dam, M.~Malinchoc, P.~M. Grambsch,
+  A.~L. Langworthy, and C.~H. Gips, ``Primary biliary cirrhosis: prediction of
+  short--term survival based on repeated patient visits,'' \emph{Hepatology},
+  vol.~20, no.~1, pp. 126--134, 1994.
+
+\bibitem{yao2005functional}
+F.~Yao, H.-G. M{\"u}ller, and J.-L. Wang, ``Functional data analysis for sparse
+  longitudinal data,'' \emph{Journal of the American statistical association},
+  vol. 100, no. 470, pp. 577--590, 2005.
+
 \end{thebibliography}

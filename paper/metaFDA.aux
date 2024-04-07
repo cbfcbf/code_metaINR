@@ -26,33 +26,42 @@
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}Meta-learning for sparse data INR}{3}{subsubsection.2.2.2}\protected@file@percent }
 \citation{chen2018neural}
 \citation{holt2022neural}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces MetaINR workflow}}{4}{figure.1}\protected@file@percent }
-\newlabel{MetaINR workflow}{{1}{4}{MetaINR workflow}{figure.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Method}{5}{section.3}\protected@file@percent }
-\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Model-Agnostic Meta-Learning for Time Series Implicit Neural Representation}}{5}{algorithm.1}\protected@file@percent }
-\newlabel{MAML}{{1}{5}{Method}{algorithm.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {3}Method}{4}{section.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textbf  {MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi _0$ for SIREN architecture $F$. The meta-model $F_{\phi _0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately. The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components.}}{5}{figure.1}\protected@file@percent }
+\newlabel{MetaINR workflow}{{1}{5}{\textbf {MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi _0$ for SIREN architecture $F$. The meta-model $F_{\phi _0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately. The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components}{figure.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Experiments}{5}{section.4}\protected@file@percent }
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Model-Agnostic Meta-Learning for Time Series Implicit Neural Representation}}{6}{algorithm.1}\protected@file@percent }
+\newlabel{MAML}{{1}{6}{Method}{algorithm.1}{}}
 \@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Implicit Neural Representation Learning for Target Sample}}{6}{algorithm.2}\protected@file@percent }
 \newlabel{INR-learning}{{2}{6}{Method}{algorithm.2}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces Learning commonalities}}{6}{figure.2}\protected@file@percent }
-\newlabel{Learning commonalities}{{2}{6}{Learning commonalities}{figure.2}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Experiments}{6}{section.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Synthetic data}{6}{subsection.4.1}\protected@file@percent }
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of analysis methods for sparse time series data}}{6}{table.1}\protected@file@percent }
+\newlabel{method_compare}{{1}{6}{Comparison of analysis methods for sparse time series data}{table.1}{}}
 \citation{raghu2019rapid}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces Estimation for synthetic data}}{7}{figure.3}\protected@file@percent }
-\newlabel{Estimation for synthetic data}{{3}{7}{Estimation for synthetic data}{figure.3}{}}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces Estimation for real-world data}}{8}{figure.4}\protected@file@percent }
-\newlabel{Estimation for real-world data}{{4}{8}{Estimation for real-world data}{figure.4}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Real-world data}{8}{subsection.4.2}\protected@file@percent }
+\citation{fleming2013counting}
+\citation{murtaugh1994primary}
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {Learning commonalities.} The figure illustrates two examples (periodicity \& mean function) of the ``shared characteristics'' that MAML learned among these tasks. It is noticable that MetaINR is able to learn the periodicity between the interval $[0,5]$ while local polynomial regression totally misses this information. It is also clear that the meta-model gradually approximates the true mean function during the training process. }}{7}{figure.2}\protected@file@percent }
+\newlabel{Learning commonalities}{{2}{7}{\textbf {Learning commonalities.} The figure illustrates two examples (periodicity \& mean function) of the ``shared characteristics'' that MAML learned among these tasks. It is noticable that MetaINR is able to learn the periodicity between the interval $[0,5]$ while local polynomial regression totally misses this information. It is also clear that the meta-model gradually approximates the true mean function during the training process}{figure.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Real-world data}{7}{subsection.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Estimation for synthetic data.} The figure shows the results of the estimation of mean function, covariance kernel and principal components in synthetic data. }}{8}{figure.3}\protected@file@percent }
+\newlabel{Estimation for synthetic data}{{3}{8}{\textbf {Estimation for synthetic data.} The figure shows the results of the estimation of mean function, covariance kernel and principal components in synthetic data}{figure.3}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion and future work}{8}{section.5}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Estimation for real-world data.}}}{9}{figure.4}\protected@file@percent }
+\newlabel{Estimation for real-world data}{{4}{9}{\textbf {Estimation for real-world data.}}{figure.4}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {6}Appendix}{9}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Traditional FDA method for sparse functional data: PACE}{9}{subsection.6.1}\protected@file@percent }
+\citation{yao2005functional}
+\citation{yao2005functional}
 \bibstyle{IEEEtran}
 \bibdata{ref}
 \bibcite{sitzmann2020implicit}{{1}{}{{}}{{}}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion and future work}{9}{section.5}\protected@file@percent }
-\@writefile{toc}{\contentsline {section}{\numberline {6}Appendix}{9}{section.6}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Traditional FDA method for sparse functional data: PACE}{9}{subsection.6.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Brief introduciton to SIREN}{9}{subsection.6.2}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Experiments on other synthetic data}{9}{subsection.6.3}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}Brief introduciton to SIREN}{10}{subsection.6.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Experiments on other synthetic data}{10}{subsection.6.3}\protected@file@percent }
 \bibcite{raghu2019rapid}{{2}{}{{}}{{}}}
 \bibcite{chen2018neural}{{3}{}{{}}{{}}}
 \bibcite{holt2022neural}{{4}{}{{}}{{}}}
+\bibcite{fleming2013counting}{{5}{}{{}}{{}}}
+\bibcite{murtaugh1994primary}{{6}{}{{}}{{}}}
+\bibcite{yao2005functional}{{7}{}{{}}{{}}}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
-\gdef \@abspage@last{10}
+\gdef \@abspage@last{11}

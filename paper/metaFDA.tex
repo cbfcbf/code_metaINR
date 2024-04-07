@@ -35,10 +35,12 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage{graphicx}
+\usepackage{makecell}
 
 \usepackage{algorithm}
 \usepackage{algorithmic}
-
+\usepackage{utfsym}
+\newcommand{\xmark}{\usym{2717}}
 
 \title{Meta-learning Implicit Neural Representation for Sparse Time Series Functional Data Analysis}
 
@@ -183,8 +185,7 @@ We introduce the following two traditional solutions for sparse time series data
   \textcolor{red}{[TODO PACE baseline coding]} 
   In this method, we start by employing local polynomial regression to estimate the mean function and variance kernel. 
   Next, we calculate principal components based on these estimates. 
-  Finally, we recover samples by computing the scores associated with each principal component.(see details in the appendix)
-  \textcolor{red}{[TODO]}.
+  Finally, we recover samples by computing the scores associated with each principal component (see details in the appendix).
   Comparing to LocalRecover method, this approach leverages information from observations of other samples in the dataset during the sample recovery process, 
   thereby enhancing the reliability of the reconstruction. 
   However, it's important to note that PACE also comes with limitations, primarily because it heavily depends on the assumption that scores follow a normal distribution while recovering time series samples.
@@ -235,12 +236,6 @@ These properties of SIREN make it the preferred choice for INR.
 While previous research predominantly applied SIREN to represent images and videos, its application in time series representation has been limited. 
 This paper explores the use of SIREN in the analysis of time series and demonstates its superiority.
 
-\begin{figure}
-  \centering
-  \includegraphics[width=\textwidth]{illustration.pdf}
-  \caption{MetaINR workflow}
-  \label{MetaINR workflow}
-\end{figure}
 
 \subsubsection{Meta-learning for sparse data INR}
 
@@ -260,7 +255,7 @@ $$
 with the initial value $\phi_0^*=\phi_0^*(\theta)$.
 This is very intuitive because it is similar to the traditional gradient decent method to optimize. 
 The only difference is that the initial value, loss function and gradient step should be carefully trained by the observations of other tasks $D$ in this scenario.
-One important example of PPG method is MAML, where $\phi_0^*(\theta)=\theta$ and $\hat{L}_\theta$ can be any loss function independent of $\theta$.
+One important example of PPG method is  Model-Agnostic Meta-Learning (MAML), where $\phi_0^*(\theta)=\theta$ and $\hat{L}_\theta$ can be any loss function independent of $\theta$.
 MAML can be regarded as learning an initial value for a task distribution, which retains the gradient decent framework of traditional optimization algorithms.
 
 \textbf{Black box methods}
@@ -277,7 +272,6 @@ Here we do not need to explicitly specify the value of $\phi$, and treat the met
   these models consider learning the commonalities among a group of time series as a task, where $t$ and $D^*$ are all their input.
 }
 
-
 \textcolor{blue}{
 \textbf{Advantages of MAML for sparse INR tasks}
 For black box methods, because of the sequential properties of input observations, sequential model architectures such as RNN are always used in $g_\theta$ to encode, which unavoidably change the initial architecture $F_\phi$.
@@ -290,12 +284,14 @@ Hence, in this paper, we opt for MAML as our meta-learning method for the INR ta
 
 
 
+
 \section{Method}
+
 
 \textbf{Overview of MetaINR}
 % 给定sparse observations of n similar time series, 我们的目标是尽可能的还原每一个sample并找到描述这一系列时间序列的主成分PC。
 Given sparse observations of $n$ similar time series, the goal of FDA for sparse data is to reconstruct each sample as accurately as possible and identify the principal components (PC) of the distribution behind these time series.
-% As discussed in the previous section，在传统的方法中，我们首先利用local polinomial regression 估计这些时间序列的均值和方差，在scores服从正态分布的条件下，就可以利用PACE的方法估计出每个主成分并reconstruct each sample.
+% As discussed in the previous section，在传统的方法中，我们首先利用local polynomial regression 估计这些时间序列的均值和方差，在scores服从正态分布的条件下，就可以利用PACE的方法估计出每个主成分并reconstruct each sample.
 % As discussed in the previous section, in traditional approaches, we first use local polynomial regression to estimate the mean and covariance of these time series. 
 % Under the assumption that scores follow a normal distribution, the PACE method can then be employed to estimate each principal component and reconstruct each sample.
 % % 这种两步估计的方法固然优于直接利用local polynomial 重构sample, 因为它利用了所有样本的信息。但是它依然存在两大明显的缺点：1. scores 服从正态分布的假设太强；2. 均值和协方差的估计不一定准确。
@@ -304,11 +300,23 @@ Given sparse observations of $n$ similar time series, the goal of FDA for sparse
 % 在我们的方法中，我们不把meta-learning看成是一种高效学习的方法，而把他当作一种学习大量任务中共性的手段。 利用这个性质，我们先通过meta learning来学习出给定的多个timeseries的共性，然后基于共性还原每个sample的INR。再根据每个sample的INR得到均值和方差的估计值。最后利用方差核来估计主成分。
 As discussed in the previous section, traditional FDA approaches either do not work well with sparse data or rely on many assumptions.
 Here, we choose an alternative way by using the method of meta-learning, which involves three main steps:
+
+
+
 \begin{itemize}
   \item Learning the meta-model: Use SIREN architecture and MAML algorithm to learn the meta-model for the INR of given time series.
   \item Recovery of samples: Calculate the SIREN-based INR efficiently for each time series sample based on the mata-model.
   \item Functional data estimation: Apply dense-data-based traditional FDA methods to the MetaINR of each sample to estimate the mean function, covariance kernel and principal components effectively.
 \end{itemize}
+
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.8\textwidth]{illustration.pdf}
+  \caption{\textbf{MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi_0$ for SIREN architecture $F$. The meta-model $F_{\phi_0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately.
+  The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components.}
+  \label{MetaINR workflow}
+\end{figure}
+
 We now discuss each step.
 
 \textbf{Learning the meta-model}
@@ -316,8 +324,7 @@ The tasks here are realizing the implicit neural representation of samples by th
 Given the sparse observations of $n$ similiar time series $D=\{(t_{ij},y_{ij})_{j=1}^{J_i}\}_{i=1}^n$,
 we use MAML algorithm \ref{MAML} to learning the meta-model of these tasks, 
 whose initial value of parameters are denoted by $\phi_0$. 
-The MAML optimization process to find $\phi_0$ can be expressed as follows:
-\begin{algorithm}
+\begin{algorithm}[htb]
 	\renewcommand{\algorithmicrequire}{\textbf{Input:}}
 	\renewcommand{\algorithmicensure}{\textbf{Output:}}
 	\caption{Model-Agnostic Meta-Learning for Time Series Implicit Neural Representation}
@@ -344,9 +351,10 @@ The MAML optimization process to find $\phi_0$ can be expressed as follows:
   \end{algorithmic}  
 \end{algorithm}
 
+
 \textbf{Recovery of samples}
-Based on this meta-model, we can use gradient decent algorithm\ref{INR-learning} to calculate the optimal parameters $\phi^*_i$ for the sample $i$ and hence obtain the INR $F_{\phi^*_i}(t)$. 
-\begin{algorithm}
+Based on this meta-model, we can use gradient decent algorithm \ref{INR-learning} to calculate the optimal parameters $\phi^*_i$ for the sample $i$ and hence obtain the INR $F_{\phi^*_i}(t)$. 
+\begin{algorithm}[htb]
 	\renewcommand{\algorithmicrequire}{\textbf{Input:}}
 	\renewcommand{\algorithmicensure}{\textbf{Output:}}
 	\caption{Implicit Neural Representation Learning for Target Sample}
@@ -389,23 +397,27 @@ Compared to the LocalRecover method in Section 2, a more robust estimation is ac
 Furthermore, unlike the PACE method in Section 2, 
 MetaINR imposes no constraints on the distribution of samples, making it more versatile.
 In contrast to other learning-based black box method, MetaINR preserve the SIREN-based INR architecture, enabling more detailed representation and easy differentiation of each sample.
+The overall comparison of these methods are shown in table \ref{method_compare}.
 }
 
-
-
-\begin{figure}
+\begin{table}[htb]
   \centering
-  \includegraphics[width=\textwidth]{learning_commonalities.png}
-  \caption{Learning commonalities}
-  \label{Learning commonalities}
-\end{figure}
+\begin{tabular}{lcccc}
+  \hline 
+  Method & \thead{Irregularity\\of observations} & \thead{Sparsity \\of obervations} & \thead{General distribution \\ of samples} & \thead{Preservation \\ of architecture} \\
+  \hline  
+  Multivariable Statistics& $\xmark$ & $\xmark$ & $\checkmark$ & $-$\\
+  LocalRecover & $\checkmark$ & $\xmark$ & $\checkmark$ & $-$\\
+  PACE & $\checkmark$ & $\checkmark$ & $\xmark$& $-$  \\
+  Neural ODE & $\checkmark$ & $\checkmark$ & $\xmark$ & $\xmark$ \\
+  Neural Laplace & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\xmark$ \\
+  MetaINR & $\checkmark$ & $\checkmark$ &$\checkmark$ & $\checkmark$\\
+ \hline
+\end{tabular}
+\caption{Comparison of analysis methods for sparse time series data}
+\label{method_compare}
+\end{table}
 
-\begin{figure}
-  \centering
-  \includegraphics[width=\textwidth]{estimation.png}
-  \caption{Estimation for synthetic data}
-  \label{Estimation for synthetic data}
-\end{figure}
 
 
 
@@ -417,6 +429,7 @@ Moreover, we extended our analysis to a real-world medical dataset to validate t
 \subsection{Synthetic data}
 
 \textcolor{red}{[IDEA: synthetic data generated by DE + evaluation principle]}
+
 
 \textbf{Data generating process}
 The ground truth of our synthetic data distribution is given by:
@@ -437,14 +450,9 @@ $$
 % $$
 % D=\{(t_{ij},y_{ij})_{j=1}^{J}\}_{i=1}^n
 % $$
-\begin{figure}
-  \centering
-  \includegraphics[width=\textwidth]{estimation_realData.png}
-  \caption{Estimation for real-world data}
-  \label{Estimation for real-world data}
-\end{figure}
 
 \textbf{Meta-learning the commonalities of time series}
+
 % 当我们对这个人造数据集进行元学习时，确实发现了元学习能够学习到一系列相似时间序列数据的共性。如图一所示，我们发现，当仅仅给出某一个样本后半段【5，10】这段区间的观测时，元学习能够从其他样本的数据中获得信息，学习到这个分布所包含的周期性。而local polynomial regression则仅仅基于单个样本的数据进行估计，这对于时间序列前半段的估计是不准确的。
 We observed the capability of meta-learning to capture commonalities among a series of similar time-series data.
 As shown in Figure \ref{Learning commonalities}a, when providing observations solely from the latter segment ($t \in [5, 10]$) of a particular sample, 
@@ -459,6 +467,13 @@ As demonstrated in Figure \ref{Learning commonalities}b, the meta-learning proce
 % 除了这两个例子之外，【2】向我们展示了MAML能够加速学习的原因是feature reuse，这也解释了为什么元模型会包含数据集的多种特征。因此通过MetaINR进行基于稀疏观测的重建会比local polynomial regression 更加可靠。
 \textcolor{red}{Aside from these two examples, \cite{raghu2019rapid}  illustrates that MAML accelerates learning through feature reuse.}
 This also clarifies why the meta-model encompasses various features of the dataset and MetaINR is a more reliable way for sample recovery than local polynomial regression. 
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=\textwidth]{learning_commonalities.png}
+  \caption{\textbf{Learning commonalities.} The figure illustrates two examples (periodicity \& mean function) of the ``shared characteristics'' that MAML learned among these tasks. 
+  It is noticable that MetaINR is able to learn the periodicity between the interval $[0,5]$ while local polynomial regression totally misses this information. It is also clear that the meta-model gradually approximates the true mean function during the training process. }
+  \label{Learning commonalities}
+\end{figure}
 
 
 % \begin{figure}
@@ -483,6 +498,12 @@ the estimators based on MetaINR for all three metrics significantly outperformed
 Particularly at the boundaries of the data, where $t$ approaches $0$ or $10$, 
 the baseline estimators often deviated substantially from the true values,
 while the estimators based on MetaINR remained relatively reliable.
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=\textwidth]{estimation.png}
+  \caption{\textbf{Estimation for synthetic data.} The figure shows the results of the estimation of mean function, covariance kernel and principal components in synthetic data. }
+  \label{Estimation for synthetic data}
+\end{figure}
 
 
 
@@ -512,19 +533,18 @@ while the estimators based on MetaINR remained relatively reliable.
 %CD4 count 的数据最好用
 \textbf{Data description} 
 In real-world scenarios, we apply MetaINR to the longitudinal data on primary biliary cirrhosis (PBC).
-\textcolor{red}{The data resulted from a Mayo Clinic trial that was conducted in 1974 to 1984, 
-which is described in Fleming \& Harrington (1991) and Murtaugh et al. (1994). 
+The data resulted from a Mayo Clinic trial that was conducted in 1974 to 1984, 
+which is also described in \cite{fleming2013counting} and \cite{murtaugh1994primary}. 
 They are available at http://lib.stat.cmu.edu/datasets/pbc or at a R package called ``survival''.
 The data contain various sparsely and irregularly sampled covariates for each of 312 patients. 
 Among these medical measurements,
 serum bilirubin concentration is known to be elevated in the presence of chronic liver cirrhosis, such as PBC.
-[TODO]
-}
+Therefore, it is important to analyze the time series data of bilirubin measurements for PBC prediction.
 %所以预测并分析PBC数据的时间序列对病人十分重要
-We extracted data from the dataset for the initial 910 days, 
+We extracte data from the dataset for the initial 910 days, 
 analyzing bilirubin measurements (in mg/dl) for different patients 
 during the pre-onset phase. 
-The goal was to characterize the pattern of this measurement over time through estimates of mean function, covariance kernel and principal components.
+Our goal is to characterize the pattern of this measurement over time through estimates of mean function, covariance kernel and principal components.
 In practice, we applied a logarithmic transformation to the bilirubin measurements and removed data for patients with a survival time less than 910 days.
 % 因此，我们从数据集中截取了前910天的数据，对这发病前期不同病人的bilirubin measurements (in mg/dl)进行分析，期望通过主成分和均值的估计来刻画这个指标随时间变化的规律。
 % 在实际操作中我们对bilirubin measurements取了对数变换，并且删除了存活时间小于910天的病人的数据。
@@ -542,7 +562,12 @@ Over the initial 910 days of observation, patients' serum bilirubin concentratio
 followed by a sharp increase around 400 days (mean function). 
 Apart from differences in ``baseline values'' which remain invariant with time (PC1), 
 significant divergence in serum bilirubin concentration among patients emerges around 400 days (PC2).
-
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=\textwidth]{estimation_realData.png}
+  \caption{\textbf{Estimation for real-world data.}}
+  \label{Estimation for real-world data}
+\end{figure}
 
 \section{Conclusion and future work}
 % 我们展示了一个利用meta-learning的技术来处理sparse time series data的一个方法。通过meta-learning利用整个数据集的信息可以对只存在极少数观测点的样本进行MetaINR。基于MetaINR让一些原本只在稠密数据集中使用的functional data analysis的方法在sparse 数据集中变得可行。基于MetaINR的估计也为我们进一步分析sparse time series data提供了强大的工具。
@@ -557,8 +582,12 @@ We can also explore other algorithms of meta-learning, such as SNAIL, and compar
 % This approach aims to build an analytical toolkit for sparse data by combining MetaINR with various functional data analysis methods.
 \section{Appendix}
 
-\textbf{PACE}
-However, in functional data analysis, one can employ the method of local polynomial regression to estimate the mean function and covariance operator of functional data.
+\subsection{Traditional FDA method for sparse functional data: PACE}
+In functional data analysis, it is inappropriate to apply dense-data-based approaches directly on sparse dataset.
+However, PACE method gives a alternative solution.
+
+Although local polynomial regression is not suitable for a single sample with sparse observations, 
+it is proved that one can employ this method to estimate the mean function and covariance operator consistently.
 Specifically, given our sparse observations of dataset $D$,
 we can define the loss function to estimate mean function $\mu(t)$
 $$
@@ -579,12 +608,49 @@ $$
 f\left(\beta,(t,s),(t_{ij},t_{il})\right)=\beta_0 + \beta_{11}(t-t_{ij})+\beta_{12}(s-t_{il})
 $$
 By minimization of $L_{t,s}^c(\beta)$, we obtain $(\beta_0(t),\beta_{11}(t),\beta_{12}(t))=arg\,min L_{t,s}^c(\beta)$. Then the estimator of the covariance kernel is defined as $\hat{c}(t,s)=\beta_0(t,s)$.
-Based on the estimation of mean and covariance,  we can use the method of Principal Analysis by Conditional Expectation (PACE) to reconstruct each sample and compute their scores 
+Under suitable conditions, including the fact that observations are random and well-spread, the estimators of mean function and covariance kernel are consistent.\cite{yao2005functional} 
+$$
+\sup _{t \in \mathcal{T}}|\hat{\mu}(t)-\mu(t)|=O_p\left(\frac{1}{\sqrt{n} h_\mu}\right)
+$$
+$$
+\sup _{t, s \in \mathcal{T}}|\hat{c}(s, t)-c(s, t)|=O_p\left(\frac{1}{\sqrt{n} h_G^2}\right)
+$$
+where $h_\mu$ and $h_G$ are bandwidths for estimating $\hat \mu$ and $\hat c$ satisfying
+$$
+\begin{aligned}
+& h_\mu \rightarrow 0, n h_\mu^4 \rightarrow \infty, \text { and } n h_\mu^6<\infty; \\
+& h_G \rightarrow 0, n h_G^6 \rightarrow \infty, \text { and } n h_G^8<\infty.
+\end{aligned}
+$$
+Base on the estimated covariance kernel, we can derive the estimated  eigenvalues $\hat \lambda$ and eigenfunctions $\hat{\phi}_k(t)$ which are also consistent, \textit{i.e.}
+$$
+\left|\hat{\lambda}_k-\lambda_k\right|=O_p\left(\frac{1}{\sqrt{n} h_G^2}\right);
+$$
+$$
+\sup _{t \in \mathcal{T}}\left|\hat{\phi}_k(t)-\phi_k(t)\right|=O_p\left(\frac{1}{\sqrt{n} h_G^2}\right), \quad k \in \mathcal{I}^{\prime}.
+$$
 
+Assume that $X_i(t)=\mu(t)+\sum_{k=1}^{\infty} a_{i k} \phi_k(t)$, with the $a_{i k} \sim N\left(0, \lambda_k\right)$,
+Principal Analysis by Conditional Expectation (PACE) reconstructs each sample and compute their scores by $\widehat{a}_{i k}=\hat{\mathbb{E}}\left(a_{i k} \mid \tilde{x}_i\right)$.
+It can be shown that 
+$$
+\widehat{a}_{i, k}=\widehat{\lambda}_k \tilde{\phi}_{i, k}^T \Sigma_{x_i}^{-1}\left(\tilde{x}_i-\tilde{\mu}_i\right)
+$$
+where $\left\{\Sigma_{x_i}\right\}_{j, l}=\widehat{c}\left(t_{ij}, t_{il}\right)$.
+The recovered sample can be represented by the first $K$ components 
+$$\widehat{X}_i^K(t)=\widehat{\mu}(t)+\sum_{k=1}^K \widehat{a}_{i, k} \widehat{\phi}_k(t)$$
+It can also be proved \cite{yao2005functional}  that under suitable conditions
+$$
+\lim _{n \rightarrow \infty} \hat{a}_{i k}={a}_{i k} \text { in probability, }
+$$
+and for all $t \in \mathcal{T}$,
+$$
+\lim _{K \rightarrow \infty} \lim _{n \rightarrow \infty} \widehat{X}_i^K(t)={X}_i(t) \text { in probability. }
+$$
 
-\subsection{Traditional FDA method for sparse functional data: PACE}
 
 \subsection{Brief introduciton to SIREN}
+
 
 \subsection{Experiments on other synthetic data}
 
