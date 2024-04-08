@@ -155,7 +155,7 @@ In FDA, scientists treat functions as basic elements for analysis and have devel
 \textbf{Sparse time series data}
 Time series is a typical object that needs to be addressed in an infinite-dimensional function space. 
 This is because time series data collected in reality often exhibit continuity, and, in certain situations, people may focus on topics such as derivatives and time alignment (registration).
-Many previous studies have relied on multivariate statistics in the analysis of time series, such as \textcolor{red}{[mention some specific examples]...}
+Many previous time series models were limited to multivariate statistical methods, such as Vector AutoRegression (VAR)\cite{stock2001vector}, AutoRegressive Integrated Moving Average model (ARIMA) \cite{box2015time}, Generalized AutoRegressive Conditional Heteroskedasticity (GARCH) \cite{francq2019garch}, to name a few.
 From the perspective of function approximation, these multivariate-statistics-based studies can indeed reflect certain properties of time series. 
 However, in many cases, this approach is challenging to generalize, as is the case with sparse time series data.
 % 当人们对time series的观测频率不高并且不规律的时候，就会形成sparse time series data。这种类型的数据在医学领域中尤其常见，因为人们只有在医院才会采集数据，而往往看病的次数是因人而异的，看病频率的也是不规律的。如果要用多元统计学分析这种类型的“杂乱”数据，人们往往会束手无策。在functional data analysis中，人们可以通过local polynomial regression的方法先估计出函数形数据的原始形式，然后在这个基础上估计均值，协方差算子等统计量（详见appendix）。local polynomial regression可以表示如下：
@@ -175,18 +175,18 @@ Due to irregularity and sparsity, this form of data cannot be analyzed using tra
 \textbf{Our benchmarks and the drawbacks of traditional FDA method for sparse data}
 We introduce the following two traditional solutions for sparse time series data as benchmarks in this paper:
 \begin{itemize}
-  \item \textbf{Local polynomial reconstruction + dense-data-based FDA (LocalRecover method)}: 
+  \item \textbf{Local polynomial regression + dense-data-based FDA (Pre-smoothing method)}: 
   In this method, we first utilize local polynomial regression directly to recover samples with sparse observations, 
   and then we apply dense-data-based methods to the recovered dense samples. 
   However, this method is inherently unreliable due to the extremely sparse observations for individual samples in the dataset. 
   This sparsity leads to unreliable local polynomial reconstructions, 
   undermining the overall reliability of the method.
+  % \textcolor{red}{[TODO bandwidth choose problem]} 
   \item \textbf{Principal Analysis by Conditional Expectation (PACE method)}: 
-  \textcolor{red}{[TODO PACE baseline coding]} 
   In this method, we start by employing local polynomial regression to estimate the mean function and variance kernel. 
   Next, we calculate principal components based on these estimates. 
   Finally, we recover samples by computing the scores associated with each principal component (see details in the appendix).
-  Comparing to LocalRecover method, this approach leverages information from observations of other samples in the dataset during the sample recovery process, 
+  Comparing to Pre-smoothing method, this approach leverages information from observations of other samples in the dataset during the sample recovery process, 
   thereby enhancing the reliability of the reconstruction. 
   However, it's important to note that PACE also comes with limitations, primarily because it heavily depends on the assumption that scores follow a normal distribution while recovering time series samples.
 \end{itemize}
@@ -393,7 +393,7 @@ According to the covariance operator, we can further estimate its principal comp
 Inspired by traditional methods, MetaINR utilizes meta-learning to complete implicit neural representation for samples with only sparse observations, 
 enabling them to be compatible with various FDA methods based on dense data.
 It is worth noting that, we treat meta-learning here not merely as an efficient learning method for sparse training sets but as a means to learn commonalities among a large number of tasks.
-Compared to the LocalRecover method in Section 2, a more robust estimation is achieved with MetaINR's sample recovery, as it leverages all the information from the entire dataset. 
+Compared to the Pre-smoothing method in Section 2, a more robust estimation is achieved with MetaINR's sample recovery, as it leverages all the information from the entire dataset. 
 Furthermore, unlike the PACE method in Section 2, 
 MetaINR imposes no constraints on the distribution of samples, making it more versatile.
 In contrast to other learning-based black box method, MetaINR preserve the SIREN-based INR architecture, enabling more detailed representation and easy differentiation of each sample.
@@ -407,7 +407,7 @@ The overall comparison of these methods are shown in table \ref{method_compare}.
   Method & \thead{Irregularity\\of observations} & \thead{Sparsity \\of obervations} & \thead{General distribution \\ of samples} & \thead{Preservation \\ of architecture} \\
   \hline  
   Multivariable Statistics& $\xmark$ & $\xmark$ & $\checkmark$ & $-$\\
-  LocalRecover & $\checkmark$ & $\xmark$ & $\checkmark$ & $-$\\
+  Pre-smoothing & $\checkmark$ & $\xmark$ & $\checkmark$ & $-$\\
   PACE & $\checkmark$ & $\checkmark$ & $\xmark$& $-$  \\
   Neural ODE & $\checkmark$ & $\checkmark$ & $\xmark$ & $\xmark$ \\
   Neural Laplace & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\xmark$ \\
@@ -422,8 +422,8 @@ The overall comparison of these methods are shown in table \ref{method_compare}.
 
 
 \section{Experiments}
-We evaluate our method on the synthetic data, with benchmark estimations provided by LocalRecover method \textcolor{red}{and the PACE method [TODO]}.
-Our results clearly demonstrate that MetaINR significantly outperforms the conventional baseline. 
+We evaluate our method on the synthetic data, with benchmark estimations provided by Pre-smoothing method and the PACE method.
+Our results clearly demonstrate that MetaINR is able to effectively recover the samples from sparse obervations. The estimations provided by MetaINR significantly outperforms the conventional baseline. 
 Moreover, we extended our analysis to a real-world medical dataset to validate the robustness and applicability of our approach in practical scenarios.
 % define evaluation method , measures? not only pictures
 \subsection{Synthetic data}
@@ -451,8 +451,12 @@ $$
 % D=\{(t_{ij},y_{ij})_{j=1}^{J}\}_{i=1}^n
 % $$
 
-\textbf{Meta-learning the commonalities of time series}
 
+\textbf{Parameter setting} \textcolor{red}{[TODO]}
+%具体的参数设置
+%recover K=2
+
+\textbf{Meta-learning the commonalities of time series}
 % 当我们对这个人造数据集进行元学习时，确实发现了元学习能够学习到一系列相似时间序列数据的共性。如图一所示，我们发现，当仅仅给出某一个样本后半段【5，10】这段区间的观测时，元学习能够从其他样本的数据中获得信息，学习到这个分布所包含的周期性。而local polynomial regression则仅仅基于单个样本的数据进行估计，这对于时间序列前半段的估计是不准确的。
 We observed the capability of meta-learning to capture commonalities among a series of similar time-series data.
 As shown in Figure \ref{Learning commonalities}a, when providing observations solely from the latter segment ($t \in [5, 10]$) of a particular sample, 
@@ -465,7 +469,7 @@ By directly plugging the initial values learned by MAML into the SIREN architect
 we observed a notable proximity between the meta-model and the means of these samples. 
 As demonstrated in Figure \ref{Learning commonalities}b, the meta-learning process is accompanied by the meta-model gradually converging towards the mean.
 % 除了这两个例子之外，【2】向我们展示了MAML能够加速学习的原因是feature reuse，这也解释了为什么元模型会包含数据集的多种特征。因此通过MetaINR进行基于稀疏观测的重建会比local polynomial regression 更加可靠。
-\textcolor{red}{Aside from these two examples, \cite{raghu2019rapid}  illustrates that MAML accelerates learning through feature reuse.}
+{Aside from these two examples, \cite{raghu2019rapid}  illustrates that MAML accelerates learning through feature reuse.}
 This also clarifies why the meta-model encompasses various features of the dataset and MetaINR is a more reliable way for sample recovery than local polynomial regression. 
 \begin{figure}[htb]
   \centering
@@ -488,8 +492,9 @@ This also clarifies why the meta-model encompasses various features of the datas
 %   \caption{Learning mean}
 % \end{figure}
 
-\textbf{Estimation of mean, covariance and principal components}
 
+
+\textbf{Estimation of mean, covariance and principal components}
 % 基于每个样本的MetaINR, 我们对这个人造数据集的均值函数，方差核和主成分进行了估计，结果如图3，4，5所示。
 % 我们发现，以MetaINR为基础对三者的估计都远好于benchmark。特别是在数据的边界处，即t接近0或10的位置，baseline的估计往往与真实值相差甚远，而基于MetaINR的估计却相对可靠。
 Based on MetaINR for each sample, we estimated the mean function, covariance kernel, and principal components of this synthetic dataset. 
@@ -500,7 +505,7 @@ the baseline estimators often deviated substantially from the true values,
 while the estimators based on MetaINR remained relatively reliable.
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=\textwidth]{estimation.png}
+  \includegraphics[width=\textwidth]{synthetic_results.pdf}
   \caption{\textbf{Estimation for synthetic data.} The figure shows the results of the estimation of mean function, covariance kernel and principal components in synthetic data. }
   \label{Estimation for synthetic data}
 \end{figure}
@@ -630,8 +635,12 @@ $$
 \sup _{t \in \mathcal{T}}\left|\hat{\phi}_k(t)-\phi_k(t)\right|=O_p\left(\frac{1}{\sqrt{n} h_G^2}\right), \quad k \in \mathcal{I}^{\prime}.
 $$
 
+Let 
+$$\tilde{x}_i=\left(x_i\left(t_{i, 1}\right), \ldots, x_i\left(t_{i, J_i}\right)\right)^T, $$
+$$\tilde{\mu}_i=\left(\widehat{\mu}\left(t_{i, 1}\right), \ldots, \widehat{\mu}\left(t_{i, J_i}\right)\right)^T, $$ 
+$$\tilde{\phi}_{i, k}=\left(\widehat{\phi}_k\left(t_{i, 1}\right), \ldots, \widehat{\phi}_k\left(t_{i, J_i}\right)\right)^T.$$
 Assume that $X_i(t)=\mu(t)+\sum_{k=1}^{\infty} a_{i k} \phi_k(t)$, with the $a_{i k} \sim N\left(0, \lambda_k\right)$,
-Principal Analysis by Conditional Expectation (PACE) reconstructs each sample and compute their scores by $\widehat{a}_{i k}=\hat{\mathbb{E}}\left(a_{i k} \mid \tilde{x}_i\right)$.
+Principal Analysis by Conditional Expectation (PACE) reconstructs each sample and estimates their scores by $\widehat{a}_{i k}=\hat{\mathbb{E}}\left(a_{i k} \mid \tilde{x}_i\right)$.
 It can be shown that 
 $$
 \widehat{a}_{i, k}=\widehat{\lambda}_k \tilde{\phi}_{i, k}^T \Sigma_{x_i}^{-1}\left(\tilde{x}_i-\tilde{\mu}_i\right)
@@ -650,9 +659,9 @@ $$
 
 
 \subsection{Brief introduciton to SIREN}
+%关于初值的选择
 
 
-\subsection{Experiments on other synthetic data}
 
 \section*{Data and code availability}
 PBC data used in this paper is available at \url{http://lib.stat.cmu.edu/datasets/pbc} , and it also can be found in a R package called ``survival''.

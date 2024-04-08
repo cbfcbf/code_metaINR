@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.10.30)  7 APR 2024 12:55
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.10.30)  8 APR 2024 21:44
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -2386,20 +2386,17 @@ File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
 ) [1
 
 
-{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-Underfull \vbox (badness 1337) has occurred while \output is active []
-
- [2] [3]
+{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3]
 
 pdfTeX warning: pdflatex (file ./illustration.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
-<illustration.pdf, id=99, 724.7075pt x 682.55pt>
+<illustration.pdf, id=101, 724.7075pt x 682.55pt>
 File: illustration.pdf Graphic file (type pdf)
 <use illustration.pdf>
 Package pdftex.def Info: illustration.pdf  used on input line 314.
 (pdftex.def)             Requested size: 317.9892pt x 299.48975pt.
 Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 330.
 [4] (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz)
-Underfull \vbox (badness 10000) has occurred while \output is active []
+Underfull \vbox (badness 1454) has occurred while \output is active []
 
  [5
 pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
@@ -2412,57 +2409,60 @@ pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has 
                                                   \__shipout_drop_firstpage_...
 l.448 $$
         ]
-<learning_commonalities.png, id=207, 1626.075pt x 704.6325pt>
+<learning_commonalities.png, id=209, 1626.075pt x 704.6325pt>
 File: learning_commonalities.png Graphic file (type png)
 <use learning_commonalities.png>
-Package pdftex.def Info: learning_commonalities.png  used on input line 472.
+Package pdftex.def Info: learning_commonalities.png  used on input line 476.
 (pdftex.def)             Requested size: 397.48499pt x 172.24403pt.
-<estimation.png, id=210, 1316.92pt x 983.675pt>
-File: estimation.png Graphic file (type png)
-<use estimation.png>
-Package pdftex.def Info: estimation.png  used on input line 503.
-(pdftex.def)             Requested size: 397.48499pt x 296.89093pt.
- [7
+
+
+pdfTeX warning: pdflatex (file ./synthetic_results.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
+<synthetic_results.pdf, id=212, 1335.0277pt x 568.81607pt>
+File: synthetic_results.pdf Graphic file (type pdf)
+<use synthetic_results.pdf>
+Package pdftex.def Info: synthetic_results.pdf  used on input line 508.
+(pdftex.def)             Requested size: 397.48499pt x 169.3529pt.
+[7
 pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.552 
+l.557 
        <./learning_commonalities.png>]
-<estimation_realData.png, id=224, 1569.865pt x 973.6375pt>
+<estimation_realData.png, id=226, 1569.865pt x 973.6375pt>
 File: estimation_realData.png Graphic file (type png)
 <use estimation_realData.png>
-Package pdftex.def Info: estimation_realData.png  used on input line 567.
+Package pdftex.def Info: estimation_realData.png  used on input line 572.
 (pdftex.def)             Requested size: 397.48499pt x 246.51378pt.
 
-Underfull \vbox (badness 2452) has occurred while \output is active []
+Underfull \vbox (badness 10000) has occurred while \output is active []
 
  [8
 pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.580 I
-       n future research, we aim to extend the application of MetaINR to oth... <./estimation.png>] [9
+l.594 A
+       lthough local polynomial regression is not suitable for a single samp... <./synthetic_results.pdf>] [9
 pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) has been already used, duplicate ignored
 <argument> ...shipout:D \box_use:N \l_shipout_box 
                                                   \__shipout_drop_firstpage_...
-l.609 $$
+l.622 $$
          <./estimation_realData.png>] (./metaFDA.bbl [10]) [11] (./metaFDA.aux)
 Package rerunfilecheck Info: File `metaFDA.out' has not changed.
-(rerunfilecheck)             Checksum: 44C975904300A42EBA25D11473AA524B;2657.
+(rerunfilecheck)             Checksum: C878FC231E0CB47FA16C10B4B32BA46D;2412.
  ) 
 Here is how much of TeX's memory you used:
- 25961 strings out of 478268
- 456406 string characters out of 5846346
- 797232 words of memory out of 5000000
- 43438 multiletter control sequences out of 15000+600000
- 509390 words of font info for 202 fonts, out of 8000000 for 9000
+ 25964 strings out of 478268
+ 456639 string characters out of 5846346
+ 797278 words of memory out of 5000000
+ 43446 multiletter control sequences out of 15000+600000
+ 509137 words of font info for 198 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  99i,16n,94p,1000b,801s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on metaFDA.pdf (11 pages, 1610684 bytes).
+Output written on metaFDA.pdf (11 pages, 21183038 bytes).
 PDF statistics:
- 343 PDF objects out of 1000 (max. 8388607)
- 259 compressed objects within 3 object streams
- 64 named destinations out of 1000 (max. 500000)
- 42649 words of extra memory for PDF output out of 42996 (max. 10000000)
+ 20462 PDF objects out of 22161 (max. 8388607)
+ 10215 compressed objects within 103 object streams
+ 66 named destinations out of 1000 (max. 500000)
+ 42641 words of extra memory for PDF output out of 42996 (max. 10000000)
 
