@@ -106,10 +106,10 @@ Sparse time series data is common in daily life, such as medical data measured a
 However, the sparsity and irregularity of such data make traditional statistical methods hard to apply directly. 
 Additionally, the consideration of continuity and differentiability properties in most time series data pose challenges for multivariable statistical analysis.
 
-Recent research suggests that meta-learning exhibits great advantages in handling sparse data. 
-It possesses the capability to identify shared patterns among related tasks, 
-facilitating few-shot learning or even one-shot learning with extremely limited training data. 
-Moreover, there has been substantial progress in statistical analysis utilizing dense functional data to address continuous time series issues. 
+Recent research suggests that meta-learning \cite{finn2017model,hospedales2021meta,beck2023survey} exhibits great advantages in handling sparse data. 
+It possesses the capability to identify shared patterns among related tasks \cite{raghu2019rapid}, 
+facilitating few-shot learning or even one-shot learning \cite{sun2019meta} with extremely limited training data. 
+Moreover, there has been substantial progress in statistical analysis utilizing dense functional data to address continuous time series issues \cite{wang2016functional}. 
 \textcolor{blue}{These findings inspire us to leverage meta-learning techniques to transform sparse time series data into dense formats.
 Subsequently, we can extend the established functional data analysis methodologies tailored for dense data to analyze sparse time series datasets effectively.
 }
@@ -139,8 +139,6 @@ Therefore, MetaINR method provides a new solution for analyzing sparse time seri
 
 \subsection{Functional Data Analysis (FDA)}
 
-\textcolor{red}{[TODO: add references]}
-
 % Traditional multivariate statistics 把一个有限维空间中的向量作为研究对象，来分析它的统计性质，如均值向量、协方差矩阵等。在维度较小的时候，这并没有什么不妥。然而如果把分析对象所在空间的维度提高到无穷维，比如L2空间时，传统方法将会面临一些挑战。在函数空间，人们的关注点并不会局限于向量在某个维度上的取值，人们还会关注连续性、导数等更多性质。同时，随着空间增长到无穷维，原先多元统计中的很多指标也会丧失意义，如概率密度函数等。正是由于无穷维和有穷维空间的统计性质和人们关注点的不同，functional data analysis（FDA） 这个方向引起了研究者的广泛关注。
 \textbf{Multivariate data versus functional data} 
 Traditional multivariate statistics take finite-dimensional vectors as the objects of study to analyze their statistical properties, such as mean vectors and covariance matrices. 
@@ -148,7 +146,7 @@ This approach is appropriate and is easy to compute when the dimension of the st
 However, if the dimension of the space is increased to infinite, for example, in $L^2$ space, traditional methods face certain challenges. 
 Besides the expensive computational cost, in such functional spaces, people's focus is not only on the values of vectors in a particular dimension but also on properties such as continuity, smoothness and derivatives. 
 Additionally, as the space grows to infinite dimensions, many useful tools in multivariate statistics, such as probability density functions, will lose their meaning. 
-It is the differences in statistical properties and people's focus between infinite-dimensional and finite-dimensional spaces, that have led to widespread attention to functional data analysis (FDA) among researchers.
+It is the differences in statistical properties and people's focus between infinite-dimensional and finite-dimensional spaces, that have led to widespread attention to functional data analysis (FDA) \cite{wang2016functional,kokoszka2017introduction} among researchers.
 In FDA, scientists treat functions as basic elements for analysis and have developed various methods to estimate the statistical properties for a functional distribution, such as mean function, covariance operator and functional principal components.
 
 % Time series是一个很典型的需要在无穷维函数空间中处理的研究对象。这是因为现实中收集的时间序列数据往往具有连续性，同时，在某些情况下，人们会关注它的导数、时间对齐（registration）等话题。有很多之前的研究基于多元统计学对时间序列进行分析。比如···。从函数逼近的观点来看，这些基于多元统计的研究确实能够很好的反映一些时间序列的性质，但是这在很多情况下是比较难以推广的，比如本文中所研究的sparse time series data。
@@ -167,7 +165,7 @@ $$
 
 where
 $y_{ij}=x_i(t_{ij}) , i=1, \cdots, n, j=1, \cdots, J_i$ and $J_i$ is the total observations of the $i$-th sample.
-This type of data is particularly common in the medical field, as the frequency of medical visits varies from person to person, with irregular patterns.
+This type of data is particularly common in the medical field \cite{holte2012efficient,muller2005functional}, as the frequency of medical visits varies from person to person, with irregular patterns.
 %由于irregularity和sparsity，这种形式的data已经完全不能够用传统的多元统计方法或者是dense-data-based FDA来分析了，而需要引入新的方法。
 Due to irregularity and sparsity, this form of data cannot be analyzed using traditional multivariate statistical methods or dense-data-based functional data analysis (FDA). Instead, it requires the introduction of new methods.
 
@@ -182,7 +180,7 @@ We introduce the following two traditional solutions for sparse time series data
   This sparsity leads to unreliable local polynomial reconstructions, 
   undermining the overall reliability of the method.
   % \textcolor{red}{[TODO bandwidth choose problem]} 
-  \item \textbf{Principal Analysis by Conditional Expectation (PACE method)}: 
+  \item \textbf{Principal Analysis by Conditional Expectation (PACE method) }\cite{yao2005functional}: 
   In this method, we start by employing local polynomial regression to estimate the mean function and variance kernel. 
   Next, we calculate principal components based on these estimates. 
   Finally, we recover samples by computing the scores associated with each principal component (see details in the appendix).
@@ -201,7 +199,7 @@ We introduce the following two traditional solutions for sparse time series data
 Unlike traditional methods, this paper introduces machine learning techniques to analyze sparse time series data. 
 Specifically, this involves two aspects:
 \begin{itemize}
-  \item We will use Implicit Neural Representation (INR) to recover and represent each sample.
+  \item We will use Implicit Neural Representation (INR) \cite{sitzmann2020implicit} to recover and represent each sample.
   \item We will leverage meta-learning methods to effectively estimate the INR for each sample with sparse observations.
 \end{itemize}
 
@@ -233,7 +231,7 @@ SIREN employs the sine function as the activation function, effectively modeling
 A remarkable observation is that even after taking derivatives of a function represented using SIREN, 
 it can still be expressed using the SIREN architecture. 
 These properties of SIREN make it the preferred choice for INR.
-While previous research predominantly applied SIREN to represent images and videos, its application in time series representation has been limited. 
+While previous research predominantly applied SIREN to represent images and videos \cite{lee2021meta}, its application in time series representation has been limited. 
 This paper explores the use of SIREN in the analysis of time series and demonstates its superiority.
 
 
@@ -241,11 +239,11 @@ This paper explores the use of SIREN in the analysis of time series and demonsta
 
 \textbf{Meta-learning framework}
 Meta-learning was initially introduced to enhance the efficiency of machine learning, often referred to as ``learning to learn''.
-By employing the deep learning model $F_\phi(\cdot)$ to address similar tasks, the ``shared characteristics'' among these tasks can be leveraged to expedite the machine learning process. \cite{raghu2019rapid}
+By employing the deep learning model $F_\phi(\cdot)$ to address similar tasks, the ``shared characteristics'' among these tasks can be leveraged to expedite the machine learning process \cite{raghu2019rapid}.
 % Meta-learning 一开始被提出是为了提高机器的学习效率，即learning to learn。 使用同一个模型来解决一系列相似的task，往往可以利用这些相似任务的”共性“来帮助机器更快地完成训练。
 To fomulate, given the observation dataset $D^*$ of the target task and the observation dataset $D=\bigcup_{i=1}^n D_i$ of $n$ similar tasks, we need to find a meta-function to effectively learn the parameters of the given task, namely $\phi^*=f_\theta(D^*)$,
 where $\theta$ is the meta-parameter of the meta-function $f_\theta(\cdot)$ that can be learned from $D$. Accordingly, the original target task can be solved as $F_{\phi^*}(\cdot)$.
-In fact, the representation of meta-function $f_\theta(\cdot)$ can be diverse. There are two main classes of methods:  Parameterized Policy Gradient Methods (PPG) and Black Box Methods.
+In fact, the representation of meta-function $f_\theta(\cdot)$ can be diverse. There are two main classes of methods:  Parameterized Policy Gradient Methods (PPG) and Black Box Methods \cite{beck2023survey}.
 
 \textbf{Parameterized Policy Gradient Methods and MAML}
 The PPG method use an iterative algorithm to represent $f_\theta$, which has an innerloop of the form:
@@ -255,7 +253,7 @@ $$
 with the initial value $\phi_0^*=\phi_0^*(\theta)$.
 This is very intuitive because it is similar to the traditional gradient decent method to optimize. 
 The only difference is that the initial value, loss function and gradient step should be carefully trained by the observations of other tasks $D$ in this scenario.
-One important example of PPG method is  Model-Agnostic Meta-Learning (MAML), where $\phi_0^*(\theta)=\theta$ and $\hat{L}_\theta$ can be any loss function independent of $\theta$.
+One important example of PPG method is  Model-Agnostic Meta-Learning (MAML) \cite{finn2017model}, where $\phi_0^*(\theta)=\theta$ and $\hat{L}_\theta$ can be any loss function independent of $\theta$.
 MAML can be regarded as learning an initial value for a task distribution, which retains the gradient decent framework of traditional optimization algorithms.
 
 \textbf{Black box methods}
@@ -452,7 +450,7 @@ $$
 % $$
 
 
-\textbf{Parameter setting} \textcolor{red}{[TODO]}
+\textbf{Parameters setting} \textcolor{red}{[TODO]}
 %具体的参数设置
 %recover K=2
 
@@ -473,7 +471,7 @@ As demonstrated in Figure \ref{Learning commonalities}b, the meta-learning proce
 This also clarifies why the meta-model encompasses various features of the dataset and MetaINR is a more reliable way for sample recovery than local polynomial regression. 
 \begin{figure}[htb]
   \centering
-  \includegraphics[width=\textwidth]{learning_commonalities.png}
+  \includegraphics[width=\textwidth]{learning_commonalities.pdf}
   \caption{\textbf{Learning commonalities.} The figure illustrates two examples (periodicity \& mean function) of the ``shared characteristics'' that MAML learned among these tasks. 
   It is noticable that MetaINR is able to learn the periodicity between the interval $[0,5]$ while local polynomial regression totally misses this information. It is also clear that the meta-model gradually approximates the true mean function during the training process. }
   \label{Learning commonalities}
@@ -539,8 +537,8 @@ while the estimators based on MetaINR remained relatively reliable.
 \textbf{Data description} 
 In real-world scenarios, we apply MetaINR to the longitudinal data on primary biliary cirrhosis (PBC).
 The data resulted from a Mayo Clinic trial that was conducted in 1974 to 1984, 
-which is also described in \cite{fleming2013counting} and \cite{murtaugh1994primary}. 
-They are available at http://lib.stat.cmu.edu/datasets/pbc or at a R package called ``survival''.
+which is also described in \cite{markus1989efficacy}, \cite{fleming2013counting} and \cite{murtaugh1994primary}. 
+They are available at \url{http://lib.stat.cmu.edu/datasets/pbc} and at a R package called ``survival''.
 The data contain various sparsely and irregularly sampled covariates for each of 312 patients. 
 Among these medical measurements,
 serum bilirubin concentration is known to be elevated in the presence of chronic liver cirrhosis, such as PBC.

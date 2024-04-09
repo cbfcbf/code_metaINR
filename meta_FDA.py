@@ -454,11 +454,12 @@ fd = skfda.FDataGrid(
 
 
 # %% learning mean function
-plt.plot(np.log(train_meta_loss_list),'r',label='train loss')
-plt.plot(np.log(val_meta_loss_list),'g',label='validation loss')
-plt.plot(np.log(mean_loss_list),'b',label='$\| \mu(t)-F_\\theta(t)\Vert^2 $')
+plt.plot(np.log(train_meta_loss_list),'r',label='Training loss')
+plt.plot(np.log(val_meta_loss_list),'g',label='Validation loss')
+plt.plot(np.log(mean_loss_list),'b',label='$\| \mu(t)-F_{\\phi_0}(t))\Vert^2 $')
 
 plt.legend()
+plt.savefig("./figure/learning_mean.pdf")
 
 # prior after meta training
 # t= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
@@ -486,14 +487,16 @@ support_y=support_y.detach().numpy()
 y_base=localreg(support_t, support_y, x0=t, degree=2, kernel=rbf.gaussian, radius=1)
 
 # print(inner_loss)
-plt.plot(support_t,support_y,"y^",markersize=10,label="trainning data point")
+plt.plot(support_t,support_y,"y^",markersize=10,label="Observations")
 # plt.plot(support_t,y_predict.detach().numpy(),"b+",label="fitted data point")
 
-plt.plot(t,y_base,"g",label="Baseline")
-plt.plot(t,y,"r",label='Ground truth')
-plt.plot(t,ft_predict,"b",label='MetaINR')
+
+plt.plot(t,y,"y",label='Ground truth')
+plt.plot(t,ft_predict,"r",label='MetaINR')
+plt.plot(t,y_base,"g",label="Local polynomial regression")
 plt.ylim(-2,2)
 plt.legend()
+plt.savefig("./figure/learning_periodicity.pdf")
 
 
 # %% PACE baseline

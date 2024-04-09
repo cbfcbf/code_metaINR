@@ -21,6 +21,40 @@
 \providecommand{\BIBdecl}{\relax}
 \BIBdecl
 
+\bibitem{finn2017model}
+C.~Finn, P.~Abbeel, and S.~Levine, ``Model-agnostic meta-learning for fast
+  adaptation of deep networks,'' in \emph{International conference on machine
+  learning}.\hskip 1em plus 0.5em minus 0.4em\relax PMLR, 2017, pp. 1126--1135.
+
+\bibitem{hospedales2021meta}
+T.~Hospedales, A.~Antoniou, P.~Micaelli, and A.~Storkey, ``Meta-learning in
+  neural networks: A survey,'' \emph{IEEE transactions on pattern analysis and
+  machine intelligence}, vol.~44, no.~9, pp. 5149--5169, 2021.
+
+\bibitem{beck2023survey}
+J.~Beck, R.~Vuorio, E.~Z. Liu, Z.~Xiong, L.~Zintgraf, C.~Finn, and S.~Whiteson,
+  ``A survey of meta-reinforcement learning,'' \emph{arXiv preprint
+  arXiv:2301.08028}, 2023.
+
+\bibitem{raghu2019rapid}
+A.~Raghu, M.~Raghu, S.~Bengio, and O.~Vinyals, ``Rapid learning or feature
+  reuse? towards understanding the effectiveness of maml,'' \emph{arXiv
+  preprint arXiv:1909.09157}, 2019.
+
+\bibitem{sun2019meta}
+Q.~Sun, Y.~Liu, T.-S. Chua, and B.~Schiele, ``Meta-transfer learning for
+  few-shot learning,'' in \emph{Proceedings of the IEEE/CVF conference on
+  computer vision and pattern recognition}, 2019, pp. 403--412.
+
+\bibitem{wang2016functional}
+J.-L. Wang, J.-M. Chiou, and H.-G. M{\"u}ller, ``Functional data analysis,''
+  \emph{Annual Review of Statistics and its application}, vol.~3, pp. 257--295,
+  2016.
+
+\bibitem{kokoszka2017introduction}
+P.~Kokoszka and M.~Reimherr, \emph{Introduction to functional data
+  analysis}.\hskip 1em plus 0.5em minus 0.4em\relax Chapman and Hall/CRC, 2017.
+
 \bibitem{stock2001vector}
 J.~H. Stock and M.~W. Watson, ``Vector autoregressions,'' \emph{Journal of
   Economic perspectives}, vol.~15, no.~4, pp. 101--115, 2001.
@@ -35,15 +69,31 @@ C.~Francq and J.-M. Zakoian, \emph{GARCH models: structure, statistical
   inference and financial applications}.\hskip 1em plus 0.5em minus 0.4em\relax
   John Wiley \& Sons, 2019.
 
+\bibitem{holte2012efficient}
+S.~Holte, T.~Randolph, J.~Ding, J.~Tien, R.~McClelland, J.~Baeten, and
+  J.~Overbaugh, ``Efficient use of longitudinal cd4 counts and viral load
+  measures in survival analysis,'' \emph{Statistics in medicine}, vol.~31,
+  no.~19, pp. 2086--2097, 2012.
+
+\bibitem{muller2005functional}
+H.-g. M{\"u}ller, ``Functional modelling and classification of longitudinal
+  data,'' \emph{Scandinavian Journal of Statistics}, vol.~32, no.~2, pp.
+  223--240, 2005.
+
+\bibitem{yao2005functional}
+F.~Yao, H.-G. M{\"u}ller, and J.-L. Wang, ``Functional data analysis for sparse
+  longitudinal data,'' \emph{Journal of the American statistical association},
+  vol. 100, no. 470, pp. 577--590, 2005.
+
 \bibitem{sitzmann2020implicit}
 V.~Sitzmann, J.~Martel, A.~Bergman, D.~Lindell, and G.~Wetzstein, ``Implicit
   neural representations with periodic activation functions,'' \emph{Advances
   in neural information processing systems}, vol.~33, pp. 7462--7473, 2020.
 
-\bibitem{raghu2019rapid}
-A.~Raghu, M.~Raghu, S.~Bengio, and O.~Vinyals, ``Rapid learning or feature
-  reuse? towards understanding the effectiveness of maml,'' \emph{arXiv
-  preprint arXiv:1909.09157}, 2019.
+\bibitem{lee2021meta}
+J.~Lee, J.~Tack, N.~Lee, and J.~Shin, ``Meta-learning sparse implicit neural
+  representations,'' \emph{Advances in Neural Information Processing Systems},
+  vol.~34, pp. 11\,769--11\,780, 2021.
 
 \bibitem{chen2018neural}
 R.~T. Chen, Y.~Rubanova, J.~Bettencourt, and D.~K. Duvenaud, ``Neural ordinary
@@ -56,6 +106,13 @@ S.~I. Holt, Z.~Qian, and M.~van~der Schaar, ``Neural laplace: Learning diverse
   \emph{International Conference on Machine Learning}.\hskip 1em plus 0.5em
   minus 0.4em\relax PMLR, 2022, pp. 8811--8832.
 
+\bibitem{markus1989efficacy}
+B.~H. Markus, E.~R. Dickson, P.~M. Grambsch, T.~R. Fleming, V.~Mazzaferro,
+  G.~B.~G. Klintmalm, R.~H. Wiesner, D.~H. Van~Thiel, and T.~E. Starzl,
+  ``Efficacy of liver transplantation in patients with primary biliary
+  cirrhosis,'' \emph{New England Journal of Medicine}, vol. 320, no.~26, pp.
+  1709--1713, 1989.
+
 \bibitem{fleming2013counting}
 T.~R. Fleming and D.~P. Harrington, \emph{Counting processes and survival
   analysis}.\hskip 1em plus 0.5em minus 0.4em\relax John Wiley \& Sons, 2013,
@@ -66,10 +123,5 @@ P.~A. Murtaugh, R.~E. Dickson, G.~M. Van~Dam, M.~Malinchoc, P.~M. Grambsch,
   A.~L. Langworthy, and C.~H. Gips, ``Primary biliary cirrhosis: prediction of
   short--term survival based on repeated patient visits,'' \emph{Hepatology},
   vol.~20, no.~1, pp. 126--134, 1994.
-
-\bibitem{yao2005functional}
-F.~Yao, H.-G. M{\"u}ller, and J.-L. Wang, ``Functional data analysis for sparse
-  longitudinal data,'' \emph{Journal of the American statistical association},
-  vol. 100, no. 470, pp. 577--590, 2005.
 
 \end{thebibliography}
