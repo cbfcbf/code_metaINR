@@ -11,6 +11,10 @@ import skfda
 from skfda.exploratory.visualization import FPCAPlot
 from skfda.preprocessing.dim_reduction import FPCA
 from localreg import *
+from scipy import interpolate
+import matplotlib.patches as mpatches
+import matplotlib.lines as mlines
+
 
 # %% real data we use #要取log #删除910天以内就死亡的
 data=skfda.datasets.fetch_cran("pbc","survival")["pbcseq"]
@@ -475,11 +479,12 @@ for task in data_loader:
 
 t=np.arange(0,910,10)
 bandwidth=200
+
 mean_pace=localreg(t_all, y_all,x0=t, degree=1, kernel=rbf.gaussian, radius=bandwidth)
 t_pace=np.arange(0,910,10)
 mean_pace_for_t_pace=localreg(t_all, y_all,x0=t_pace, degree=1, kernel=rbf.gaussian, radius=bandwidth)
 mean_pace_all=localreg(t_all, y_all, degree=1, kernel=rbf.gaussian, radius=bandwidth)
-# %%
+
 input=[]
 z=[]
 for i,task in enumerate(data_loader):
@@ -501,50 +506,49 @@ x0=np.array([np.ravel(X0), np.ravel(Y0)]).T
 cov_pace = localreg(input[:], z[:], x0, degree=1,radius=bandwidth, kernel=rbf.gaussian)
 cov_pace = cov_pace.reshape(X0.shape)
 
-
-
-# %% Sample recovery
-i=6
-plt.plot(dataset.datalist[i][:,0],dataset.datalist[i][:,1],"r^",markersize=15,label='training data points')
-plt.plot(t,fd.data_matrix[i],'r',label='metaINR')
-plt.plot(t,fd_base.data_matrix[i],'r:',label='Baseline')
-
-i=8
-plt.plot(dataset.datalist[i][:,0],dataset.datalist[i][:,1],"g^",markersize=15)
-plt.plot(t,fd.data_matrix[i],'g')
-plt.plot(t,fd_base.data_matrix[i],'g:')
-
-i=9
-plt.plot(dataset.datalist[i][:,0],dataset.datalist[i][:,1],"b^",markersize=15)
-plt.plot(t,fd.data_matrix[i],'b')
-plt.plot(t,fd_base.data_matrix[i],'b:')
-plt.legend()
-
 # %% FPCA
-
 # 对原来的数据做FPCA
 
 fpca_discretized = FPCA(n_components=2)
 fpca_discretized.fit(fd)
 pc1,pc2=fpca_discretized.components_.data_matrix
 var_ratio=fpca_discretized.explained_variance_ratio_
-print(var_ratio)
+# print(var_ratio)
 
-# baseline local polynomial regression PCA
+# Pre-smoothing PCA
 fpca_discretized_base = FPCA(n_components=2)
 fpca_discretized_base.fit(fd_base)
 pc1_base,pc2_base=fpca_discretized_base.components_.data_matrix
 var_ratio_base=fpca_discretized_base.explained_variance_ratio_
 
+# PACE FPCA
+lambda_list,pc_list=np.linalg.eig(cov_pace)
+pc1_pace=pc_list[:,0].real
+pc2_pace=pc_list[:,1].real
+lambda_list=lambda_list.real
+var_ratio_PACE=[lambda_list[0]/lambda_list.sum().real,lambda_list[1]/lambda_list.sum().real]
 
 # visualize
-l1=plt.plot(t,pc1,'r',label='pc1_metaINR %.3f' % var_ratio[0])
-l3=plt.plot(t,pc1_base,'r--',label='pc1_baseline %.3f' % var_ratio_base[0])
-l2=plt.plot(t,pc2,'b',label='pc2_metaINR %.3f' % var_ratio[1])
-l4=plt.plot(t,pc2_base,'b--',label='pc2_baseline %.3f' % var_ratio_base[1])
+l1=plt.plot(t,pc1,'r',label='pc1_MetaINR %.3f' % var_ratio[0])
+l3=plt.plot(t,pc1_base,'r--',linewidth=3,label='pc1_Pre-smoothing %.3f' % var_ratio_base[0])
+l5=plt.plot(t,pc1_pace,'r:',label='pc1_PACE %.3f' % var_ratio_PACE[0].real)
+
+l2=plt.plot(t,pc2,'b',label='pc2_MetaINR %.3f' % var_ratio[1])
+l4=plt.plot(t,pc2_base,'b--',linewidth=3,label='pc2_Pre-smoothing %.3f' % var_ratio_base[1])
+l6=plt.plot(t,pc2_pace,'b:',label='pc2_PACE %.3f' % var_ratio_PACE[1].real)
 
 # plt.ylim(-0.75,0.75)
-plt.legend(loc="lower right")
+# plt.legend(loc="lower right")
+red_patch = mpatches.Patch(color='red', label='PC1')
+blue_patch = mpatches.Patch(color='blue', label='PC2')
+line1 = mlines.Line2D([], [], color='black', markersize=15, label='MetaINR')
+line2 = mlines.Line2D([], [], color='black',linestyle='--',linewidth=3, label='Pre-smoothing')
+line3 = mlines.Line2D([], [], color='black', linestyle=':',markersize=15, label='PACE')
+
+plt.legend(handles=[red_patch,blue_patch,line1,line2,line3])
+
+plt.savefig("./figure/PC_real.pdf")
+
 
 # %% mean estimation 
 
@@ -557,6 +561,8 @@ plt.plot(t,mean_base,'g',label="Pre-smoothing")
 plt.plot(t,mean_pace,'b',label="PACE")
 
 plt.legend()
+
+plt.savefig("./figure/mean_real.pdf")
 
 
 
@@ -581,7 +587,7 @@ ax3.plot_surface(X,Y,Z3,alpha=0.2,cmap='winter')
 ax3.contour(X,Y,Z3,zdir='z', offset=Z.min(),cmap="rainbow")
 ax3.contour(X,Y,Z3,zdir='x', offset=0,cmap="rainbow")  
 ax3.contour(X,Y,Z3,zdir='y', offset=Y.max(),cmap="rainbow")
-ax3.set_title("Presmoothing",fontsize=fontsize)
+ax3.set_title("Pre-smoothing",fontsize=fontsize)
 ax3.set_zlim(0.5,1)
 
 Z2 = cov_pace
@@ -593,5 +599,103 @@ ax2.contour(X0,Y0,Z2,zdir='y', offset=Y.max(),cmap="rainbow")
 ax2.set_title("PACE",fontsize=fontsize)
 ax2.set_zlim(0.5,1)
 
+plt.savefig("./figure/covariance_real.pdf")
+
+
+# %% Sample recovery
+i=15
+
+t_sample=dataset.datalist[i][:,0].detach().numpy()
+y_sample=dataset.datalist[i][:,1].detach().numpy()
+
+f1=interpolate.interp1d(t_pace,pc1_pace.real)
+phi_1=f1(t_sample)
+f2=interpolate.interp1d(t_pace,pc2_pace.real)
+phi_2=f2(t_sample)
+
+X0_sample,Y0_sample=np.meshgrid(t_sample,t_sample)
+x0_sample=np.array([np.ravel(X0_sample), np.ravel(Y0_sample)]).T
+cov_pace_id = localreg(input, z, x0_sample, degree=1,radius=bandwidth, kernel=rbf.gaussian)
+cov_pace_id = np.matrix(cov_pace_id.reshape(X0_sample.shape))
+cov_pace_id_inv=np.linalg.inv(cov_pace_id)
+
+mu_id=mean_pace_all[obs_num_list[i]:obs_num_list[i+1]]
+a_1=np.array(lambda_list[0]*np.matrix(phi_1)*cov_pace_id_inv*(np.matrix(y_sample-mu_id).T))[0][0]
+a_2=np.array(lambda_list[1]*np.matrix(phi_2)*cov_pace_id_inv*(np.matrix(y_sample-mu_id).T))[0][0]
+y_pace=mean_pace_for_t_pace+a_1*pc1_pace+a_2*pc2_pace
+
+plt.plot(t_sample,y_sample,"r^",markersize=15,label='Observations')
+plt.plot(t,fd.data_matrix[i],'r',label='MetaINR')
+plt.plot(t,fd_base.data_matrix[i],'r--',label='Pre-smoothing')
+plt.plot(t_pace,y_pace,'r:',label='PACE')
+
+
+i=7
+
+t_sample=dataset.datalist[i][:,0].detach().numpy()
+y_sample=dataset.datalist[i][:,1].detach().numpy()
+
+f1=interpolate.interp1d(t_pace,pc1_pace.real)
+phi_1=f1(t_sample)
+f2=interpolate.interp1d(t_pace,pc2_pace.real)
+phi_2=f2(t_sample)
+
+X0_sample,Y0_sample=np.meshgrid(t_sample,t_sample)
+x0_sample=np.array([np.ravel(X0_sample), np.ravel(Y0_sample)]).T
+cov_pace_id = localreg(input, z, x0_sample, degree=1,radius=bandwidth, kernel=rbf.gaussian)
+cov_pace_id = np.matrix(cov_pace_id.reshape(X0_sample.shape))
+cov_pace_id_inv=np.linalg.inv(cov_pace_id)
+
+mu_id=mean_pace_all[obs_num_list[i]:obs_num_list[i+1]]
+a_1=np.array(lambda_list[0]*np.matrix(phi_1)*cov_pace_id_inv*(np.matrix(y_sample-mu_id).T))[0][0]
+a_2=np.array(lambda_list[1]*np.matrix(phi_2)*cov_pace_id_inv*(np.matrix(y_sample-mu_id).T))[0][0]
+y_pace=mean_pace_for_t_pace+a_1*pc1_pace+a_2*pc2_pace
+
+plt.plot(t_sample,y_sample,"g^",markersize=15)
+plt.plot(t,fd.data_matrix[i],'g')
+plt.plot(t,fd_base.data_matrix[i],'g--')
+plt.plot(t_pace,y_pace,'g:')
+
+i=10
+
+t_sample=dataset.datalist[i][:,0].detach().numpy()
+y_sample=dataset.datalist[i][:,1].detach().numpy()
+
+f1=interpolate.interp1d(t_pace,pc1_pace.real)
+phi_1=f1(t_sample)
+f2=interpolate.interp1d(t_pace,pc2_pace.real)
+phi_2=f2(t_sample)
+
+X0_sample,Y0_sample=np.meshgrid(t_sample,t_sample)
+x0_sample=np.array([np.ravel(X0_sample), np.ravel(Y0_sample)]).T
+cov_pace_id = localreg(input, z, x0_sample, degree=1,radius=bandwidth, kernel=rbf.gaussian)
+cov_pace_id = np.matrix(cov_pace_id.reshape(X0_sample.shape))
+cov_pace_id_inv=np.linalg.inv(cov_pace_id)
+
+mu_id=mean_pace_all[obs_num_list[i]:obs_num_list[i+1]]
+a_1=np.array(lambda_list[0]*np.matrix(phi_1)*cov_pace_id_inv*(np.matrix(y_sample-mu_id).T))[0][0]
+a_2=np.array(lambda_list[1]*np.matrix(phi_2)*cov_pace_id_inv*(np.matrix(y_sample-mu_id).T))[0][0]
+y_pace=mean_pace_for_t_pace+a_1*pc1_pace+a_2*pc2_pace
+
+plt.plot(t_sample,y_sample,"b^",markersize=15)
+plt.plot(t,fd.data_matrix[i],'b')
+plt.plot(t,fd_base.data_matrix[i],'b--')
+plt.plot(t_pace,y_pace,'b:')
+
+line1 = mlines.Line2D([],[],marker="^",linestyle='',color='black',markersize=15,label='Observations')
+line2 = mlines.Line2D([],[],color='black',label='MetaINR')
+line3 = mlines.Line2D([],[],linestyle='--',color='black',label='Pre-smoothing')
+line4 = mlines.Line2D([],[],linestyle=':',color='black',label='PACE')
+red_patch = mpatches.Patch(color='red', label='Sample1')
+blue_patch = mpatches.Patch(color='blue', label='Sample2')
+green_patch = mpatches.Patch(color='green', label='Sample3')
+
+plt.legend(handles=[line1,line2,line3,line4,red_patch,blue_patch,green_patch])
+
+plt.savefig("./figure/sample_real.pdf")
+
 # %%
+lambda_list
+# %%
+help(mpatches)
 # %%

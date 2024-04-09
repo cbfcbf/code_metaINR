@@ -671,16 +671,32 @@ phi_2=f2(t_sample)
 X0_sample,Y0_sample=np.meshgrid(t_sample,t_sample)
 x0_sample=np.array([np.ravel(X0_sample), np.ravel(Y0_sample)]).T
 cov_pace_id = localreg(input[:], z[:], x0_sample, degree=0,radius=1, kernel=rbf.gaussian)
-cov_pace_id = np.matrix(cov_pace_id.reshape(X0_sample.shape))
+cov_pace_id = np.matrix(cov_pace_id.reshape(X0_sample.shape))+np.matrix(0.00001*np.eye(X0_sample.shape[0])) #正则化 防止不可逆
 cov_pace_id_inv=np.linalg.inv(cov_pace_id)
 # cov_pace_id_inv=np.array(cov_pace_id_inv)
 
 mu_id=mean_pace_all[id*dataset.total_samples_per_task:(id+1)*dataset.total_samples_per_task]
 
-a_1=np.array(lambda_list[0]*np.matrix(phi_1)*(np.matrix(y_sample-mu_id).T))[0][0]
-a_2=np.array(lambda_list[1]*np.matrix(phi_2)*(np.matrix(y_sample-mu_id).T))[0][0]
+a_1=np.array(lambda_list[0]*np.matrix(phi_1)*cov_pace_id_inv*(np.matrix(y_sample-mu_id).T))[0][0]
+a_2=np.array(lambda_list[1]*np.matrix(phi_2)*cov_pace_id_inv*(np.matrix(y_sample-mu_id).T))[0][0]
 
 y_pace=mean_pace_for_t_pace+a_1*pc1_pace+a_2*pc2_pace
+# %%
+# %%
+# %%
+# %%
+fig = plt.figure(figsize=(18, 6), facecolor='w')
+c4=cov_pace
+Z4 = c4
+ax4 = fig.add_subplot(1, 4, 4, projection='3d')
+ax4.plot_surface(X0,Y0,Z4,alpha=0.2,cmap='winter')
+ax4.contour(X0,Y0,Z4,zdir='z', offset=-0.1,cmap="rainbow")
+ax4.contour(X0,Y0,Z4,zdir='x', offset=0,cmap="rainbow")  
+ax4.contour(X0,Y0,Z4,zdir='y', offset=10,cmap="rainbow")
+ax4.set_title("PACE",fontsize=fontsize)
+# ax4.set_zlim(-0.1,0.1)
+
+ax4.scatter(X0_sample,Y0_sample,cov_pace_id,alpha=0.2,cmap='winter')
 
 # %% Recovery
 
