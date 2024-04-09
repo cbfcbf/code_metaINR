@@ -461,7 +461,49 @@ t= torch.tensor(t).to(torch.float32).reshape(-1,1)
 y,coord= meta_model.forward(t)
 plt.plot(t.detach().numpy(),y.detach().numpy(),'r')
 
-# %% 看看拟合成什么样
+# %% PACE baseline
+t_all=np.array([])
+y_all=np.array([])
+obs_num_list=[0]
+
+for task in data_loader:
+    t_sample=task[0][:,0].detach().numpy()
+    y_sample=task[0][:,1].detach().numpy()
+    t_all=np.hstack((t_all,t_sample))
+    y_all=np.hstack((y_all,y_sample))
+    obs_num_list.append(len(t_all))
+
+t=np.arange(0,910,10)
+bandwidth=200
+mean_pace=localreg(t_all, y_all,x0=t, degree=1, kernel=rbf.gaussian, radius=bandwidth)
+t_pace=np.arange(0,910,10)
+mean_pace_for_t_pace=localreg(t_all, y_all,x0=t_pace, degree=1, kernel=rbf.gaussian, radius=bandwidth)
+mean_pace_all=localreg(t_all, y_all, degree=1, kernel=rbf.gaussian, radius=bandwidth)
+# %%
+input=[]
+z=[]
+for i,task in enumerate(data_loader):
+    t_sample=task[0][:,0].detach().numpy()
+    y_sample=task[0][:,1].detach().numpy()
+    X, Y = np.meshgrid(t_sample, t_sample)
+    input_sample = np.array([X.ravel(), Y.ravel()]).T
+    v_sample=np.array([y_sample-mean_pace_all[obs_num_list[i]:obs_num_list[i+1]]])
+    z_sample = ((v_sample.T).dot(v_sample)).ravel()
+    input.extend(list(input_sample))
+    z.extend(list(z_sample))
+input=np.array(input)
+z=np.array(z)
+
+t_pace=np.arange(0,910,10)
+X0,Y0=np.meshgrid(t_pace,t_pace)
+x0=np.array([np.ravel(X0), np.ravel(Y0)]).T
+
+cov_pace = localreg(input[:], z[:], x0, degree=1,radius=bandwidth, kernel=rbf.gaussian)
+cov_pace = cov_pace.reshape(X0.shape)
+
+
+
+# %% Sample recovery
 i=6
 plt.plot(dataset.datalist[i][:,0],dataset.datalist[i][:,1],"r^",markersize=15,label='training data points')
 plt.plot(t,fd.data_matrix[i],'r',label='metaINR')
@@ -510,7 +552,9 @@ mean=fd.mean().data_matrix[0,:,0]
 plt.plot(t,mean,'r',label="MetaINR")
 
 mean_base=fd_base.mean().data_matrix[0,:,0]
-plt.plot(t,mean_base,'r:',label="Baseline")
+plt.plot(t,mean_base,'g',label="Pre-smoothing")
+
+plt.plot(t,mean_pace,'b',label="PACE")
 
 plt.legend()
 
@@ -522,24 +566,32 @@ fig = plt.figure(figsize=(12, 6), facecolor='w')
 c=np.cov(fd.data_matrix[:,:,0].T)
 X, Y = np.meshgrid(t, t)
 Z = c
-ax1 = fig.add_subplot(1, 2, 1, projection='3d')
+ax1 = fig.add_subplot(1, 3, 1, projection='3d')
 ax1.plot_surface(X,Y,Z,alpha=0.2,cmap='winter')
 ax1.contour(X,Y,Z,zdir='z', offset=Z.min(),cmap="rainbow")
 ax1.contour(X,Y,Z,zdir='x', offset=0,cmap="rainbow")  
 ax1.contour(X,Y,Z,zdir='y', offset=Y.max(),cmap="rainbow")
 ax1.set_title("MetaINR",fontsize=fontsize)
-# ax1.set_zlim(-0.1,0.1)
+ax1.set_zlim(0.5,1)
 
 c3=np.cov(fd_base.data_matrix[:,:,0].T)
 Z3 = c3
-ax3 = fig.add_subplot(1, 2, 2, projection='3d')
+ax3 = fig.add_subplot(1, 3, 2, projection='3d')
 ax3.plot_surface(X,Y,Z3,alpha=0.2,cmap='winter')
 ax3.contour(X,Y,Z3,zdir='z', offset=Z.min(),cmap="rainbow")
 ax3.contour(X,Y,Z3,zdir='x', offset=0,cmap="rainbow")  
 ax3.contour(X,Y,Z3,zdir='y', offset=Y.max(),cmap="rainbow")
-ax3.set_title("Baseline",fontsize=fontsize)
-# ax3.set_zlim(-0.1,0.1)
+ax3.set_title("Presmoothing",fontsize=fontsize)
+ax3.set_zlim(0.5,1)
 
+Z2 = cov_pace
+ax2 = fig.add_subplot(1, 3, 3, projection='3d')
+ax2.plot_surface(X0,Y0,Z2,alpha=0.2,cmap='winter')
+ax2.contour(X0,Y0,Z2,zdir='z', offset=Z.min(),cmap="rainbow")
+ax2.contour(X0,Y0,Z2,zdir='x', offset=0,cmap="rainbow")  
+ax2.contour(X0,Y0,Z2,zdir='y', offset=Y.max(),cmap="rainbow")
+ax2.set_title("PACE",fontsize=fontsize)
+ax2.set_zlim(0.5,1)
 
 # %%
 # %%

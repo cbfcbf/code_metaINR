@@ -590,9 +590,9 @@ mean=fd.mean().data_matrix[0,:,0]
 plt.plot(t,mean,'r:',label="MetaINR")
 
 mean_base=fd_base.mean().data_matrix[0,:,0]
-plt.plot(t,mean_base,'b:',label="LocalReg")
+plt.plot(t,mean_base,'g:',label="Pre-smoothing")
 
-plt.plot(t,mean_pace,'g:',label="PACE")
+plt.plot(t,mean_pace,'b:',label="PACE")
 
 
 # t1= torch.tensor(np.arange(0,10,0.01)).to(torch.float32).reshape(-1,1)
@@ -681,7 +681,6 @@ a_1=np.array(lambda_list[0]*np.matrix(phi_1)*(np.matrix(y_sample-mu_id).T))[0][0
 a_2=np.array(lambda_list[1]*np.matrix(phi_2)*(np.matrix(y_sample-mu_id).T))[0][0]
 
 y_pace=mean_pace_for_t_pace+a_1*pc1_pace+a_2*pc2_pace
-# %%
 
 # %% Recovery
 
