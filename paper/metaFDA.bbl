@@ -90,6 +90,18 @@ V.~Sitzmann, J.~Martel, A.~Bergman, D.~Lindell, and G.~Wetzstein, ``Implicit
   neural representations with periodic activation functions,'' \emph{Advances
   in neural information processing systems}, vol.~33, pp. 7462--7473, 2020.
 
+\bibitem{genova2019learning}
+K.~Genova, F.~Cole, D.~Vlasic, A.~Sarna, W.~T. Freeman, and T.~Funkhouser,
+  ``Learning shape templates with structured implicit functions,'' in
+  \emph{Proceedings of the IEEE/CVF International Conference on Computer
+  Vision}, 2019, pp. 7154--7164.
+
+\bibitem{park2019deepsdf}
+J.~J. Park, P.~Florence, J.~Straub, R.~Newcombe, and S.~Lovegrove, ``Deepsdf:
+  Learning continuous signed distance functions for shape representation,'' in
+  \emph{Proceedings of the IEEE/CVF conference on computer vision and pattern
+  recognition}, 2019, pp. 165--174.
+
 \bibitem{lee2021meta}
 J.~Lee, J.~Tack, N.~Lee, and J.~Shin, ``Meta-learning sparse implicit neural
   representations,'' \emph{Advances in Neural Information Processing Systems},
@@ -123,5 +135,15 @@ P.~A. Murtaugh, R.~E. Dickson, G.~M. Van~Dam, M.~Malinchoc, P.~M. Grambsch,
   A.~L. Langworthy, and C.~H. Gips, ``Primary biliary cirrhosis: prediction of
   short--term survival based on repeated patient visits,'' \emph{Hepatology},
   vol.~20, no.~1, pp. 126--134, 1994.
+
+\bibitem{santoro2016meta}
+A.~Santoro, S.~Bartunov, M.~Botvinick, D.~Wierstra, and T.~Lillicrap,
+  ``Meta-learning with memory-augmented neural networks,'' in
+  \emph{International conference on machine learning}.\hskip 1em plus 0.5em
+  minus 0.4em\relax PMLR, 2016, pp. 1842--1850.
+
+\bibitem{mishra2017simple}
+N.~Mishra, M.~Rohaninejad, X.~Chen, and P.~Abbeel, ``A simple neural attentive
+  meta-learner,'' \emph{arXiv preprint arXiv:1707.03141}, 2017.
 
 \end{thebibliography}

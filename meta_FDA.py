@@ -31,7 +31,7 @@ meta_lr = 0.0001
 max_epoch = 10000
 inner_batch_size=1 #没什么用 每个batch只能对应一个任务
 
-eval_batches = 20
+# eval_batches = 20
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # Fix random seeds
