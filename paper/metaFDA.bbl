@@ -107,6 +107,11 @@ J.~Lee, J.~Tack, N.~Lee, and J.~Shin, ``Meta-learning sparse implicit neural
   representations,'' \emph{Advances in Neural Information Processing Systems},
   vol.~34, pp. 11\,769--11\,780, 2021.
 
+\bibitem{fons2022hypertime}
+E.~Fons, A.~Sztrajman, Y.~El-Laham, A.~Iosifidis, and S.~Vyetrenko,
+  ``Hypertime: Implicit neural representation for time series,'' \emph{arXiv
+  preprint arXiv:2208.05836}, 2022.
+
 \bibitem{chen2018neural}
 R.~T. Chen, Y.~Rubanova, J.~Bettencourt, and D.~K. Duvenaud, ``Neural ordinary
   differential equations,'' \emph{Advances in neural information processing

@@ -33,52 +33,56 @@
 \citation{genova2019learning,park2019deepsdf}
 \citation{sitzmann2020implicit}
 \citation{lee2021meta}
-\citation{raghu2019rapid}
-\citation{beck2023survey}
+\citation{fons2022hypertime}
 \@writefile{toc}{\contentsline {subsection}{\numberline {2.2}Machine learning for functional data}{3}{subsection.2.2}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.1}Implicit Neural Representation}{3}{subsubsection.2.2.1}\protected@file@percent }
-\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}Meta-learning for sparse data INR}{3}{subsubsection.2.2.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textbf  {Diagram of the INR architecture.} Each neuron uses sine activations in SIREN.}}{3}{figure.1}\protected@file@percent }
+\newlabel{INR}{{1}{3}{\textbf {Diagram of the INR architecture.} Each neuron uses sine activations in SIREN}{figure.1}{}}
+\citation{raghu2019rapid}
+\citation{beck2023survey}
 \citation{finn2017model}
 \citation{chen2018neural}
 \citation{holt2022neural}
-\@writefile{lof}{\contentsline {figure}{\numberline {1}{\ignorespaces \textbf  {MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi _0$ for SIREN architecture $F$. The meta-model $F_{\phi _0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately. The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components.}}{4}{figure.1}\protected@file@percent }
-\newlabel{MetaINR workflow}{{1}{4}{\textbf {MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi _0$ for SIREN architecture $F$. The meta-model $F_{\phi _0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately. The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components}{figure.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {3}Method}{5}{section.3}\protected@file@percent }
-\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Model-Agnostic Meta-Learning for Time Series Implicit Neural Representation}}{5}{algorithm.1}\protected@file@percent }
-\newlabel{MAML}{{1}{5}{Method}{algorithm.1}{}}
+\@writefile{toc}{\contentsline {subsubsection}{\numberline {2.2.2}Meta-learning for sparse data INR}{4}{subsubsection.2.2.2}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {3}Method}{4}{section.3}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi _0$ for SIREN architecture $F$. The meta-model $F_{\phi _0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately. The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components.}}{5}{figure.2}\protected@file@percent }
+\newlabel{MetaINR workflow}{{2}{5}{\textbf {MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi _0$ for SIREN architecture $F$. The meta-model $F_{\phi _0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately. The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components}{figure.2}{}}
 \citation{yao2005functional}
 \citation{chen2018neural}
 \citation{holt2022neural}
+\citation{fons2022hypertime}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Model-Agnostic Meta-Learning for Time Series Implicit Neural Representation}}{6}{algorithm.1}\protected@file@percent }
+\newlabel{MAML}{{1}{6}{Method}{algorithm.1}{}}
 \@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Implicit Neural Representation Learning for Target Sample}}{6}{algorithm.2}\protected@file@percent }
 \newlabel{INR-learning}{{2}{6}{Method}{algorithm.2}{}}
-\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of analysis methods for sparse time series data}}{6}{table.1}\protected@file@percent }
-\newlabel{method_compare}{{1}{6}{Comparison of analysis methods for sparse time series data}{table.1}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {4}Experiments}{6}{section.4}\protected@file@percent }
 \citation{raghu2019rapid}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of analysis methods for sparse time series data}}{7}{table.1}\protected@file@percent }
+\newlabel{method_compare}{{1}{7}{Comparison of analysis methods for sparse time series data}{table.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Experiments}{7}{section.4}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Synthetic data}{7}{subsection.4.1}\protected@file@percent }
 \citation{markus1989efficacy}
 \citation{fleming2013counting}
 \citation{murtaugh1994primary}
-\@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {Learning commonalities.} The figure illustrates two examples (periodicity \& mean function) of the ``shared characteristics'' that MAML learned among these tasks. It is noticable that MetaINR is able to learn the periodicity between the interval $[0,5]$ while local polynomial regression totally misses this information. It is also clear that the meta-model gradually approximates the true mean function during the training process. }}{8}{figure.2}\protected@file@percent }
-\newlabel{Learning commonalities}{{2}{8}{\textbf {Learning commonalities.} The figure illustrates two examples (periodicity \& mean function) of the ``shared characteristics'' that MAML learned among these tasks. It is noticable that MetaINR is able to learn the periodicity between the interval $[0,5]$ while local polynomial regression totally misses this information. It is also clear that the meta-model gradually approximates the true mean function during the training process}{figure.2}{}}
-\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Real-world data}{8}{subsection.4.2}\protected@file@percent }
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Learning commonalities.} The figure illustrates two examples (periodicity \& mean function) of the ``shared characteristics'' that MAML learned among these tasks. It is noticable that MetaINR is able to learn the periodicity between the interval $[0,5]$ while local polynomial regression totally misses this information. It is also clear that the meta-model gradually approximates the true mean function during the training process. }}{8}{figure.3}\protected@file@percent }
+\newlabel{Learning commonalities}{{3}{8}{\textbf {Learning commonalities.} The figure illustrates two examples (periodicity \& mean function) of the ``shared characteristics'' that MAML learned among these tasks. It is noticable that MetaINR is able to learn the periodicity between the interval $[0,5]$ while local polynomial regression totally misses this information. It is also clear that the meta-model gradually approximates the true mean function during the training process}{figure.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Estimation for synthetic data.} The figure shows the results of the sample recovery and the estimation of mean function, covariance kernel and principal components in synthetic data. In each plot, the horizontal axis represents time, and the vertical axis represents the corresponding variable's value. It is clear that for all estimatiors, the performance of MetaINR is significantly better than that of Pre-smoothing and PACE methods. }}{9}{figure.4}\protected@file@percent }
+\newlabel{Estimation for synthetic data}{{4}{9}{\textbf {Estimation for synthetic data.} The figure shows the results of the sample recovery and the estimation of mean function, covariance kernel and principal components in synthetic data. In each plot, the horizontal axis represents time, and the vertical axis represents the corresponding variable's value. It is clear that for all estimatiors, the performance of MetaINR is significantly better than that of Pre-smoothing and PACE methods}{figure.4}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Real-world data}{9}{subsection.4.2}\protected@file@percent }
 \citation{santoro2016meta}
 \citation{mishra2017simple}
 \citation{yao2005functional}
-\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Estimation for synthetic data.} The figure shows the results of the sample recovery and the estimation of mean function, covariance kernel and principal components in synthetic data. In each plot, the horizontal axis represents time, and the vertical axis represents the corresponding variable's value. It is clear that for all estimatiors, the performance of MetaINR is significantly better than that of Pre-smoothing and PACE methods. }}{9}{figure.3}\protected@file@percent }
-\newlabel{Estimation for synthetic data}{{3}{9}{\textbf {Estimation for synthetic data.} The figure shows the results of the sample recovery and the estimation of mean function, covariance kernel and principal components in synthetic data. In each plot, the horizontal axis represents time, and the vertical axis represents the corresponding variable's value. It is clear that for all estimatiors, the performance of MetaINR is significantly better than that of Pre-smoothing and PACE methods}{figure.3}{}}
-\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion and future work}{9}{section.5}\protected@file@percent }
-\citation{yao2005functional}
-\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {Estimation for real-world data.}The figure demonstates the results of the sample recovery (three typical examples), and the estimation of statistical quantities (mean function, covariance kernel and principal components) in real-world PBC data. In each plot, the horizontal axis represents the observation time (days), and the vertical axis represents the value of logarithmic serum bilirubin concentration (mg/dl). The estimated results are similar in all three methods. }}{10}{figure.4}\protected@file@percent }
-\newlabel{Estimation for real-world data}{{4}{10}{\textbf {Estimation for real-world data.}The figure demonstates the results of the sample recovery (three typical examples), and the estimation of statistical quantities (mean function, covariance kernel and principal components) in real-world PBC data. In each plot, the horizontal axis represents the observation time (days), and the vertical axis represents the value of logarithmic serum bilirubin concentration (mg/dl). The estimated results are similar in all three methods}{figure.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Estimation for real-world data.}The figure demonstates the results of the sample recovery (three typical examples), and the estimation of statistical quantities (mean function, covariance kernel and principal components) in real-world PBC data. In each plot, the horizontal axis represents the observation time (days), and the vertical axis represents the value of logarithmic serum bilirubin concentration (mg/dl). The estimated results are similar in all three methods. }}{10}{figure.5}\protected@file@percent }
+\newlabel{Estimation for real-world data}{{5}{10}{\textbf {Estimation for real-world data.}The figure demonstates the results of the sample recovery (three typical examples), and the estimation of statistical quantities (mean function, covariance kernel and principal components) in real-world PBC data. In each plot, the horizontal axis represents the observation time (days), and the vertical axis represents the value of logarithmic serum bilirubin concentration (mg/dl). The estimated results are similar in all three methods}{figure.5}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion and future work}{10}{section.5}\protected@file@percent }
 \@writefile{toc}{\contentsline {section}{\numberline {6}Appendix}{10}{section.6}\protected@file@percent }
 \@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Traditional FDA method for sparse functional data: PACE \cite  {yao2005functional}}{10}{subsection.6.1}\protected@file@percent }
 \citation{yao2005functional}
+\citation{yao2005functional}
 \citation{sitzmann2020implicit}
-\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}The initialization scheme of SIREN \cite  {sitzmann2020implicit}}{11}{subsection.6.2}\protected@file@percent }
 \bibstyle{IEEEtran}
 \bibdata{ref}
 \bibcite{finn2017model}{{1}{}{{}}{{}}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}The initialization scheme of SIREN \cite  {sitzmann2020implicit}}{12}{subsection.6.2}\protected@file@percent }
 \bibcite{hospedales2021meta}{{2}{}{{}}{{}}}
 \bibcite{beck2023survey}{{3}{}{{}}{{}}}
 \bibcite{raghu2019rapid}{{4}{}{{}}{{}}}
@@ -95,12 +99,13 @@
 \bibcite{genova2019learning}{{15}{}{{}}{{}}}
 \bibcite{park2019deepsdf}{{16}{}{{}}{{}}}
 \bibcite{lee2021meta}{{17}{}{{}}{{}}}
-\bibcite{chen2018neural}{{18}{}{{}}{{}}}
-\bibcite{holt2022neural}{{19}{}{{}}{{}}}
-\bibcite{markus1989efficacy}{{20}{}{{}}{{}}}
-\bibcite{fleming2013counting}{{21}{}{{}}{{}}}
-\bibcite{murtaugh1994primary}{{22}{}{{}}{{}}}
-\bibcite{santoro2016meta}{{23}{}{{}}{{}}}
-\bibcite{mishra2017simple}{{24}{}{{}}{{}}}
+\bibcite{fons2022hypertime}{{18}{}{{}}{{}}}
+\bibcite{chen2018neural}{{19}{}{{}}{{}}}
+\bibcite{holt2022neural}{{20}{}{{}}{{}}}
+\bibcite{markus1989efficacy}{{21}{}{{}}{{}}}
+\bibcite{fleming2013counting}{{22}{}{{}}{{}}}
+\bibcite{murtaugh1994primary}{{23}{}{{}}{{}}}
+\bibcite{santoro2016meta}{{24}{}{{}}{{}}}
+\bibcite{mishra2017simple}{{25}{}{{}}{{}}}
 \providecommand\NAT@force@numbers{}\NAT@force@numbers
 \gdef \@abspage@last{14}

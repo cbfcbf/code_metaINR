@@ -98,11 +98,11 @@
 \maketitle
 
 \begin{abstract}
-  Sparse time series data is everywhere in our daily life, which is formed by sparsely observed samples from a given function distribution. However, traditional statistical methods struggle to analyze such data effectively. 
-  Here, we introduce MetaINR, a method for learning the implicit neural representation (INR) of time series from sparse and irregular observations.
+  Sparse time series data is ubiquitous in our daily lives, comprising sparsely observed samples from a given function distribution.
+  However, traditional statistical methods often struggle to effectively analyze such data, either relying heavily on specific assumptions or requiring a larger number of observations.  Here, we introduce MetaINR, a method for learning the implicit neural representation (INR) of time series from sparse and irregular observations.
   MetaINR incorporates meta-learning into the functional data analysis (FDA) framework, 
-  efficiently learning sample distributions. 
-  It utilizes a specific SIREN-based network architecture to recover complete samples based on a few observation points. 
+  efficiently learning sample distributions without any prior assumptions.
+  It utilizes a specific SIREN-based network architecture to recover complete samples based on a few observation points, preserving fine details in each sample. 
   With MetaINR, estimations of the mean function, covariance operator, and principal components become straightforward.
   Our experiments, conducted on both synthetic and real data, demonstrate that MetaINR significantly outperforms traditional baseline methods in terms of estimation accuracy.
 \end{abstract}
@@ -225,6 +225,13 @@ $$y(t)=F_\phi(t), $$
 where $F_\phi(\cdot)$ is a deep neural network parameterized by $\phi$.
 This type of continuous representation not only proves to be more memory-efficient but also enables higher resolution and the handling of more complex operations on functional data.
 
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.5\textwidth]{INR.png}
+  \caption{\textbf{Diagram of the INR architecture.} Each neuron uses sine activations in SIREN.}
+  \label{INR}
+\end{figure}
+
 %【】提出了SIREN的函数结构，。
 \textbf{SIREN architecture for time series and its advantages}
 % 很多之前的工作用Relu-based multilayer perceptrons(MLP) 来作为INR的神经网络架构，但是基于这种架构的INR往往缺乏表达信号中精细细节的能力，并且不能很好的表示目标信号的多阶导数。为了解决这个问题，【1】提出了SIREN的架构来替代传统的ReLU-MLPs。它使用sine函数来作为神经网络的激活函数，可以很好的刻画函数的细节。令人惊奇的是，当对用SIREN来表示函数求导后，它依然可以用SIREN来表示。虽然之前的研究大多利用SIREN来表示图像和视频，却很少用来表示时间序列。本文将SIREN用在时间序列的分析中，我们发现SIREN在表示时间序列上具有优越性。
@@ -239,8 +246,11 @@ SIREN employs the sine function as the activation function, effectively modeling
 A remarkable observation is that even after taking derivatives of a function represented using SIREN, 
 it can still be expressed using the SIREN architecture. 
 These properties of SIREN make it the preferred choice for INR.
-While previous research predominantly applied SIREN to represent images and videos \cite{lee2021meta}, its application in time series representation has been limited. 
-Inspired by these and other seminal works, this paper explores the use of SIREN-based INR of time series samples and demonstates its superiority in further FDA analysis.
+While previous research predominantly applied SIREN to represent images and videos \cite{lee2021meta}, its application in time series representation has been relatively limited.
+\cite{fons2022hypertime} is one of the few examples exploring SIREN in time series, demonstrating the effectiveness of SIREN-based INR in recovering time series samples with dense observations under a hypernet architecture.
+However, this paper diverges by showing the superiority of SIREN in handling sparse time series samples through a meta-learning approach.
+% However, this paper will show the superiority of SIREN in sparse time series samples with meta-learning method.
+% Inspired by these and other seminal works, this paper incorporates meta-learning to SIREN-based INR of time series and demonstates its superiority in further FDA analysis.
 
 
 \subsubsection{Meta-learning for sparse data INR}
@@ -264,13 +274,7 @@ The only difference is that the initial value, loss function and gradient step s
 One important example of PPG method is  Model-Agnostic Meta-Learning (MAML) \cite{finn2017model}, where $\phi_0^*(\theta)=\theta$ and $\hat{L}_\theta$ can be any loss function independent of $\theta$.
 MAML can be regarded as learning an initial value for a task distribution, which retains the gradient decent framework of traditional optimization algorithms.
 
-\begin{figure}[tb]
-  \centering
-  \includegraphics[width=0.8\textwidth]{illustration.pdf}
-  \caption{\textbf{MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi_0$ for SIREN architecture $F$. The meta-model $F_{\phi_0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately.
-  The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components.}
-  \label{MetaINR workflow}
-\end{figure}
+
 
 \textbf{Black box methods}
 Since we only care about the target function $F_\phi(\cdot)$ rather than the value of parameters $\phi$, an alternative way to treat $f_\theta(\cdot)$ is to see it as a black box. Based on this idea, we can rewrite the target function:
@@ -298,7 +302,13 @@ Therefore, in this paper, we choose MAML as our meta-learning method for the INR
 }
 
 
-
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.8\textwidth]{illustration.pdf}
+  \caption{\textbf{MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi_0$ for SIREN architecture $F$. The meta-model $F_{\phi_0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately.
+  The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components.}
+  \label{MetaINR workflow}
+\end{figure}
 
 \section{Method}
 \textbf{Overview of MetaINR}
@@ -425,6 +435,7 @@ The overall comparison of these methods are shown in table \ref{method_compare}.
   PACE \cite{yao2005functional} & $\checkmark$ & $\checkmark$ & $\xmark$& $-$  \\
   Neural ODE \cite{chen2018neural} & $\checkmark$ & $\checkmark$ & $\xmark$ & $\xmark$ \\
   Neural Laplace \cite{holt2022neural} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\xmark$ \\
+  HyperTime \cite{fons2022hypertime} & $\checkmark$ & $\checkmark$ & $\checkmark$ & $\xmark$ \\
   MetaINR & $\checkmark$ & $\checkmark$ &$\checkmark$ & $\checkmark$\\
  \hline
 \end{tabular}
