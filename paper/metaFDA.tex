@@ -98,7 +98,7 @@
 \maketitle
 
 \begin{abstract}
-  Sparse time series data is formed by sparsely observed samples from a given function distribution. However, traditional statistical methods struggle to analyze such data effectively. 
+  Sparse time series data is everywhere in our daily life, which is formed by sparsely observed samples from a given function distribution. However, traditional statistical methods struggle to analyze such data effectively. 
   Here, we introduce MetaINR, a method for learning the implicit neural representation (INR) of time series from sparse and irregular observations.
   MetaINR incorporates meta-learning into the functional data analysis (FDA) framework, 
   efficiently learning sample distributions. 
@@ -390,8 +390,11 @@ $$
 $$
 \hat{c}(t,s)= \frac{1}{n} \sum_{i=1}^n  [\hat{y}_i(t))-\hat{\mu}(t)] [\hat{y}_i(s)-\hat{\mu}(s) ]
 $$
-According to the covariance operator, we can further estimate its principal components $\hat{\phi}_k(t)$ and the variance of scores $\hat \lambda_k$ by calculate the eigenfunctions and eigenvalues of $\hat{c}(t,s)$.
+According to the covariance operator, we can further estimate its principal components $\hat{\phi}_k(t)$ and the variance of scores $\hat \lambda_k$ by solving the eigenfunctions and eigenvalues of $\hat{c}(t,s)$.
 
+$$
+\int \hat{c}(t,s) \hat{\phi}_k(s) ds= \hat \lambda_k \hat{\phi}_k(t)
+$$
 
 \textcolor{blue}{
 \textbf{Advantages of MetaINR}
