@@ -90,6 +90,11 @@ V.~Sitzmann, J.~Martel, A.~Bergman, D.~Lindell, and G.~Wetzstein, ``Implicit
   neural representations with periodic activation functions,'' \emph{Advances
   in neural information processing systems}, vol.~33, pp. 7462--7473, 2020.
 
+\bibitem{fons2022hypertime}
+E.~Fons, A.~Sztrajman, Y.~El-Laham, A.~Iosifidis, and S.~Vyetrenko,
+  ``Hypertime: Implicit neural representation for time series,'' \emph{arXiv
+  preprint arXiv:2208.05836}, 2022.
+
 \bibitem{genova2019learning}
 K.~Genova, F.~Cole, D.~Vlasic, A.~Sarna, W.~T. Freeman, and T.~Funkhouser,
   ``Learning shape templates with structured implicit functions,'' in
@@ -106,11 +111,6 @@ J.~J. Park, P.~Florence, J.~Straub, R.~Newcombe, and S.~Lovegrove, ``Deepsdf:
 J.~Lee, J.~Tack, N.~Lee, and J.~Shin, ``Meta-learning sparse implicit neural
   representations,'' \emph{Advances in Neural Information Processing Systems},
   vol.~34, pp. 11\,769--11\,780, 2021.
-
-\bibitem{fons2022hypertime}
-E.~Fons, A.~Sztrajman, Y.~El-Laham, A.~Iosifidis, and S.~Vyetrenko,
-  ``Hypertime: Implicit neural representation for time series,'' \emph{arXiv
-  preprint arXiv:2208.05836}, 2022.
 
 \bibitem{chen2018neural}
 R.~T. Chen, Y.~Rubanova, J.~Bettencourt, and D.~K. Duvenaud, ``Neural ordinary
@@ -150,5 +150,25 @@ A.~Santoro, S.~Bartunov, M.~Botvinick, D.~Wierstra, and T.~Lillicrap,
 \bibitem{mishra2017simple}
 N.~Mishra, M.~Rohaninejad, X.~Chen, and P.~Abbeel, ``A simple neural attentive
   meta-learner,'' \emph{arXiv preprint arXiv:1707.03141}, 2017.
+
+\bibitem{he2021automl}
+X.~He, K.~Zhao, and X.~Chu, ``Automl: A survey of the state-of-the-art,''
+  \emph{Knowledge-based systems}, vol. 212, p. 106622, 2021.
+
+\bibitem{wu2019hyperparameter}
+J.~Wu, X.-Y. Chen, H.~Zhang, L.-D. Xiong, H.~Lei, and S.-H. Deng,
+  ``Hyperparameter optimization for machine learning models based on bayesian
+  optimization,'' \emph{Journal of Electronic Science and Technology}, vol.~17,
+  no.~1, pp. 26--40, 2019.
+
+\bibitem{reiss2007functional}
+P.~T. Reiss and R.~T. Ogden, ``Functional principal component regression and
+  functional partial least squares,'' \emph{Journal of the American Statistical
+  Association}, vol. 102, no. 479, pp. 984--996, 2007.
+
+\bibitem{srivastava2011registration}
+A.~Srivastava, W.~Wu, S.~Kurtek, E.~Klassen, and J.~S. Marron, ``Registration
+  of functional data using fisher-rao metric,'' \emph{arXiv preprint
+  arXiv:1103.3817}, 2011.
 
 \end{thebibliography}

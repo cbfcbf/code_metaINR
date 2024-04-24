@@ -116,26 +116,29 @@ Recent research suggests that meta-learning \cite{finn2017model,hospedales2021me
 It possesses the capability to identify shared patterns among related tasks \cite{raghu2019rapid}, 
 facilitating few-shot learning or even one-shot learning \cite{sun2019meta} with extremely limited training data. 
 Moreover, there has been substantial progress in statistical analysis utilizing dense functional data to address continuous time series issues \cite{wang2016functional}. 
-\textcolor{blue}{These findings inspire us to leverage meta-learning techniques to transform sparse time series samples into dense formats (recover the samples).
+These findings inspire us to leverage meta-learning techniques to transform sparse time series samples into dense formats (recover the samples).
 Subsequently, we can extend the established functional data analysis methodologies tailored for dense data to analyze sparse time series datasets effectively.
-}
+
 
 In this paper, we introduce a novel approach, MetaINR, which combines meta-learning and functional data analysis to address the estimation challenges posed by sparse time series data. 
 Through this method, we use meta-learning to realize the implicit neural representation (INR) to
 reconstruct the time series function for each sample based on sparse time series observations.
 Furthermore, we can estimate the mean, covariance, and principal components of the distribution behind these samples.
-\textcolor{blue}{
-  The advantange of MetaINR can be summarized as follows:
+The advantange of MetaINR can be summarized as follows:
   \begin{itemize}
-    \item Efficient and accurate reconstruction of time series samples with sparse observations by leveraging information from the entire dataset
-    \item Effective estimation of mean function, covariance operator and principal components for sparse time series dataset
+    \item Efficient and accurate reconstruction of time series samples, especially with sparse observations, by leveraging shared characteristics learned from the entire dataset via meta-learning.
+    \item Effective estimation of mean function, covariance operator and principal components for sparse time series dataset.
     \item Independence from any initial assumptions about the distribution of time series samples
     \item Preservation of fine details in the samples and easy calculation for their derivatives through the SIREN-based INR
   \end{itemize}
-}
 
-Therefore, MetaINR method provides a new solution for analyzing sparse time series data.
+MetaINR method provides a new solution for analyzing sparse time series data,
+whose potential applications span across various domains.
+In healthcare, MetaINR could facilitate early disease detection and treatment optimization through the analysis of long-term personal sparse medical observation data.
+In finance, it could enhance investment strategies by analyzing the infrequently disclosed financial data such as financial statements. 
+Moreover, MetaINR's capabilities also extend to environmental monitoring, social sciences, and biological sciences, where it can provide valuable insights into environmental changes, societal trends, and biological processes by analyzing the sparse time series observations in these domains. 
 
+%利用这个方法，我们可以有效解决现实中许多问题
 
 % Sparse time series data 在日常生活中非常常见，比如病人在不同时间测量的医疗数据、青少年在成长时不同阶段测量得到的身高数据等。这些数据的稀疏性和irregularity让传统的统计手段变得不太适用。同时，绝大多数时间序列数据所拥有的连续性，可微性等性质也给基于multivarible的统计学分析带来了困境
 % 最近的研究表明，元学习在处理稀疏形数据中具有独特的优势。它可以从大量相似的任务中学习任务的共性，并对非常稀疏的训练集做到few-shot learning, 甚至 one-shot learning。同时，在处理连续的时间序列问题时，基于funcitonal data 的统计学也逐渐成熟。
@@ -175,7 +178,7 @@ This type of data is particularly common in the medical field \cite{holte2012eff
 %由于irregularity和sparsity，这种形式的data已经完全不能够用传统的多元统计方法或者是dense-data-based FDA来分析了，而需要引入新的方法。
 Due to irregularity and sparsity, this form of data cannot be analyzed using traditional multivariate statistical methods or dense-data-based functional data analysis (FDA). Instead, it requires the introduction of new methods.
 
-\textcolor{blue}{
+
 \textbf{Our benchmarks and the drawbacks of traditional FDA method for sparse data}
 There have been previous explorations in sparse functional data analysis. 
 We introduce the following two traditional solutions for sparse time series data as benchmarks in this paper:
@@ -190,7 +193,7 @@ We introduce the following two traditional solutions for sparse time series data
   \item \textbf{Principal Analysis by Conditional Expectation (PACE method) }\cite{yao2005functional}: 
   In this method, we start by employing local polynomial regression to estimate the mean function and variance kernel. 
   Next, we calculate principal components based on these estimates. 
-  Finally, we recover samples by computing the scores associated with each principal component (see details in the appendix).
+  Finally, we recover samples by computing the scores associated with each principal component (see details in the appendix \ref{PACE}).
   Comparing to Pre-smoothing method, this approach leverages information from observations of other samples in the dataset during the sample recovery process, 
   thereby enhancing the reliability of the reconstruction. 
   However, it's important to note that PACE also comes with limitations, primarily because it heavily depends on the assumption that scores follow a normal distribution while recovering time series samples.
@@ -199,7 +202,7 @@ We introduce the following two traditional solutions for sparse time series data
 %1.local polynomial reconstruction + dense-data-based approach: 先直接利用local polynomial regression 对拥有稀疏observaiton的sample进行recover, 然后再利用dense-data-based 的方法对函数形数据进行分析
 %显然，这是不可靠的。这是因为数据集中对于单个样本的观测是极为稀疏的，基于稀疏样本的local polynomial reconstruction会变得非常不可靠。
 %2.PACE: 先利用local polynomial regression估计均值函数和方差核，然后计算主成分，利用主成分恢复样本。 这种方法在恢复sample时结合数据集中其他样本的信息，因此基于PACE的reconstruction会变得相对可靠。然而，PACE方法也有不足之处，它在恢复时间序列样本的过程中较大程度地依赖了分数服从正态分布的假设。
-}
+
 
 \subsection{Machine learning for functional data}
 % 与传统方法不同的是，本文将引入Machine learning的方法来analyze sparse time series data。具体而言，这涉及到两个方面。1. 我们将采用INR来恢复并且表示每一个sample；2. 我们将借助meta-learning的方法利用全数据集的信息对每个sample的INR进行有效的估计。
@@ -228,7 +231,7 @@ This type of continuous representation not only proves to be more memory-efficie
 \begin{figure}[htb]
   \centering
   \includegraphics[width=0.5\textwidth]{INR.png}
-  \caption{\textbf{Diagram of the INR architecture.} Each neuron uses sine activations in SIREN.}
+  \caption{\textbf{Diagram of the INR architecture.} \cite{fons2022hypertime} Each neuron uses sine activations in SIREN.}
   \label{INR}
 \end{figure}
 
@@ -282,15 +285,13 @@ $$
 F_\phi(t)=F_{f_\theta(D^*)}(t)=g_\theta(t,D^*)
 $$
 Here we do not need to explicitly specify the value of $\phi$, and treat the meta-learning task as another ``big'' task, which adds all the sparse sample observations into input.
-\textcolor{blue}{
   From this perspective, some existing deep learning models for learning differential equations, 
   such as Neural ODE \cite{chen2018neural} and Neural Laplace \cite{holt2022neural}, 
   can actually be classified as Black box methods. 
   Instead of treating INR for a single time series as a task, 
   these models consider learning the commonalities among a group of time series as a task, where $t$ and $D^*$ are all their input.
-}
 
-\textcolor{blue}{
+
 \textbf{Advantages of MAML for sparse INR tasks}
 For black box methods, because of the sequential properties of input observations, sequential model architectures such as RNN are always used in $g_\theta$ to encode the observations $D^*$, which unavoidably change the initial architecture $F_\phi$.
 In contrast, PPG methods use the meta-parameters $\theta$ to find the task parameters $\phi$ explicitly, which maintain the initial network architecture.
@@ -299,16 +300,10 @@ whereas PPG methods are more straightforward but carry an inductive bias within 
 In the context of time series Implicit Neural Representation (INR), selecting an SIREN-based appropriate network architecture is crucial for modeling complicated signals and their derivatives.
 Only PPG methods like MAML can learn the ``shared characteristics'' among samples while preserving the network architecture.
 Therefore, in this paper, we choose MAML as our meta-learning method for the INR task.
-}
 
 
-\begin{figure}[htb]
-  \centering
-  \includegraphics[width=0.8\textwidth]{illustration.pdf}
-  \caption{\textbf{MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi_0$ for SIREN architecture $F$. The meta-model $F_{\phi_0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately.
-  The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components.}
-  \label{MetaINR workflow}
-\end{figure}
+
+
 
 \section{Method}
 \textbf{Overview of MetaINR}
@@ -324,6 +319,13 @@ Given sparse observations of $n$ similar time series, the goal of FDA for sparse
 As discussed in the previous section, traditional FDA approaches either do not work well with sparse data or rely on many assumptions.
 Here, we choose an alternative way by using the method of meta-learning, which involves three main steps:
 
+\begin{figure}[htb]
+  \centering
+  \includegraphics[width=0.8\textwidth]{illustration.pdf}
+  \caption{\textbf{MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi_0$ for SIREN architecture $F$. The meta-model $F_{\phi_0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately.
+  The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components.}
+  \label{MetaINR workflow}
+\end{figure}
 
 
 \begin{itemize}
@@ -406,7 +408,7 @@ $$
 \int \hat{c}(t,s) \hat{\phi}_k(s) ds= \hat \lambda_k \hat{\phi}_k(t)
 $$
 
-\textcolor{blue}{
+
 \textbf{Advantages of MetaINR}
 %Inspired by 传统的方法, MetaINR 利用Meta-learning首先将只有sparse observation的样本完成了implicit neural representation， 使之可以适应于众多基于dense data的FDA方法。
 %值得注意的是，比LocalRecover method in Section 2的估计更加稳健的是, 基于MetaINR的sample recovery利用了整个数据集所有的信息。
@@ -422,7 +424,7 @@ MetaINR imposes no constraints on the distribution of samples, making it more ve
 Compared to other learning-based black box methods, MetaINR stands out by its ability to handle a broader range of sample distributions, not restricted to those generated solely from differential equations.
 Additionally, MetaINR maintains the SIREN-based INR architecture, which facilitates a more intricate representation of individual samples.
 The overall comparison of these methods are shown in table \ref{method_compare}.
-}
+
 
 \begin{table}[htb]
   \centering
@@ -447,7 +449,7 @@ The overall comparison of these methods are shown in table \ref{method_compare}.
 
 
 \section{Experiments}
-We evaluate our method on the synthetic data, with benchmarks estimations provided by Pre-smoothing method and the PACE method.
+We evaluate our method on the synthetic data, with benchmarks estimations provided by Pre-smoothing method, PACE method and other ML-based INR methods.
 Our results clearly demonstrate that MetaINR is able to effectively recover the samples from sparse observations. The estimations provided by MetaINR significantly outperforms the conventional baseline. 
 Moreover, we extended our analysis to a real-world medical dataset to validate the robustness and applicability of our approach in practical scenarios.
 % define evaluation method , measures? not only pictures
@@ -455,6 +457,12 @@ Moreover, we extended our analysis to a real-world medical dataset to validate t
 
 % \textcolor{red}{[IDEA: synthetic data generated by DE + evaluation principle]}
 
+In our experiments, we assessed MetaINR using various data distributions, 
+including distributions generated by principal components with different scores
+and distributions generated by the solutions of differential equation with different initial conditions. 
+To facilitate reader comprehension of our method, we selected the following one particular example in the main text.
+Experimental results of MetaINR on other datasets can be found in the appendix \ref{Experiments}.
+%在实验中，我们使用了不同的数据distribution来评价MetaINR, including 周期性数据集（sine function，）, 微分方程数据集等。为了让读者方面理解方法，我们选取了其中一个特殊的例子在正文中进行展示。MetaINR在其他数据集上的实验结果可以见附录。
 
 \textbf{Data generating process}
 The ground truth of our synthetic data distribution is given by:
@@ -487,12 +495,18 @@ which does not meet the assumption of normal distribution required by traditiona
 Therefore, in such a data setting, MetaINR demonstrates significant superiority.
 
 \textbf{Parameters setting} 
-Following our previous discussions, we integrate the SIREN architecture with MAML in the experiments. 
-We set the initial parameters of SIREN $\omega_0=3$, to match frequency spectrum of the signal fluctuations in the samples (see the appendix for details).
+When integrating the SIREN architecture with MAML in our experiments, 
+we employed a SIREN architecture with three hidden layers, each containing $40$ hidden neurons.
+We set the initial parameters of SIREN $\omega_0=3$, to match frequency spectrum of the signal fluctuations in the samples (see the appendix \ref{SIREN} for details).
 During the meta-learning training process, we divide the data into two halves, with each sample having 10 observation points: one half serves as the support set and the other half as the query set.
 In the outer loop of MAML, we set the learning rate of the meta-model to 0.0001. 
 In the inner loop of MAML, we set the model's learning rate to 0.001 and the number of iterations for parameter optimization $Q=1$.
 During subsequent gradient decent algorithm for sample recovery, the model's learning rate is set to 0.001 as well.
+The selection of these parameters is based on engineering experience during debugging in order to improve algorithm's accuracy and efficiency.
+Adaptations should be made for different datasets, considering their unique characteristics.
+
+%这些参数的选择是根据工程经验为了提高算法运行速度调试的，对于不同数据集需要根据数据集的性质在算法运行过程中进行调整
+
 % 我们依照先前的讨论把SIREN架构和MAML结合起来。在元学习的训练过程中，我们把一半的数据(每个样本取10个观测点)作为support set， 另一半作为query set. 
 % 我们设置SIREN的初始化参数$\omega_0=3$以适应样本的波动频率。（see appendix for details）
 % 在MAML的外循环中，我们令元模型的学习率为0.0001；在MAML的内循环中，我们令模型的学习率为0.001，并让设置参数的迭代优化次数Q=1。
@@ -512,7 +526,7 @@ resulting in less accurate predictions for the first half ($t \in [0, 5]$) of th
 Additionally, meta-learning inherently learns information about the mean function of this distribution. 
 By directly plugging the initial values $\phi_0$ learned by MAML into the SIREN architecture to form the meta-model $F_{\phi_0}(t)$,
 we observed a notable proximity between the meta-model and the means of these samples. 
-As demonstrated in Figure \ref{Learning commonalities}b, the meta-learning process is accompanied by the meta-model gradually converging towards the mean.
+As demonstrated in Figure \ref{Learning commonalities}b, the meta-learning process is accompanied by the meta-model gradually converging towards the mean (see appendix \ref{Experiments} for the similar results in other synthetic datasets).
 % 除了这两个例子之外，【2】向我们展示了MAML能够加速学习的原因是feature reuse，这也解释了为什么元模型会包含数据集的多种特征。因此通过MetaINR进行基于稀疏观测的重建会比local polynomial regression 更加可靠。
 {Aside from these two examples, \cite{raghu2019rapid}  illustrates that MAML accelerates learning through feature reuse.}
 This also clarifies why the meta-model encompasses various features of the dataset and MetaINR is a more reliable way for sample recovery than local polynomial regression. 
@@ -542,7 +556,7 @@ This also clarifies why the meta-model encompasses various features of the datas
 \textbf{Estimation of mean, covariance and principal components}
 % 基于每个样本的MetaINR, 我们对这个人造数据集的均值函数，方差核和主成分进行了估计，结果如图3，4，5所示。
 % 我们发现，以MetaINR为基础对三者的估计都远好于benchmarks。特别是在数据的边界处，即t接近0或10的位置，baseline的估计往往与真实值相差甚远，而基于MetaINR的估计却相对可靠。
-Based on MetaINR workflow, we estimated the mean function, covariance kernel, and principal components of this synthetic dataset. 
+Based on MetaINR workflow, we recovered samples and estimated the mean function, covariance kernel, and principal components of this synthetic dataset. 
 As demonstrated in Figure \ref{Estimation for synthetic data},
 the estimators based on MetaINR for all metrics significantly outperformed the benchmarks. 
 %In sample recovery, Pre-smoothing method 在估计中没有考虑到其他样本带来的信息从而导致了在[0,1]区间中与真实值较大的偏离；PACE method 尽管在估计中考虑了所有样本的信息而产生相对较合理的样本恢复结果，但是恢复效果依然不如MetaINR，这可能和数据生成过程不满足PACE方法的假设条件有关。
@@ -551,11 +565,12 @@ the estimators based on MetaINR for all metrics significantly outperformed the b
 %In Principal component estimation, 我们发现这四种方法对于PC1都有着较好的估计，但Pre-smoothing 和 PACE 方法却都不能够较精准的捕捉PC2随时间的变动，而MetaINR 却近乎完美地估计了PC2。
 
 In the context of sample recovery, 
-the Pre-smoothing method did not take into account information from other samples in the estimation process, 
-leading to significant deviations from the true values within the $[0,1]$ interval. 
-On the other hand, although the PACE method considered information from all samples and produced relatively reasonable sample recovery results, 
+the Pre-smoothing method relies solely on a few observations from the target sample, 
+neglecting information from other samples, 
+thus leading to significant deviations from the true values within the $[0,1]$ interval. 
+On the other hand, although the PACE method considers information from all samples and yields relatively reasonable sample recovery results, 
 its performance still falls short compared to MetaINR. 
-This discrepancy may be attributed to the data generation process not meeting the assumptions of the PACE method.
+This discrepancy may be attributed to the fact that the scores of sample principal components are uniformly distributed rather than normally distributed, which does not meet the assumptions of the PACE method.
 
 Regarding mean function estimation, the Pre-smoothing method's estimation  assigned equal weights to all samples at different time points. 
 However, since the number and positions of observed points vary among different samples, the information provided by different samples for estimating the mean at a given time point varies. 
@@ -580,7 +595,10 @@ However, both the Pre-smoothing and PACE methods struggled to accurately capture
   \label{Estimation for synthetic data}
 \end{figure}
 
-
+\textcolor{red}{
+\textbf{Sample recovery evaluation}
+}
+Compare to NL, ...
 
 % \begin{figure}
 %   \centering
@@ -631,6 +649,7 @@ During the meta-learning training process, we equally divide the observations of
 In the outer loop of MAML, we set the learning rate of the meta-model to 0.00005. 
 In the inner loop of MAML, we set the model's learning rate to 0.00005 and the number of iterations for parameter optimization $Q=3$.
 During subsequent gradient decent algorithm for sample recovery, the model's learning rate is set to 0.00005 and the total iterations is set to 500.
+The choices of these parameters are all based on empirical rules.
 
 \textbf{Estimation of mean, covariance and principal components}
 % 如图3展示了MetaINR在实际sparse functional dataset中的估计结果。我们发现虽然每个样本只有极少数的观测点，但是MetaINR却能较好地恢复样本。在统计量的估计方面，在这个特定的实际数据集中，metaINR有着与Baseline类似的估计效果。我们可以通过估计结果得到如下结论：在前910天的观测中，病人的serum bilirubin concentration先小幅下降，在400天左右，它又急剧上升（mean function）。不同病人之间serum bilirubin concentration除了在基础值上有差异外（pc1），从400天左右, 病人的serum bilirubin concentration之间出现较大的分化差异（pc2）。
@@ -660,18 +679,36 @@ significant divergence in serum bilirubin concentration among patients emerges a
 
 \section{Conclusion and future work}
 % 我们展示了一个利用meta-learning的技术来处理sparse time series data的一个方法。通过meta-learning利用整个数据集的信息可以对只存在极少数观测点的样本进行MetaINR。基于MetaINR让一些原本只在稠密数据集中使用的functional data analysis的方法在sparse 数据集中变得可行。基于MetaINR的估计也为我们进一步分析sparse time series data提供了强大的工具。
-In this paper, we have shown a method named MetaINR utilizing meta-learning to analyze sparse time series data. 
+In this paper, we have proposed MetaINR utilizing meta-learning to analyze sparse time series data. 
 MetaINR enables the estimation of functional form samples with very few observation points by leveraging information from the entire dataset through meta-learning. 
-The application of MetaINR makes functional data analysis (FDA) methods, which are typically used in dense datasets, feasible for sparse datasets. 
-Therefore, MetaINR provides a novel tool for further analyzing sparse time series data.
+This approach extends the applicability of functional data analysis (FDA) methods, which are typically used in dense datasets, to sparse datasets. 
+Therefore, MetaINR presents a valuable tool for the analysis of sparse time series data, with potential applications in various fields, 
+including healthcare, finance, environmental monitoring, sensor networks, social sciences, and biological sciences.  
 % 在未来的研究中，我们希望可以利用MetaINR对其他原本只适用于稠密数据集的funcational data analysis的方法进行拓展，如FPLS，functional regression等。从而结合MetaINR和FDA的方法来建立针对sparse data的分析工具库。
 
-In future research, we aim to extend the application of MetaINR to other functional data analysis methods that were initially designed for dense datasets, such as Functional Partial Least Squares Regression (FPLS), functional regression, registration and more.
-We can also explore other algorithms of meta-learning, such as MANN \cite{santoro2016meta} and SNAIL \cite{mishra2017simple}, and compare the performances between them.
-% This approach aims to build an analytical toolkit for sparse data by combining MetaINR with various functional data analysis methods.
-\section{Appendix}
 
+Nevertheless, MetaINR exhibits certain limitations, particularly its sensitivity to the choice of hyperparameters, 
+such as the learning rates of inner and outer loop in MAML and network initialization weights in SIREN. 
+Optimal hyperparameters can vary significantly across different datasets, 
+and the improper selection often results in suboptimal outcomes.
+
+In our future work, 
+we intend to tackle this challenge by exploring alternative meta-learning algorithms, 
+such as MANN \cite{santoro2016meta} and SNAIL \cite{mishra2017simple}, 
+as well as incorporating methods like AutoML \cite{he2021automl} and Bayesian optimization \cite{wu2019hyperparameter} for hyperparameter selection.
+By taking this approach, we anticipate a reduction in sensitivity to specific hyperparameters, thereby improving the overall performance and robustness of MetaINR.
+In addition, we also plan to extend the application of MetaINR to other functional data analysis methods that were initially designed for dense datasets, such as Functional Partial Least Squares Regression (FPLS) \cite{reiss2007functional} and functional data registration \cite{srivastava2011registration},
+to introduce more innovative methods in sparse FDA by leveraging machine learning techniques.
+
+% Additionallly, we intend to explore other algorithms of meta-learning, such as MANN \cite{santoro2016meta} and SNAIL \cite{mishra2017simple}, and conduct comprehensive performance comparisons.
+% Such investigations would offer valuable insights into the comparative strengths and weaknesses of different meta-learning approaches, 
+% thereby informing future enhancements and optimizations of MetaINR.
+% This approach aims to build an analytical toolkit for sparse data by combining MetaINR with various functional data analysis methods.
+
+
+\section{Appendix}
 \subsection{Traditional FDA method for sparse functional data: PACE \cite{yao2005functional}} 
+\label{PACE}
 In functional data analysis, it is inappropriate to apply dense-data-based approaches directly on sparse dataset.
 However, PACE method gives a alternative solution.
 
@@ -744,6 +781,7 @@ $$
 
 
 \subsection{The initialization scheme of SIREN \cite{sitzmann2020implicit}}
+\label{SIREN}
 
 As discussed in the main text, SIREN is a restructured network architecture based on the traditional MLP, 
 where the sine function replaces the original ReLU function as the activation function of the neural network. 
@@ -788,8 +826,19 @@ $
 $ 
 will not only keep the activations constant but also boosts the gradients.
 
+\textcolor{red}{
+\subsection{Experimental results for other synthetic data distributions}}
+\label{Experiments}
 
-% \subsection{Experiments on other synthetic data}
+Here we demonstate more experimental results in synthetic data to show its robustness and accuracy of estimation.
+
+\textbf{The meta-model learning mean function} %表格
+
+\textbf{MetaINR estimation of data distribution generated by principle components}
+%% 满足PACE要求的
+%% 不满足PACE要求的
+
+\textbf{MetaINR estimation of data distribution generated by differencial equations} %来不及可不做，原文中记得改
 
 
 \section*{Data and code availability}
