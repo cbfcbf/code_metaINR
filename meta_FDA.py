@@ -496,7 +496,7 @@ plt.plot(t,ft_predict,"r",label='MetaINR')
 plt.plot(t,y_base,"g",label="Local polynomial regression")
 plt.ylim(-2,2)
 plt.legend()
-plt.savefig("./figure/learning_periodicity.pdf")
+# plt.savefig("./figure/learning_periodicity.pdf")
 
 
 # %% PACE baseline

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.10.30)  24 APR 2024 17:58
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.10.30)  26 APR 2024 14:10
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -2406,7 +2406,7 @@ Underfull \vbox (badness 1067) has occurred while \output is active []
  [4]
 
 pdfTeX warning: pdflatex (file ./illustration.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
-<illustration.pdf, id=147, 724.7075pt x 682.55pt>
+<illustration.pdf, id=148, 724.7075pt x 682.55pt>
 File: illustration.pdf Graphic file (type pdf)
 <use illustration.pdf>
 Package pdftex.def Info: illustration.pdf  used on input line 324.
@@ -2425,7 +2425,7 @@ l.507
       ]
 
 pdfTeX warning: pdflatex (file ./learning_commonalities.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
-<learning_commonalities.pdf, id=264, 914.1402pt x 366.07364pt>
+<learning_commonalities.pdf, id=265, 914.1402pt x 366.07364pt>
 File: learning_commonalities.pdf Graphic file (type pdf)
 <use learning_commonalities.pdf>
 Package pdftex.def Info: learning_commonalities.pdf  used on input line 535.
@@ -2441,7 +2441,7 @@ l.575 R
        egarding mean function estimation, the Pre-smoothing method's estimat... <./learning_commonalities.pdf>]
 
 pdfTeX warning: pdflatex (file ./synthetic_results.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
-<synthetic_results.pdf, id=290, 1335.0277pt x 568.81607pt>
+<synthetic_results.pdf, id=291, 1335.0277pt x 568.81607pt>
 File: synthetic_results.pdf Graphic file (type pdf)
 <use synthetic_results.pdf>
 Package pdftex.def Info: synthetic_results.pdf  used on input line 591.
@@ -2457,7 +2457,7 @@ l.653
        <./synthetic_results.pdf>]
 
 pdfTeX warning: pdflatex (file ./real_results.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
-<real_results.pdf, id=20422, 835.74936pt x 491.95996pt>
+<real_results.pdf, id=20423, 835.74936pt x 491.95996pt>
 File: real_results.pdf Graphic file (type pdf)
 <use real_results.pdf>
 Package pdftex.def Info: real_results.pdf  used on input line 663.
@@ -2530,17 +2530,17 @@ Package rerunfilecheck Info: File `metaFDA.out' has not changed.
 (rerunfilecheck)             Checksum: C7893E53636BC8D0FADB91F5318B4836;3022.
  ) 
 Here is how much of TeX's memory you used:
- 26095 strings out of 478268
- 459101 string characters out of 5846346
- 793588 words of memory out of 5000000
+ 26098 strings out of 478268
+ 459125 string characters out of 5846346
+ 792600 words of memory out of 5000000
  43516 multiletter control sequences out of 15000+600000
- 510944 words of font info for 220 fonts, out of 8000000 for 9000
+ 511071 words of font info for 222 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  99i,16n,94p,1000b,801s stack positions out of 10000i,1000n,20000p,200000b,200000s
 {/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on metaFDA.pdf (15 pages, 24264212 bytes).
+Output written on metaFDA.pdf (15 pages, 24264450 bytes).
 PDF statistics:
- 32880 PDF objects out of 38293 (max. 8388607)
+ 32881 PDF objects out of 38293 (max. 8388607)
  16434 compressed objects within 165 object streams
  91 named destinations out of 1000 (max. 500000)
  42654 words of extra memory for PDF output out of 42996 (max. 10000000)
