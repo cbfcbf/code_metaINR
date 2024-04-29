@@ -15,8 +15,8 @@ from localreg import *
 from scipy import interpolate
 
 train_inner_train_step = 1
-val_inner_train_step = 10
-first_omega_0=3
+val_inner_train_step = 1
+first_omega_0=2
 inner_lr = 0.001
 meta_lr = 0.001
 # first_omega_0=0.5
@@ -347,7 +347,8 @@ def MetaINR_training(dataset,device):
         else:
             waiting += 1
 
-        if best_loss<0.001:
+        if best_loss<0.0005:
+            print(best_loss)
             break
 
     train_meta_loss_list=np.array(train_meta_loss_list)

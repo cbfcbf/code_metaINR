@@ -15,8 +15,8 @@ from localreg import *
 
 from scipy import interpolate
 
-from baseline.metaINR_utils import *
-from baseline.NeuralLaplace_utils import *
+from metaINR_utils import *
+from NeuralLaplace_utils import *
 # %% parameters
 Number_of_task=100  #take 100 tasks for training in total 
 total_samples_per_task = 20
@@ -110,7 +110,7 @@ best_laplace_rep_func,best_encoder=train_NL(trajectories, ti )
 
 # %% Test data
 def sine_test(t):
-    y=0.8*torch.sin(t)+0.4*torch.sin(2*t)
+    y=0.6*torch.sin(t)+0.6*torch.sin(2*t)
     return y
 
 def sawtooth_test(t):
@@ -123,8 +123,12 @@ t=torch.arange(0,10,0.01)
 y=Test_fun(t)
 
 
-support_t=torch.linspace(0,5,total_samples_per_task//2-3)
-support_t=torch.linspace(0,5,total_samples_per_task//2-3)
+
+# support_t=torch.linspace(0,4.7368,total_samples_per_task//2)
+
+# support_t=5 * torch.rand(10).sort()[0]
+
+# support_t=torch.linspace(0,5,total_samples_per_task//2-2)
 
 support_y=Test_fun(support_t)
 
@@ -134,12 +138,13 @@ query_y_true=Test_fun(query_t)
 y_true=query_y_true.detach().numpy()
 t_plot = query_t.detach().numpy()
 
-# %% metaINR
+#  metaINR
+test_inner_train_step=50
 meta_model, optimizer, loss_fn = model_init(device, meta_lr,first_omega_0)
-fast_weights, inner_loss=inner_train(support_t,support_y,meta_weights,loss_fn, inner_lr,meta_model,inner_step = val_inner_train_step)
+fast_weights, inner_loss=inner_train(support_t,support_y,meta_weights,loss_fn, inner_lr,meta_model,inner_step = test_inner_train_step)
 y_metaINR=meta_model.functional_forward(query_t.reshape(-1,1), fast_weights).detach().numpy()
 
-# %% NL
+# NL
 input_dim=1
 output_dim=1
 encoder = ReverseGRUEncoder(
@@ -166,14 +171,13 @@ predictions = laplace_reconstruct(
 # tp_to_predict = torch.squeeze(tp_to_predict).detach().numpy()
 y_NL = torch.squeeze(predictions).detach().numpy()
 
-# %%
+
+# 
 plt.plot(t_plot,y_NL,"b:",label="Neural Laplace")
 plt.plot(t_plot,y_metaINR,'r:',label="MetaINR")
 plt.plot(t_plot,y_true,'y',label="ground truth") 
 plt.legend()
-# plt.savefig('./figure_compare/sine.pdf')
+plt.savefig('more_t.pdf')
+
 # %%
-support_t
-# %%
-torch.arange(0,5,0.5)
-# %%
+
