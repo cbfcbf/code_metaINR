@@ -564,16 +564,19 @@ pc2_pace=pc_list[:,1]
 # %%
 # visualize PC1
 l5=plt.plot(t,pc1_true,'y',label='pc1_true')
+l9=plt.plot(t,pc1_true_sample,'grey',label='pc1_sample')
+
 l1=plt.plot(t,pc1,'r:',label='pc1_metaINR')
 l3=plt.plot(t,pc1_base,'g:',label='pc1_Pre-smoothing')
 l7=plt.plot(t_pace,pc1_pace*5**0.5,'b:',label='pc1_PACE')
 plt.title("PC1")
 plt.ylim(-0.75,0.75)
-# plt.legend(bbox_to_anchor=(1.45, 1))
+plt.legend(bbox_to_anchor=(1.45, 1))
 plt.savefig("./figure/PC1.pdf")
 
 # %%
 # PC2
+l10=plt.plot(t,pc2_true_sample,'grey',label='pc1_sample')
 l6=plt.plot(t,-pc2_true,'y',label='pc2_true')
 l2=plt.plot(t,pc2,'r:',label='pc2_metaINR')
 l4=plt.plot(t,-pc2_base,'g:',label='pc2_Pre-smoothing')

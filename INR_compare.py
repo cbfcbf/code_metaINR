@@ -23,7 +23,7 @@ total_samples_per_task = 20
 
 device = "cuda" if torch.cuda.is_available() else "cpu"
 # Fix random seeds
-random_seed = 0
+random_seed = 5 #0,2,3,4,5
 random.seed(random_seed)
 np.random.seed(random_seed)
 torch.manual_seed(random_seed)
@@ -108,6 +108,8 @@ meta_weights=MetaINR_training(dataset,device)
 # %% NeuralLaplace
 best_laplace_rep_func,best_encoder=train_NL(trajectories, ti )
 
+
+
 # %% Test data
 def sine_test(t):
     y=0.6*torch.sin(t)+0.6*torch.sin(2*t)
@@ -128,7 +130,9 @@ y=Test_fun(t)
 
 # support_t=5 * torch.rand(10).sort()[0]
 
-# support_t=torch.linspace(0,5,total_samples_per_task//2-2)
+support_t=torch.linspace(0,5,total_samples_per_task//2-2)
+
+# support_t=torch.linspace(0,5,total_samples_per_task//2+2)
 
 support_y=Test_fun(support_t)
 
@@ -142,7 +146,7 @@ t_plot = query_t.detach().numpy()
 test_inner_train_step=50
 meta_model, optimizer, loss_fn = model_init(device, meta_lr,first_omega_0)
 fast_weights, inner_loss=inner_train(support_t,support_y,meta_weights,loss_fn, inner_lr,meta_model,inner_step = test_inner_train_step)
-y_metaINR=meta_model.functional_forward(query_t.reshape(-1,1), fast_weights).detach().numpy()
+y_metaINR=meta_model.functional_forward(query_t.reshape(-1,1), fast_weights).detach().numpy()[:,0]
 
 # NL
 input_dim=1
@@ -179,5 +183,42 @@ plt.plot(t_plot,y_true,'y',label="ground truth")
 plt.legend()
 plt.savefig('more_t.pdf')
 
-# %%
 
+diff_NL=(y_NL-y_true)
+print('NL')
+print((diff_NL**2).mean()**0.5)
+
+diff_meta=(y_metaINR-y_true)
+print('metaINR')
+print((diff_meta**2).mean()**0.5)
+
+# %%实验结果
+# %% 1NL
+a=np.array([0.07546819984835752,0.05105212300754457,0.06605465457538706,0.04913789478883712,0.05041396530153229])
+# %% 1Meta
+a=np.array([0.08923125884156312,0.08756490060955151,0.058980835404201605,0.06916237316656006,0.08131458084033742])
+
+# %% 2NL
+a=np.array([0.3021836963639041,0.08713125565625102,0.3283296128770619,0.3328562640576716,0.1614360037611365])
+ 
+# %% 2Meta
+a=np.array([0.07421979464247509,0.07424439125338857,0.058452599106028715,0.06934251888363321,0.08749221997073525])
+
+# %% 3NL
+a=np.array([0.251102074732578,0.21643046611985536,0.12551925514410922,0.19557766081079941,0.16914321906234767])
+ 
+# %% 3Meta
+a=np.array([0.06611423590349785,0.07510480759876709,0.04999861407966896,0.07043453064492627,0.07218096903780057])
+
+# %% 4NL
+a=np.array([0.15173701974808643,0.14910189736748164,0.10452123487789013,0.12409115241854461,0.09289421952866912])
+ 
+# %% 4Meta
+a=np.array([0.06938074235842107,0.08109277381934182,0.05284692092610641,0.06570195372214457,0.07575862303386087])
+
+# %%
+mean_a = np.mean(a)
+print("Mean of a:", mean_a)
+# 计算标准差
+std_a = np.std(a)
+print("Standard deviation of a:", std_a)

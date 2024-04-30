@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.10.30)  29 APR 2024 18:37
+This is pdfTeX, Version 3.141592653-2.6-1.40.24 (TeX Live 2022) (preloaded format=pdflatex 2022.10.30)  30 APR 2024 16:17
 entering extended mode
  restricted \write18 enabled.
  file:line:error style messages enabled.
@@ -2368,3 +2368,225 @@ File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
 LaTeX Font Info:    Trying to load font information for U+msb on input line 99.
  (/usr/local/texlive/2022/texmf-dist/tex/latex/amsfonts/umsb.fd
+File: umsb.fd 2013/01/14 v3.01 AMS symbols B
+) (/usr/local/texlive/2022/texmf-dist/tex/latex/microtype/mt-msb.cfg
+File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
+)
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 99.
+ (/usr/local/texlive/2022/texmf-dist/tex/latex/base/t1cmtt.fd
+File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
+)
+Package microtype Info: Loading generic protrusion settings for font family
+(microtype)             `cmtt' (encoding: T1).
+(microtype)             For optimal results, create family-specific settings.
+(microtype)             See the microtype manual for details.
+LaTeX Font Info:    Trying to load font information for TS1+ptm on input line 129.
+ (/usr/local/texlive/2022/texmf-dist/tex/latex/psnfss/ts1ptm.fd
+File: ts1ptm.fd 2001/06/04 font definitions for TS1/ptm.
+)
+Underfull \vbox (badness 1237) has occurred while \output is active []
+
+ [1
+
+
+{/usr/local/texlive/2022/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2]
+<INR.png, id=111, 1001.7425pt x 451.6875pt>
+File: INR.png Graphic file (type png)
+<use INR.png>
+Package pdftex.def Info: INR.png  used on input line 233.
+(pdftex.def)             Requested size: 198.7425pt x 89.61221pt.
+ [3
+pdfTeX warning (ext4): destination with the same identifier (name{figure.1}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.257 
+       <./INR.png>]
+Underfull \vbox (badness 1067) has occurred while \output is active []
+
+ [4]
+
+pdfTeX warning: pdflatex (file ./illustration.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
+<illustration.pdf, id=148, 724.7075pt x 682.55pt>
+File: illustration.pdf Graphic file (type pdf)
+<use illustration.pdf>
+Package pdftex.def Info: illustration.pdf  used on input line 324.
+(pdftex.def)             Requested size: 317.9892pt x 299.48975pt.
+Package hyperref Info: bookmark level for unknown algorithm defaults to 0 on input line 351.
+[5
+pdfTeX warning (ext4): destination with the same identifier (name{figure.2}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.396 
+       <./illustration.pdf>] [6] (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) (/usr/local/texlive/2022/texmf-dist/tex/latex/utfsym/usym2717.tikz) [7
+pdfTeX warning (ext4): destination with the same identifier (name{table.1}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.507 
+      ]
+
+pdfTeX warning: pdflatex (file ./learning_commonalities.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
+<learning_commonalities.pdf, id=265, 914.1402pt x 366.07364pt>
+File: learning_commonalities.pdf Graphic file (type pdf)
+<use learning_commonalities.pdf>
+Package pdftex.def Info: learning_commonalities.pdf  used on input line 535.
+(pdftex.def)             Requested size: 397.48499pt x 159.1737pt.
+[8
+pdfTeX warning (ext4): destination with the same identifier (name{figure.3}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.569 
+       <./learning_commonalities.pdf>]
+
+pdfTeX warning: pdflatex (file ./ML_Compare.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
+<ML_Compare.pdf, id=292, 1583.73677pt x 573.58995pt>
+File: ML_Compare.pdf Graphic file (type pdf)
+<use ML_Compare.pdf>
+Package pdftex.def Info: ML_Compare.pdf  used on input line 578.
+(pdftex.def)             Requested size: 397.48499pt x 143.95728pt.
+
+
+pdfTeX warning: pdflatex (file ./synthetic_results.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
+<synthetic_results.pdf, id=294, 1335.0277pt x 556.77107pt>
+File: synthetic_results.pdf Graphic file (type pdf)
+<use synthetic_results.pdf>
+Package pdftex.def Info: synthetic_results.pdf  used on input line 623.
+(pdftex.def)             Requested size: 397.48499pt x 165.76675pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [9
+pdfTeX warning (ext4): destination with the same identifier (name{figure.4}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.675 
+       <./ML_Compare.pdf>]
+
+pdfTeX warning: pdflatex (file ./real_results.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
+<real_results.pdf, id=328, 835.74936pt x 491.95996pt>
+File: real_results.pdf Graphic file (type pdf)
+<use real_results.pdf>
+Package pdftex.def Info: real_results.pdf  used on input line 693.
+(pdftex.def)             Requested size: 397.48499pt x 233.98367pt.
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [10
+pdfTeX warning (ext4): destination with the same identifier (name{figure.5}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.718 
+       <./synthetic_results.pdf>]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\begingroup' on input line 740.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\<let>-command' on input line 740.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\NAT@ctype' on input line 740.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\z@' on input line 740.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\let' on input line 740.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\let' on input line 740.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\new@ifnextchar' on input line 740.
+
+[11
+pdfTeX warning (ext4): destination with the same identifier (name{figure.6}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.750 $$
+         <./real_results.pdf>]
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\begingroup' on input line 813.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\<let>-command' on input line 813.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\NAT@ctype' on input line 813.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\z@' on input line 813.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\let' on input line 813.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\let' on input line 813.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (Unicode):
+(hyperref)                removing `\new@ifnextchar' on input line 813.
+
+[12]
+
+pdfTeX warning: pdflatex (file ./learning_mean_moreExp.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
+<learning_mean_moreExp.pdf, id=32762, 1686.83202pt x 600.26358pt>
+File: learning_mean_moreExp.pdf Graphic file (type pdf)
+<use learning_mean_moreExp.pdf>
+Package pdftex.def Info: learning_mean_moreExp.pdf  used on input line 872.
+(pdftex.def)             Requested size: 397.48499pt x 141.44664pt.
+
+
+pdfTeX warning: pdflatex (file ./sawtooth_results.pdf): PDF inclusion: found PDF version <1.6>, but at most version <1.5> allowed
+<sawtooth_results.pdf, id=32766, 1335.0277pt x 556.77107pt>
+File: sawtooth_results.pdf Graphic file (type pdf)
+<use sawtooth_results.pdf>
+Package pdftex.def Info: sawtooth_results.pdf  used on input line 904.
+(pdftex.def)             Requested size: 397.48499pt x 165.76675pt.
+[13]
+Underfull \vbox (badness 2941) has occurred while \output is active []
+
+ [14
+pdfTeX warning (ext4): destination with the same identifier (name{figure.7}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.920 \section
+              *{Acknowledgments}
+pdfTeX warning (ext4): destination with the same identifier (name{figure.8}) has been already used, duplicate ignored
+<argument> ...shipout:D \box_use:N \l_shipout_box 
+                                                  \__shipout_drop_firstpage_...
+l.920 \section
+              *{Acknowledgments} <./learning_mean_moreExp.pdf> <./sawtooth_results.pdf
+
+pdfTeX warning: pdflatex (file ./sawtooth_results.pdf): PDF inclusion: multiple pdfs with page group included in a single page
+>] (./metaFDA.bbl [15]) [16] (./metaFDA.aux)
+Package rerunfilecheck Info: File `metaFDA.out' has not changed.
+(rerunfilecheck)             Checksum: 4FC5985E62698D54D71D05BF4C832966;3189.
+ ) 
+Here is how much of TeX's memory you used:
+ 26129 strings out of 478268
+ 459816 string characters out of 5846346
+ 793830 words of memory out of 5000000
+ 43537 multiletter control sequences out of 15000+600000
+ 511198 words of font info for 224 fonts, out of 8000000 for 9000
+ 1141 hyphenation exceptions out of 8191
+ 99i,16n,94p,1000b,801s stack positions out of 10000i,1000n,20000p,200000b,200000s
+{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/base/8r.enc}{/usr/local/texlive/2022/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc}</usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/msam10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmb8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmr8a.pfb></usr/local/texlive/2022/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on metaFDA.pdf (16 pages, 42339267 bytes).
+PDF statistics:
+ 53059 PDF objects out of 55141 (max. 8388607)
+ 26449 compressed objects within 265 object streams
+ 95 named destinations out of 1000 (max. 500000)
+ 42669 words of extra memory for PDF output out of 42996 (max. 10000000)
+

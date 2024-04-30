@@ -49,4 +49,84 @@
 \@writefile{toc}{\contentsline {section}{\numberline {3}Method}{5}{section.3}\protected@file@percent }
 \@writefile{lof}{\contentsline {figure}{\numberline {2}{\ignorespaces \textbf  {MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi _0$ for SIREN architecture $F$. The meta-model $F_{\phi _0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately. The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components.}}{5}{figure.2}\protected@file@percent }
 \newlabel{MetaINR workflow}{{2}{5}{\textbf {MetaINR workflow.} Given the sparse and irregular observations from several samples of an functional distribution, MAML algorithm is implemented to learning the optimal initial value $\phi _0$ for SIREN architecture $F$. The meta-model $F_{\phi _0}$ contain the ``shared characteristics'' from the distribution, hence the recovery of samples can be implemented efficiently and accurately. The dense-data-based FDA methods then can be applied effectively on the INRs of samples, such as the estimation of mean function, covariance kernel and principal components}{figure.2}{}}
-\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Model-Agnostic Meta-Learning for Time Series Implicit Neural Re
+\@writefile{loa}{\contentsline {algorithm}{\numberline {1}{\ignorespaces Model-Agnostic Meta-Learning for Time Series Implicit Neural Representation}}{6}{algorithm.1}\protected@file@percent }
+\newlabel{MAML}{{1}{6}{Method}{algorithm.1}{}}
+\@writefile{loa}{\contentsline {algorithm}{\numberline {2}{\ignorespaces Implicit Neural Representation Learning for Target Sample}}{6}{algorithm.2}\protected@file@percent }
+\newlabel{INR-learning}{{2}{6}{Method}{algorithm.2}{}}
+\citation{yao2005functional}
+\citation{chen2018neural}
+\citation{holt2022neural}
+\citation{fons2022hypertime}
+\@writefile{lot}{\contentsline {table}{\numberline {1}{\ignorespaces Comparison of analysis methods for sparse time series data}}{7}{table.1}\protected@file@percent }
+\newlabel{method_compare}{{1}{7}{Comparison of analysis methods for sparse time series data}{table.1}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {4}Experiments}{7}{section.4}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.1}Experiments on synthetic data}{7}{subsection.4.1}\protected@file@percent }
+\citation{raghu2019rapid}
+\citation{holt2022neural}
+\@writefile{lof}{\contentsline {figure}{\numberline {3}{\ignorespaces \textbf  {Learning commonalities.} The figure illustrates two examples (periodicity \& mean function) of the ``shared characteristics'' that MAML learned among these tasks. It is noticable that MetaINR is able to learn the periodicity between the interval $[0,5]$ while local polynomial regression totally misses this information. It is also clear that the meta-model gradually approximates the true mean function during the training process. }}{8}{figure.3}\protected@file@percent }
+\newlabel{Learning commonalities}{{3}{8}{\textbf {Learning commonalities.} The figure illustrates two examples (periodicity \& mean function) of the ``shared characteristics'' that MAML learned among these tasks. It is noticable that MetaINR is able to learn the periodicity between the interval $[0,5]$ while local polynomial regression totally misses this information. It is also clear that the meta-model gradually approximates the true mean function during the training process}{figure.3}{}}
+\citation{markus1989efficacy}
+\citation{fleming2013counting}
+\citation{murtaugh1994primary}
+\@writefile{lof}{\contentsline {figure}{\numberline {4}{\ignorespaces \textbf  {MetaINR reducing the inductive bias from data.} The figure compares the generalization ability of MetaINR to Neural Laplace method. In the training setting, we provide the support set with 10 regular observation times in [0,5]; while in the testing setting, we vary the number and distribution of observations. By comparing the averaged RMSE of predictions in [5,10] over 5 runs, it demonstates that MetaINR is still able to maintain stable and accurate results despite changes in the support set, while the accuracy of Neural Laplace significantly decreases. }}{9}{figure.4}\protected@file@percent }
+\newlabel{ML_compare}{{4}{9}{\textbf {MetaINR reducing the inductive bias from data.} The figure compares the generalization ability of MetaINR to Neural Laplace method. In the training setting, we provide the support set with 10 regular observation times in [0,5]; while in the testing setting, we vary the number and distribution of observations. By comparing the averaged RMSE of predictions in [5,10] over 5 runs, it demonstates that MetaINR is still able to maintain stable and accurate results despite changes in the support set, while the accuracy of Neural Laplace significantly decreases}{figure.4}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {5}{\ignorespaces \textbf  {Estimation for synthetic data.} The figure shows the results of the sample recovery and the estimation of mean function, covariance kernel and principal components on synthetic data. In each plot, the horizontal axis represents time, and the vertical axis represents the corresponding variable's value. It is clear that for all estimatiors, the performance of MetaINR is significantly better than that of Pre-smoothing and PACE methods. }}{10}{figure.5}\protected@file@percent }
+\newlabel{Estimation for synthetic data}{{5}{10}{\textbf {Estimation for synthetic data.} The figure shows the results of the sample recovery and the estimation of mean function, covariance kernel and principal components on synthetic data. In each plot, the horizontal axis represents time, and the vertical axis represents the corresponding variable's value. It is clear that for all estimatiors, the performance of MetaINR is significantly better than that of Pre-smoothing and PACE methods}{figure.5}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {4.2}Real applications in healthcare}{10}{subsection.4.2}\protected@file@percent }
+\citation{santoro2016meta}
+\citation{mishra2017simple}
+\citation{he2021automl}
+\citation{wu2019hyperparameter}
+\citation{reiss2007functional}
+\citation{srivastava2011registration}
+\citation{yao2005functional}
+\@writefile{lof}{\contentsline {figure}{\numberline {6}{\ignorespaces \textbf  {Estimation for real-world data.}The figure demonstates the results of the sample recovery (three typical examples), and the estimation of statistical quantities (mean function, covariance kernel and principal components) in real-world PBC data. In each plot, the horizontal axis represents the observation time (days), and the vertical axis represents the value of logarithmic serum bilirubin concentration (mg/dl). The estimated results are similar in all three methods. }}{11}{figure.6}\protected@file@percent }
+\newlabel{Estimation for real-world data}{{6}{11}{\textbf {Estimation for real-world data.}The figure demonstates the results of the sample recovery (three typical examples), and the estimation of statistical quantities (mean function, covariance kernel and principal components) in real-world PBC data. In each plot, the horizontal axis represents the observation time (days), and the vertical axis represents the value of logarithmic serum bilirubin concentration (mg/dl). The estimated results are similar in all three methods}{figure.6}{}}
+\@writefile{toc}{\contentsline {section}{\numberline {5}Conclusion and future work}{11}{section.5}\protected@file@percent }
+\@writefile{toc}{\contentsline {section}{\numberline {6}Appendix}{11}{section.6}\protected@file@percent }
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.1}Traditional FDA method for sparse functional data: PACE \cite  {yao2005functional}}{11}{subsection.6.1}\protected@file@percent }
+\newlabel{PACE}{{6.1}{11}{Traditional FDA method for sparse functional data: PACE \cite {yao2005functional}}{subsection.6.1}{}}
+\citation{yao2005functional}
+\citation{yao2005functional}
+\citation{sitzmann2020implicit}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.2}The initialization scheme of SIREN \cite  {sitzmann2020implicit}}{13}{subsection.6.2}\protected@file@percent }
+\newlabel{SIREN}{{6.2}{13}{The initialization scheme of SIREN \cite {sitzmann2020implicit}}{subsection.6.2}{}}
+\@writefile{toc}{\contentsline {subsection}{\numberline {6.3}Experimental results for other synthetic data distributions}{13}{subsection.6.3}\protected@file@percent }
+\newlabel{Experiments}{{6.3}{13}{Experimental results for other synthetic data distributions}{subsection.6.3}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {7}{\ignorespaces \textbf  {Learning mean functions.} The figure illustrates that during the learning process, the meta-models gradually converge towards the mean functions of different distributions which is generated by two different principal components. }}{14}{figure.7}\protected@file@percent }
+\newlabel{Learning mean functions}{{7}{14}{\textbf {Learning mean functions.} The figure illustrates that during the learning process, the meta-models gradually converge towards the mean functions of different distributions which is generated by two different principal components}{figure.7}{}}
+\@writefile{lof}{\contentsline {figure}{\numberline {8}{\ignorespaces \textbf  {FDA performance for non-differentiable samples.} The figure shows the results of the sample recovery and the estimation of mean function, covariance kernel and principal components of non-smooth samples It is noticable that the performance of MetaINR is significantly better than that of Pre-smoothing and PACE methods, especially around non-differentiable time points. }}{14}{figure.8}\protected@file@percent }
+\newlabel{sawtooth_results}{{8}{14}{\textbf {FDA performance for non-differentiable samples.} The figure shows the results of the sample recovery and the estimation of mean function, covariance kernel and principal components of non-smooth samples It is noticable that the performance of MetaINR is significantly better than that of Pre-smoothing and PACE methods, especially around non-differentiable time points}{figure.8}{}}
+\bibstyle{IEEEtran}
+\bibdata{ref}
+\bibcite{finn2017model}{{1}{}{{}}{{}}}
+\bibcite{hospedales2021meta}{{2}{}{{}}{{}}}
+\bibcite{beck2023survey}{{3}{}{{}}{{}}}
+\bibcite{raghu2019rapid}{{4}{}{{}}{{}}}
+\bibcite{sun2019meta}{{5}{}{{}}{{}}}
+\bibcite{wang2016functional}{{6}{}{{}}{{}}}
+\bibcite{kokoszka2017introduction}{{7}{}{{}}{{}}}
+\bibcite{stock2001vector}{{8}{}{{}}{{}}}
+\bibcite{box2015time}{{9}{}{{}}{{}}}
+\bibcite{francq2019garch}{{10}{}{{}}{{}}}
+\bibcite{holte2012efficient}{{11}{}{{}}{{}}}
+\bibcite{muller2005functional}{{12}{}{{}}{{}}}
+\bibcite{yao2005functional}{{13}{}{{}}{{}}}
+\bibcite{sitzmann2020implicit}{{14}{}{{}}{{}}}
+\bibcite{fons2022hypertime}{{15}{}{{}}{{}}}
+\bibcite{genova2019learning}{{16}{}{{}}{{}}}
+\bibcite{park2019deepsdf}{{17}{}{{}}{{}}}
+\bibcite{lee2021meta}{{18}{}{{}}{{}}}
+\bibcite{chen2018neural}{{19}{}{{}}{{}}}
+\bibcite{holt2022neural}{{20}{}{{}}{{}}}
+\bibcite{markus1989efficacy}{{21}{}{{}}{{}}}
+\bibcite{fleming2013counting}{{22}{}{{}}{{}}}
+\bibcite{murtaugh1994primary}{{23}{}{{}}{{}}}
+\bibcite{santoro2016meta}{{24}{}{{}}{{}}}
+\bibcite{mishra2017simple}{{25}{}{{}}{{}}}
+\bibcite{he2021automl}{{26}{}{{}}{{}}}
+\bibcite{wu2019hyperparameter}{{27}{}{{}}{{}}}
+\bibcite{reiss2007functional}{{28}{}{{}}{{}}}
+\bibcite{srivastava2011registration}{{29}{}{{}}{{}}}
+\providecommand\NAT@force@numbers{}\NAT@force@numbers
+\gdef \@abspage@last{16}
