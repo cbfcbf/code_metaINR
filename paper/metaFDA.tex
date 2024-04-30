@@ -210,7 +210,7 @@ Unlike traditional methods, this paper introduces machine learning techniques to
 Specifically, this involves two aspects:
 \begin{itemize}
   \item Use SIREN as the Implicit Neural Representation (INR) \cite{sitzmann2020implicit} architecture to recover each sample.
-  \item Use meta-learning framework to effectively and robustly estimate INR for each sample with sparse observations.
+  \item Use the meta-learning framework to effectively and robustly estimate INR for each sample with sparse observations.
 \end{itemize}
 
 \subsubsection{Implicit Neural Representation}
@@ -223,7 +223,7 @@ wherein a finite set of coordinates and corresponding function values are given 
 However, this approach has certain drawbacks: the original functional data in an infinite-dimensional space is discretized into a finite-dimensional space. 
 This not only hampers operations like differentiation but also significantly impacts the resolution of the function within a smaller time interval.
 With the emergence of deep learning, it has been discovered that utilizing deep neural networks can be an effective way to represent functions implicitly.
-Implicit neural representation (INR) parameterize the functional data by deep neural networks:
+Implicit neural representation (INR) parameterizes the functional data by deep neural networks:
 $$y(t)=F_\phi(t), $$
 where $F_\phi(\cdot)$ is a deep neural network parameterized by $\phi$.
 This type of continuous representation not only proves to be more memory-efficient but also enables higher resolution and the handling of more complex operations on functional data.
@@ -273,7 +273,7 @@ $$
 $$
 with the initial value $\phi_0^*=\phi_0^*(\theta)$.
 This is very intuitive because it is similar to the traditional gradient decent method to optimize. 
-The only difference is that the initial value, loss function and gradient step should be carefully trained by the observations of other tasks $D$ in this scenario.
+The only difference is that the initial value, loss function, and gradient step should be carefully trained by the observations of other tasks $D$ in this scenario.
 One important example of PPG method is  Model-Agnostic Meta-Learning (MAML) \cite{finn2017model}, where $\phi_0^*(\theta)=\theta$ and $\hat{L}_\theta$ can be any loss function independent of $\theta$.
 MAML can be regarded as learning an initial value for a task distribution, which retains the gradient decent framework of traditional optimization algorithms.
 
@@ -289,11 +289,11 @@ Here we do not need to explicitly specify the value of $\phi$, and treat the met
   such as Neural ODE \cite{chen2018neural} and Neural Laplace \cite{holt2022neural}, 
   can actually be classified as Black box methods. 
   Instead of treating INR for a single time series as a task, 
-  these models consider learning the commonalities among a group of time series as a task, where $t$ and $D^*$ are all their input.
+  these models consider learning the commonalities among a group of time series as a task, where $t$ and $D^*$ are all their inputs.
 
 
 \textbf{Advantages of MAML for sparse INR tasks}
-For black box methods, because of the sequential properties of input observations, sequential model architectures such as RNN are always used in $g_\theta$ to encode the observations $D^*$, which unavoidably change the initial architecture $F_\phi$.
+For black box methods, because of the sequential properties of input observations, sequential model architectures such as RNN are always used in $g_\theta$ to encode the observations $D^*$, which unavoidably changes the initial architecture $F_\phi$.
 In contrast, PPG methods use the meta-parameters $\theta$ to find the task parameters $\phi$ explicitly, which maintain the initial network architecture.
 In this sense, black box methods are less explainable and exhibit an inductive bias derived from data, 
 whereas PPG methods are more straightforward but carry an inductive bias within their network architecture.
@@ -606,12 +606,12 @@ Regarding mean function estimation, the Pre-smoothing method's estimation  assig
 However, since the number and time points of observations vary among different samples, the information provided by different samples for estimating the mean at a given time point in fact varies as well. 
 As a result, mean estimation based on the Pre-smoothing method still exhibits significant bias, whereas the estimations from PACE and MetaINR are comparatively better.
 
-In covariance kernel estimation, the estimation of both Pre-smoothing and PACE methods also exhibit differences from the ground truth, 
+In covariance kernel estimation, the estimations of both Pre-smoothing and PACE methods also exhibit differences from the ground truth, 
 whereas the estimation based on MetaINR remains relatively reliable.
 During our experiments, we observe that the estimation results of these two traditional methods are highly sensitive to the selection of bandwidth in the local polynomial regression process, 
 indicating that their estimations are not sufficiently robust.
 
-Regarding Principal Component (PC) estimation, we find that all three methods performed well in estimating PC1. 
+Regarding Principal Component (PC) estimation, we find that all three methods perform well in estimating PC1. 
 However, Pre-smoothing method struggles to accurately capture the variation of PC2 over time, 
 with PACE exhibiting relatively better performance in this aspect. 
 Meanwhile, MetaINR nearly perfectly estimates PC2.
@@ -690,7 +690,7 @@ MetaINR demonstrates similar performance to the benchmarks in this specific real
 \begin{figure}[htb]
   \centering
   \includegraphics[width=\textwidth]{real_results.pdf}
-  \caption{\textbf{Estimation of PBC dataset.}The figure demoofnstrates the results of the sample recovery (three typical examples), and the estimation of statistical quantities
+  \caption{\textbf{Estimation of PBC dataset.}The figure demonstrates the results of the sample recovery (three typical examples), and the estimation of statistical quantities
   (mean function, covariance kernel, and principal components) in real-world PBC data. 
   In each plot, the horizontal axis represents the observation time (days), and the vertical axis represents the value of logarithmic serum bilirubin concentration (mg/dl). 
   The estimated results are similar in all three methods.
@@ -717,7 +717,7 @@ including healthcare, finance, environmental monitoring, sensor networks, social
 
 
 Nevertheless, MetaINR exhibits certain limitations, particularly its sensitivity to the choice of hyperparameters, 
-such as the learning rates of inner and outer loop in MAML and network initialization weights in SIREN. 
+such as the learning rates of inner and outer loops in MAML and network initialization weights in SIREN. 
 Optimal hyperparameters can vary significantly across different datasets, 
 and improper selection often results in suboptimal outcomes.
 
@@ -835,7 +835,7 @@ it is proved that the dot product of weights and input of each layer converges t
 $$
 \mathbf{w}^T \mathbf{x} \sim \mathcal{N}\left(0, 1\right),
 $$
-and the output of each layer (input of next layer) $\mathbf{x}^+=\phi_i\left(\mathbf{x}\right)=\sin \left(\mathbf{W} \mathbf{x}+\mathbf{b}\right)$ converges to an another arcsine distribution
+and the output of each layer (input of next layer) $\mathbf{x}^+=\phi_i\left(\mathbf{x}\right)=\sin \left(\mathbf{W} \mathbf{x}+\mathbf{b}\right)$ converges to another arcsine distribution
 $$\mathbf{x}^+  \sim \operatorname{Arcsin}(-1,1).$$
 This property makes it possible that the output distribution of SIREN becomes invariant to the network's depth if we choose $\mathbf{W} \sim Uniform (-\sqrt{6/n}, \sqrt{6/n}).$
 
@@ -895,7 +895,7 @@ Particularly, at non-differentiable points, MetaINR accurately captures the deta
 while other traditional methods struggle to recover the change in samples at the inflection points.
 Another noteworthy point is that, in the estimation of principal components, 
 although the results provided by MetaINR differ considerably from the ground truth, 
-they closely approximate the sample estimation of principal components $\widehat{PC}(t)_{sample}$, which is based on all samples with full observations (not the sparse observations).
+they closely approximate the sample estimation of principal components $\widehat{PC}(t)_{sample}$, which is based on all samples with full observations (not sparse observations).
 It can be proved that (similar to Appendix \ref{PACE}), when there are enough samples, $\widehat{PC}(t)_{sample}$ will converge to the ground truth $PC(t)$. 
 Therefore, the estimation based on MetaINR is still consistent.
 \begin{figure}[htb]
