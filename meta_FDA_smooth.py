@@ -22,9 +22,11 @@ number_of_samples_in_query_set=10
 total_samples_per_task = number_of_samples_in_support_set+number_of_samples_in_query_set
 
 train_inner_train_step = 1
-val_inner_train_step = 10
+val_inner_train_step = 1
 
-first_omega_0=10
+test_inner_train_step=1000
+
+first_omega_0=0.001
 inner_lr = 0.001
 meta_lr = 0.001
 
@@ -449,16 +451,19 @@ mean_loss_list=np.array(mean_loss_list)
 # 可视化训练结果
 #  val_meta_loss = Metaepoch(meta_model,optimizer,val_loader,loss_fn,inner_train_step=val_inner_train_step,inner_lr=inner_lr,train=False,visualize=True)
 
+
+# %%
 # 保存每个任务的格点拟合
 meta_weights = OrderedDict(meta_model.named_parameters())
 
 fast_weights_list=[]
-for task in data_loader:
+
+for i,task in enumerate(data_loader):
     t=task[0][:,0].reshape(-1,1)
     y=task[0][:,1].reshape(-1,1)
-    fast_weights, inner_loss=inner_train(t,y,meta_weights=meta_weights,inner_step = val_inner_train_step)
+    fast_weights, inner_loss=inner_train(t,y,meta_weights=meta_weights,inner_step = test_inner_train_step)
     fast_weights_list.append(fast_weights)
-    # print(inner_loss)
+    print('save sample:'+str(i)+ "\t  inner loss:" + str(inner_loss))
 
 dense_data = []
 t=torch.arange(0,10,0.01)
@@ -498,10 +503,10 @@ for task in data_loader:
     y_all=np.hstack((y_all,y_sample))
 
 t=np.arange(0,10,0.01)
-mean_pace=localreg(t_all, y_all,x0=t, degree=1, kernel=rbf.gaussian, radius=0.2)
-t_pace=np.arange(0,10,0.2)
-mean_pace_for_t_pace=localreg(t_all, y_all,x0=t_pace, degree=1, kernel=rbf.gaussian, radius=0.2)
-mean_pace_all=localreg(t_all, y_all, degree=1, kernel=rbf.gaussian, radius=0.2)
+mean_pace=localreg(t_all, y_all,x0=t, degree=1, kernel=rbf.gaussian, radius=1)
+t_pace=np.arange(0,10.01,0.2)
+mean_pace_for_t_pace=localreg(t_all, y_all,x0=t_pace, degree=1, kernel=rbf.gaussian, radius=1)
+mean_pace_all=localreg(t_all, y_all, degree=1, kernel=rbf.gaussian, radius=1)
 
 input=[]
 z=[]
@@ -517,11 +522,11 @@ for i,task in enumerate(data_loader):
 input=np.array(input)
 z=np.array(z)
 
-t_pace=np.arange(0,10,0.2)
+t_pace=np.arange(0,10.01,0.2)
 X0,Y0=np.meshgrid(t_pace,t_pace)
 x0=np.array([np.ravel(X0), np.ravel(Y0)]).T
 
-cov_pace = localreg(input[:], z[:], x0, degree=0,radius=0.2, kernel=rbf.gaussian)
+cov_pace = localreg(input[:], z[:], x0, degree=0,radius=1, kernel=rbf.gaussian)
 cov_pace = cov_pace.reshape(X0.shape)
 
 # %%
@@ -621,7 +626,7 @@ ax1.contour(X,Y,Z,zdir='z', offset=0,cmap="rainbow")
 ax1.contour(X,Y,Z,zdir='x', offset=0,cmap="rainbow")  
 ax1.contour(X,Y,Z,zdir='y', offset=10,cmap="rainbow")
 ax1.set_title("MetaINR",fontsize=fontsize)
-ax1.set_zlim(0,0.2)
+# ax1.set_zlim(0,0.2)
 
 c3=np.cov(fd_base.data_matrix[:,:,0].T)
 Z3 = c3
@@ -631,7 +636,7 @@ ax3.contour(X,Y,Z3,zdir='z', offset=0,cmap="rainbow")
 ax3.contour(X,Y,Z3,zdir='x', offset=0,cmap="rainbow")  
 ax3.contour(X,Y,Z3,zdir='y', offset=10,cmap="rainbow")
 ax3.set_title("Pre-smoothing",fontsize=fontsize)
-ax3.set_zlim(0,0.2)
+# ax3.set_zlim(0,0.2)
 
 c2=np.cov(fd_true.data_matrix[:,:,0].T)
 Z2 = c2
@@ -641,7 +646,7 @@ ax2.contour(X,Y,Z2,zdir='z', offset=0,cmap="rainbow")
 ax2.contour(X,Y,Z2,zdir='x', offset=0,cmap="rainbow")  
 ax2.contour(X,Y,Z2,zdir='y', offset=10,cmap="rainbow")
 ax2.set_title("Ground truth",fontsize=fontsize)
-ax2.set_zlim(0,0.2)
+# ax2.set_zlim(0,0.2)
 
 c4=cov_pace
 Z4 = c4
@@ -651,12 +656,12 @@ ax4.contour(X0,Y0,Z4,zdir='z', offset=0,cmap="rainbow")
 ax4.contour(X0,Y0,Z4,zdir='x', offset=0,cmap="rainbow")  
 ax4.contour(X0,Y0,Z4,zdir='y', offset=10,cmap="rainbow")
 ax4.set_title("PACE",fontsize=fontsize)
-ax4.set_zlim(0,0.2)
+# ax4.set_zlim(0,0.2)
 
 plt.savefig("./figure/covariance.pdf")
 
 # %% PACE recovery
-id=2
+id=4
 t_sample=t_all[id*dataset.total_samples_per_task:(id+1)*dataset.total_samples_per_task]
 y_sample=y_all[id*dataset.total_samples_per_task:(id+1)*dataset.total_samples_per_task]
 
@@ -672,7 +677,7 @@ phi_2=f2(t_sample)
 
 X0_sample,Y0_sample=np.meshgrid(t_sample,t_sample)
 x0_sample=np.array([np.ravel(X0_sample), np.ravel(Y0_sample)]).T
-cov_pace_id = localreg(input[:], z[:], x0_sample, degree=0,radius=0.2, kernel=rbf.gaussian)
+cov_pace_id = localreg(input[:], z[:], x0_sample, degree=0,radius=1, kernel=rbf.gaussian)
 cov_pace_id = np.matrix(cov_pace_id.reshape(X0_sample.shape))+np.matrix(0.00001*np.eye(X0_sample.shape[0])) #正则化 防止不可逆
 cov_pace_id_inv=np.linalg.inv(cov_pace_id)
 # cov_pace_id_inv=np.array(cov_pace_id_inv)
@@ -695,6 +700,4 @@ plt.plot(t_pace,y_pace,'b:',label='PACE')
 plt.legend()
 plt.savefig("./figure/recovery.pdf")
 
-# %%
-np.floor(t)%2
 # %%
